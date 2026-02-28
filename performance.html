@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance & Instrumentation | ALL-LLM Pod</title>
+
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 40px;
+    background: #ffffff;
+    color: #111;
+    max-width: 900px;
+}
+h1 { font-size: 28px; }
+h2 { margin-top: 40px; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+a {
+    color: #111;
+    text-decoration: underline;
+}
+.footer {
+    margin-top: 60px;
+    font-size: 14px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Performance & Instrumentation</h1>
+
+<p>
+The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation.
+Latency instrumentation is implemented end-to-end across ASR, diarization,
+LLM inference, and TTS playback using structured logging and trace-level metrics.
+</p>
+
+<h2>Inference Runtime</h2>
+
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Model</td><td>Mistral 7B + LoRA Adapters</td></tr>
+<tr><td>GPU</td><td>RTX 4070 Super (12GB VRAM)</td></tr>
+<tr><td>Quantization</td><td>4-bit / 8-bit (VRAM-constrained)</td></tr>
+<tr><td>First-Token Latency</td><td>~XXX ms</td></tr>
+<tr><td>Tokens / Second</td><td>~XXX tok/s</td></tr>
+<tr><td>First-Audio Playback</td><td>~XXX ms</td></tr>
+<tr><td>Peak VRAM Usage</td><td>~XXX MB</td></tr>
+</table>
+
+<h2>ASR & Diarization Throughput</h2>
+
+<table>
+<tr><th>Component</th><th>Notes</th></tr>
+<tr><td>WhisperX Transcription</td><td>Batched long-form decoding with word-level alignment</td></tr>
+<tr><td>NVIDIA NeMo Diarization</td><td>Multiscale embedding + clustering-based speaker attribution</td></tr>
+<tr><td>Episodes Processed</td><td>538</td></tr>
+<tr><td>Total Audio Indexed</td><td>460+ hours</td></tr>
+</table>
+
+<h2>Instrumentation Coverage</h2>
+
+<ul>
+<li>ASR processing duration</li>
+<li>Diarization runtime</li>
+<li>LLM generation latency</li>
+<li>TTS synthesis latency</li>
+<li>WebSocket transmission time</li>
+<li>End-to-end user input → audio playback latency</li>
+</ul>
+
+<h2>Design Constraints</h2>
+
+<p>
+Operating within a 12GB VRAM ceiling required careful memory management,
+LoRA hot-swapping, quantized model loading, and selective RAG activation
+to prevent fragmentation and maintain real-time responsiveness.
+</p>
+
+<p><a href="index.html">← Back to Main Page</a></p>
+
+<div class="footer">
+Mason Thompson · Oakland, CA
+</div>
+
+</body>
+</html>
