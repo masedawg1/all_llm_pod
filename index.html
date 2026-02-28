@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALL-LLM Pod | Mason Thompson</title>
+
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #111;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    margin-top: 60px;
+    font-size: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+p {
+    margin-top: 12px;
+}
+
+.diagram {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f6f6f6;
+    border: 1px solid #e2e2e2;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.footer {
+    margin-top: 80px;
+    font-size: 14px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>ALL-LLM Pod</h1>
+<p><strong>Multi-Agent LLM System for Real-Time Text & Voice Interaction</strong></p>
+
+<p>
+ALL-LLM Pod is a full-stack, multi-agent LLM system designed to simulate real-time text and voice interaction between multiple AI personas. The system runs entirely on a local GPU workstation and includes a custom ASR + diarization pipeline, hybrid RAG architecture, Human-in-the-Loop validation tooling, and a SwiftUI client application for direct and multi-agent group interaction. The project explores low-latency inference, persona consistency, dataset integrity, and distributed system orchestration under constrained hardware.
+</p>
+
+<h2>System Architecture</h2>
+
+<div class="diagram">
+iOS SwiftUI App
+    ↓ (Tailscale)
+FastAPI Backend (Local GPU Workstation)
+    ├── LLM (Mistral + LoRA Adapters)
+    ├── TTS Engine
+    ├── WhisperX (ASR)
+    ├── NVIDIA NeMo (Diarization)
+    ├── Hybrid RAG Layer
+    ├── Behavioral Memory Store
+    └── Structured Logging & Latency Metrics
+</div>
+
+<h2>End-to-End ASR & Diarization Pipeline</h2>
+
+<div class="diagram">
+YouTube URL
+    ↓
+yt_dlp
+    ↓
+Audio Normalization (16k mono)
+    ↓
+WhisperX Transcription
+    ↓
+NeMo Diarization
+    ↓
+Speaker Merge & Segment Repair
+    ↓
+HITL Validation Interface
+    ↓
+Speaker-Labeled JSON Dataset Export
+</div>
+
+<p><strong>538 Episodes Processed · 460+ Audio Hours</strong></p>
+
+<h2>Hybrid RAG Architecture</h2>
+
+<p>
+The system uses a hybrid Retrieval-Augmented Generation architecture combining periodic external news retrieval with transcript-grounded behavioral memory. External retrieval provides up-to-date topical context, while behavioral memory anchors generation to persona-consistent historical speech patterns. Retrieval layers are selectively triggered to minimize latency while preserving contextual relevance.
+</p>
+
+<h2>Human-in-the-Loop Validation</h2>
+
+<p>
+Custom HITL tooling enables high-accuracy speaker labeling, segment repair, and persona-aligned topic validation across multi-agent simulations. Dataset safeguards include integrity checks, structured transcript merging, and persona-consistency validation workflows.
+</p>
+
+<h2>Performance Metrics</h2>
+
+<table>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Audio Hours Processed</td>
+<td>460+</td>
+</tr>
+<tr>
+<td>Episodes Indexed</td>
+<td>538</td>
+</tr>
+<tr>
+<td>Inference Environment</td>
+<td>Local RTX 4070 Super (12GB VRAM)</td>
+</tr>
+<tr>
+<td>Latency Instrumentation</td>
+<td>End-to-End Structured Logging + Tracing</td>
+</tr>
+<tr>
+<td>Dataset Validation</td>
+<td>Human-in-the-Loop + Automated Integrity Checks</td>
+</tr>
+</table>
+
+<div class="footer">
+Mason Thompson · Oakland, CA
+</div>
+
+</div>
+
+</body>
+</html>
