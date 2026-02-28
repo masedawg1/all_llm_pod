@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALL-LLM Pod | Model Evaluation</title>
+<title>ALL-LLM Pod | Evaluation</title>
 
 <style>
-
-/* ---- YOUR GLOBAL LAYOUT STYLES SHOULD EXIST ABOVE THIS ---- */
-
 .code-tabs {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -55,165 +52,131 @@ pre {
     margin: 0;
     white-space: pre-wrap;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="layout">
+<div class="content">
 
-    <div class="nav">
-        <h3>ALL-LLM Pod</h3>
-        <a href="index.html">Overview</a>
-        <a href="performance.html">Performance</a>
-        <a href="heuristics.html">Heuristics</a>
-        <a href="evaluation.html">Model Evaluation</a>
-    </div>
+<h1>Model Evaluation</h1>
+<h2>Episode E136: Diarization Architecture Iteration</h2>
 
-    <div class="content">
+<div class="code-tabs">
 
-        <h1>Model Evaluation</h1>
+<div class="tab-buttons">
+<button class="active" onclick="openTab(event, 'whisperx')">WhisperX ASR</button>
+<button onclick="openTab(event, 'pyannote')">WHX + Pyannote</button>
+<button onclick="openTab(event, 'nemo_raw')">WHX + NeMo</button>
+<button onclick="openTab(event, 'nemo_aligned')">WHX Forced-Alignment + NeMo</button>
+</div>
 
-        <h2>Episode E136: Diarization Architecture Iteration</h2>
-
-        <p>
-        Structured comparison of WhisperX + Pyannote batching versus
-        WhisperX + NeMo raw RTTM injection with time instrumentation.
-        </p>
-
-        <div class="code-tabs">
-
-            <div class="tab-buttons">
-                <button class="active" onclick="openTab(event, 'pyannote')">
-                    WHX + Pyannote (Batched)
-                </button>
-                <button onclick="openTab(event, 'nemo')">
-                    WHX + NeMo (Raw)
-                </button>
-            </div>
-
-            <!-- ===================== PYANNOTE BATCHED ===================== -->
-
-            <div id="pyannote" class="tab-content active">
+<!-- WhisperX Raw -->
+<div id="whisperx" class="tab-content active">
 <pre><code>{
-  "processing": "pyannote_stock_diarization + whisperx_asr",
-  "segments_batched": [
+  "segments": [
     {
-      "speaker": "friedberg",
+      "start": 1.246,
+      "end": 30.912,
+      "time_elapsed": 29.666,
+      "text": "Let me get everything queued up here. How does J. Cal open the show? What does he say? Hey, everybody. Yeah, do it, Chamath. Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest. Oh, my God. He's not even here. You can't do that. It's awful. That's just bullying. It's awful."
+    }
+  ]
+}</code></pre>
+</div>
+
+<!-- Pyannote -->
+<div id="pyannote" class="tab-content">
+<pre><code>{
+  "segments": [
+    {
+      "canonical_speaker": "friedberg",
       "start": 1.229,
-      "end": 11.038,
-      "time_elapsed": 9.809,
+      "end": 10.991,
+      "time_elapsed": 9.762,
       "text": "Let me get everything queued up here. How does J. Cal open the show? What does he say? Hey, everybody. Hey, everybody. Yeah, do it, Chamath."
     },
     {
-      "speaker": "chamath",
+      "canonical_speaker": "chamath",
       "start": 12.119,
-      "end": 25.13,
-      "time_elapsed": 13.011,
-      "text": "Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostness. The mostness, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+      "end": 19.873,
+      "time_elapsed": 7.754,
+      "text": "Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest."
     },
     {
-      "speaker": "friedberg",
-      "start": 25.15,
-      "end": 29.194,
-      "time_elapsed": 4.044,
-      "text": "Oh, my God. He's not even here. You can't do that. It's awful."
-    },
-    {
-      "speaker": "SPEAKER_01",
-      "start": 29.214,
-      "end": 30.675,
-      "time_elapsed": 1.461,
-      "text": "That's just bullying."
-    },
-    {
-      "speaker": "UNKNOWN",
-      "start": 30.695,
+      "canonical_speaker": "friedberg",
+      "start": 18.884,
       "end": 30.915,
-      "time_elapsed": 0.22,
-      "text": "It's awful."
+      "time_elapsed": 12.031,
+      "text": "And the fattest, that's the dumbest. He's not even here. You can't do that. It's awful. That's just bullying. It's awful."
     }
   ]
 }</code></pre>
-            </div>
+</div>
 
-            <!-- ===================== NEMO RAW ===================== -->
-
-            <div id="nemo" class="tab-content">
+<!-- NeMo Raw Injection -->
+<div id="nemo_raw" class="tab-content">
 <pre><code>{
-  "episode": "E136_Hacking_the_pod_Threads_launches_Fe_2023_07_09",
-  "diarization_source": "NEMO",
-  "backend": "FasterWhisper",
-  "turns": [
+  "segments": [
     {
-      "speaker": "friedberg",
+      "canonical_speaker": "friedberg",
       "start": 1.309,
-      "end": 7.09,
-      "time_elapsed": 5.781,
-      "text": "Let me get everything queued up here. How does J. Cal open the show? What does he say?"
-    },
-    {
-      "speaker": "SPEAKER_UNKNOWN",
-      "start": 7.11,
-      "end": 8.791,
-      "time_elapsed": 1.681,
-      "text": "Hey,"
-    },
-    {
-      "speaker": "friedberg",
-      "start": 8.811,
       "end": 10.991,
-      "time_elapsed": 2.18,
-      "text": "everybody. Hey, everybody. Yeah, do it, Chamath."
+      "time_elapsed": 9.682,
+      "text": "Let me get everything queued up here. How does J. Cal open the show? What does he say? Hey, everybody. Yeah, do it, Chamath."
     },
     {
-      "speaker": "chamath",
+      "canonical_speaker": "chamath",
       "start": 12.011,
       "end": 19.873,
       "time_elapsed": 7.862,
-      "text": "Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+      "text": "Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest."
     },
     {
-      "speaker": "SPEAKER_UNKNOWN",
-      "start": 25.274,
-      "end": 25.474,
-      "time_elapsed": 0.2,
-      "text": "He's"
-    },
-    {
-      "speaker": "friedberg",
+      "canonical_speaker": "friedberg",
       "start": 25.514,
-      "end": 26.894,
-      "time_elapsed": 1.38,
-      "text": "not even here. You can't do that. It's"
-    },
-    {
-      "speaker": "SPEAKER_UNKNOWN",
-      "start": 27.274,
-      "end": 28.114,
-      "time_elapsed": 0.84,
-      "text": "awful."
-    },
-    {
-      "speaker": "friedberg",
-      "start": 28.995,
       "end": 30.035,
-      "time_elapsed": 1.04,
-      "text": "That's just bullying. It's awful."
+      "time_elapsed": 4.521,
+      "text": "He's not even here. You can't do that. It's awful. That's just bullying. It's awful."
     }
   ]
 }</code></pre>
-            </div>
+</div>
 
-        </div>
+<!-- Forced Alignment Dominant -->
+<div id="nemo_aligned" class="tab-content">
+<pre><code>{
+  "alignment_strategy": "whisperx_forced_alignment_dominant_projection",
+  "segments": [
+    {
+      "canonical_speaker": "friedberg",
+      "start": 1.309,
+      "end": 10.991,
+      "time_elapsed": 9.682,
+      "text": "Let me get everything queued up here. How does Jcal open the show? What does he say? Hey, everybody. Hey, everybody. Yeah, do it, Chamath."
+    },
+    {
+      "canonical_speaker": "chamath",
+      "start": 12.011,
+      "end": 18.793,
+      "time_elapsed": 6.782,
+      "text": "Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest."
+    },
+    {
+      "canonical_speaker": "friedberg",
+      "start": 18.853,
+      "end": 29.715,
+      "time_elapsed": 10.862,
+      "text": "And the fattest, that's the dumbest. He's not even here. You can't do that. It's awful. That's just bullying."
+    }
+  ]
+}</code></pre>
+</div>
 
-        <div class="footer">
-            Mason Thompson · Berkeley, California
-        </div>
+</div>
 
-    </div>
-
+</div>
 </div>
 
 <script>
