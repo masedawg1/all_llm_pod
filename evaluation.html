@@ -1,14 +1,12 @@
 <h2>Episode E136: Diarization Architecture Iteration</h2>
 
 <p>
-Episode E136 exposed instability under interruption-dense conversational speech.
-The failure was not singular — it occurred at multiple layers of the pipeline.
-Below is the architectural progression.
+Episode E136 was selected following transcript validation anomalies identified during multi-speaker review. Its rapid turn-taking, sub-second interjections, impersonation, and cross-talk provide a stress condition for the ASR + diarization integration layer. The configurations below document the architectural revisions that followed this analysis.
 </p>
 
 <hr>
 
-<h3>1. Pyannote Baseline (Embedding + Boundary Instability)</h3>
+<h3>1. Pyannote Baseline (Embedding + Boundary Volatility)</h3>
 
 <pre><code>{
   "diarization_source": "PYANNOTE",
@@ -36,12 +34,6 @@ Below is the architectural progression.
       "start": 25.274,
       "end": 25.474,
       "text": "He's"
-    },
-    {
-      "speaker": "speaker_3",
-      "start": 25.514,
-      "end": 26.894,
-      "text": "not even here..."
     }
   ]
 }</code></pre>
@@ -51,17 +43,22 @@ Observed:
 • Overlapping intervals  
 • Sub-2 second micro-fragments  
 • UNKNOWN sandwich artifacts  
-• Oscillatory boundary flips under cross-talk  
+• Boundary oscillation under interruption-heavy speech  
+</p>
+
+<p>
+Lexical continuity was largely preserved, but speaker identity mapping
+was unstable under rapid alternation.
 </p>
 
 <hr>
 
-<h3>2. NeMo RTTM Injection (No Force Alignment)</h3>
+<h3>2. NeMo RTTM Injection (No Word-Level Reconciliation)</h3>
 
 <p>
-Switching to NeMo TitaNet-L embeddings improved cluster cohesion,
-but naïvely injecting RTTM intervals without reconciling WhisperX
-word-level timestamps introduced lexical fragmentation.
+Replacing Pyannote with NeMo TitaNet-L improved embedding cohesion
+and cluster separation. However, directly injecting RTTM segment
+boundaries into WhisperX transcripts introduced integration artifacts.
 </p>
 
 <pre><code>{
@@ -93,18 +90,19 @@ word-level timestamps introduced lexical fragmentation.
 Observed:
 • Word-level splits inside lexical units  
 • Artificial UNKNOWN fragments mid-token  
-• ASR timestamp / RTTM boundary mismatch  
+• Empty spans under RTTM windows  
+• ASR timestamp / diarization boundary mismatch  
 </p>
 
 <p>
-This demonstrated that diarization stability alone is insufficient.
-Temporal reconciliation between ASR word alignment and diarization
-segments is required to prevent semantic fragmentation.
+This demonstrated that embedding stability alone is insufficient.
+Diarization intervals and ASR word timestamps are generated independently;
+without reconciliation, temporal drift produces semantic fragmentation.
 </p>
 
 <hr>
 
-<h3>3. NeMo + Force-Aligned Reconciliation (Final Architecture)</h3>
+<h3>3. NeMo + Word-Level Force Alignment (Final Architecture)</h3>
 
 <pre><code>{
   "diarization_source": "NEMO",
@@ -135,12 +133,14 @@ segments is required to prevent semantic fragmentation.
 Result:
 • Same-speaker batching restored  
 • UNKNOWN inflation eliminated  
+• No mid-token lexical splits  
 • Reduced boundary oscillation  
-• Preserved semantic continuity  
 • Stable canonical dataset export  
 </p>
 
 <p>
-Episode E136 served as the inflection point for revising the diarization subsystem
-from a model-only dependency to a multi-layer reconciled architecture.
+E136 demonstrates that instability was not a diarization model failure,
+but a cross-model temporal reconciliation issue. Enforcing deterministic
+word-level assignment resolved the fragmentation while preserving
+NeMo’s improved embedding stability.
 </p>
