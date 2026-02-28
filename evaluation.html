@@ -3,211 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALL-LLM Pod · Evaluation</title>
+<title>ALL-LLM Pod | Evaluation</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f6f8fa;
-  color: #111;
-  line-height: 1.6;
-}
+/* ---- COPY YOUR EXISTING GLOBAL CSS HERE ---- */
+/* DO NOT redefine body/layout/nav/content */
+/* Only add the code-tabs styles below */
 
-.container {
-  max-width: 1000px;
-  margin: 60px auto;
-  padding: 0 20px;
-}
-
-h1, h2, h3 {
-  margin-top: 40px;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #ddd;
-  margin: 40px 0;
-}
-
-/* Code Tabs */
 .code-tabs {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #0d1117;
-  color: #c9d1d9;
-  margin: 30px 0;
-  font-family: monospace;
-  overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #0d1117;
+    color: #c9d1d9;
+    margin: 30px 0;
+    font-family: monospace;
+    overflow: hidden;
 }
 
 .tab-buttons {
-  display: flex;
-  background: #161b22;
-  border-bottom: 1px solid #30363d;
+    display: flex;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
 }
 
 .tab-buttons button {
-  background: none;
-  border: none;
-  color: #8b949e;
-  padding: 12px 18px;
-  cursor: pointer;
-  font-size: 13px;
+    background: none;
+    border: none;
+    color: #8b949e;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 13px;
 }
 
 .tab-buttons button.active {
-  color: #ffffff;
-  border-bottom: 2px solid #58a6ff;
+    color: #ffffff;
+    border-bottom: 2px solid #58a6ff;
 }
 
 .tab-content {
-  display: none;
-  padding: 18px;
-  overflow-x: auto;
-  font-size: 13px;
-  line-height: 1.5;
+    display: none;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .tab-content.active {
-  display: block;
+    display: block;
 }
 
 pre {
-  margin: 0;
-}
-
-footer {
-  margin-top: 80px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-  font-size: 14px;
-  color: #666;
+    margin: 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="layout">
 
-<h1>Evaluation</h1>
+    <!-- LEFT NAVIGATION -->
+    <div class="nav">
+        <h3>ALL-LLM Pod</h3>
 
-<h2>Episode E136: Diarization Architecture Iteration</h2>
+        <a href="index.html">Overview</a>
+        <a href="performance.html">Performance</a>
+        <a href="heuristics.html">Heuristics</a>
+        <a href="evaluation.html">Model Evaluation</a>
+    </div>
 
-<p>
-Episode E136 was selected following transcript validation anomalies identified during structured multi-speaker review. Its rapid turn-taking, impersonation, sub-second interjections, and cross-talk provide a stress condition for the ASR + diarization integration layer.
-</p>
+    <!-- MAIN CONTENT -->
+    <div class="content">
 
-<p>
-The configurations below document the architectural progression that followed.
-</p>
+        <h1>Model Evaluation</h1>
 
-<hr>
+        <h2>Episode E136: Diarization Architecture Iteration</h2>
 
-<h3>Pipeline Comparison</h3>
+        <p>
+        Episode E136 was selected following transcript validation anomalies
+        identified during structured multi-speaker review.
+        </p>
 
-<div class="code-tabs">
+        <div class="code-tabs">
 
-  <div class="tab-buttons">
-    <button class="active" onclick="openTab(event, 'pyannote')">
-      1. Pyannote Baseline
-    </button>
-    <button onclick="openTab(event, 'nemo_raw')">
-      2. NeMo RTTM Injection
-    </button>
-    <button onclick="openTab(event, 'nemo_aligned')">
-      3. NeMo + Force Alignment
-    </button>
-  </div>
+            <div class="tab-buttons">
+                <button class="active" onclick="openTab(event, 'pyannote')">
+                    Pyannote Baseline
+                </button>
+                <button onclick="openTab(event, 'nemo_raw')">
+                    NeMo RTTM Injection
+                </button>
+                <button onclick="openTab(event, 'nemo_aligned')">
+                    NeMo + Force Alignment
+                </button>
+            </div>
 
-  <div id="pyannote" class="tab-content active">
+            <div id="pyannote" class="tab-content active">
 <pre><code>{
   "diarization_source": "PYANNOTE",
-  "observed_issues": [
-    "Overlapping intervals",
-    "Sub-2s micro-fragments",
-    "UNKNOWN sandwich artifacts",
-    "Boundary oscillation under cross-talk"
-  ],
-  "example_fragment": {
-    "speaker": "Friedberg",
-    "start": 1.309,
-    "end": 7.09,
-    "text": "Let me get everything queued up here..."
-  }
+  "issues": ["Overlaps", "Micro-fragments", "UNKNOWN sandwich"]
 }</code></pre>
-  </div>
+            </div>
 
-  <div id="nemo_raw" class="tab-content">
+            <div id="nemo_raw" class="tab-content">
 <pre><code>{
   "diarization_source": "NEMO",
   "alignment_strategy": "raw_rttm_injection",
-  "improvement": "Better embedding cohesion",
-  "integration_issues": [
-    "Mid-token lexical splits",
-    "Artificial UNKNOWN fragments",
-    "Empty RTTM spans with no ASR words",
-    "ASR / RTTM timestamp drift"
-  ],
-  "example_fragment": {
-    "speaker": "speaker_3",
-    "start": 7.11,
-    "end": 8.791,
-    "text": "Hey,"
-  }
+  "issues": ["Mid-token splits", "Timestamp drift"]
 }</code></pre>
-  </div>
+            </div>
 
-  <div id="nemo_aligned" class="tab-content">
+            <div id="nemo_aligned" class="tab-content">
 <pre><code>{
-  "diarization_source": "NEMO",
   "alignment_strategy": "force_aligned_merge",
-  "result": [
-    "Same-speaker batching restored",
-    "UNKNOWN inflation eliminated",
-    "No mid-token splits",
-    "Stable canonical export"
-  ],
-  "example_segment": {
-    "start": 1.309,
-    "end": 10.991,
-    "speaker": "friedberg",
-    "text": "Let me get everything queued up here... Hey, everybody. Yeah, do it, Chamath."
-  }
+  "result": ["Stable batching", "No lexical splits"]
 }</code></pre>
-  </div>
+            </div>
 
-</div>
+        </div>
 
-<hr>
+        <div class="footer">
+            Mason Thompson · Berkeley, California
+        </div>
 
-<h3>Architectural Finding</h3>
-
-<p>
-E136 demonstrates that diarization instability was not solely a model-quality issue. Pyannote exhibited boundary volatility under interruption-dense speech. NeMo improved embedding cohesion, but naïvely injecting RTTM boundaries without reconciling WhisperX word-level timestamps introduced semantic fragmentation.
-</p>
-
-<p>
-Deterministic word-level alignment resolved the conflict layer, converting the pipeline from model-dependent clustering to reconciled temporal integration.
-</p>
-
-<footer>
-Mason Thompson · Berkeley, California
-</footer>
+    </div>
 
 </div>
 
 <script>
 function openTab(evt, tabId) {
-  const contents = document.querySelectorAll(".tab-content");
-  const buttons = document.querySelectorAll(".tab-buttons button");
+    const contents = document.querySelectorAll(".tab-content");
+    const buttons = document.querySelectorAll(".tab-buttons button");
 
-  contents.forEach(c => c.classList.remove("active"));
-  buttons.forEach(b => b.classList.remove("active"));
+    contents.forEach(c => c.classList.remove("active"));
+    buttons.forEach(b => b.classList.remove("active"));
 
-  document.getElementById(tabId).classList.add("active");
-  evt.currentTarget.classList.add("active");
+    document.getElementById(tabId).classList.add("active");
+    evt.currentTarget.classList.add("active");
 }
 </script>
 
