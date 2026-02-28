@@ -58,6 +58,11 @@ th, td {
     border-bottom: 1px solid #ddd;
 }
 
+a {
+    color: #111;
+    text-decoration: underline;
+}
+
 .footer {
     margin-top: 80px;
     font-size: 14px;
@@ -85,10 +90,10 @@ iOS SwiftUI App
 FastAPI Backend (Local GPU Workstation)
     ├── LLM (Mistral + LoRA Adapters)
     ├── TTS Engine
-    ├── WhisperX (ASR)
-    ├── NVIDIA NeMo (Diarization)
     ├── Hybrid RAG Layer
     ├── Behavioral Memory Store
+    ├── WhisperX (ASR)
+    ├── NVIDIA NeMo (Diarization)
     └── Structured Logging & Latency Metrics
 </div>
 
@@ -114,6 +119,11 @@ Speaker-Labeled JSON Dataset Export
 
 <p><strong>538 Episodes Processed · 460+ Audio Hours</strong></p>
 
+<p>
+Detailed speaker-boundary detection heuristics available 
+<a href="heuristics.html">here</a>.
+</p>
+
 <h2>Hybrid RAG Architecture</h2>
 
 <p>
@@ -123,7 +133,7 @@ The system uses a hybrid Retrieval-Augmented Generation architecture combining p
 <h2>Human-in-the-Loop Validation</h2>
 
 <p>
-Custom HITL tooling enables high-accuracy speaker labeling, segment repair, and persona-aligned topic validation across multi-agent simulations. Dataset safeguards include integrity checks, structured transcript merging, and persona-consistency validation workflows.
+Custom HITL tooling enables high-accuracy speaker labeling, segment repair, and persona-aligned topic modeling across multi-agent simulations. Dataset safeguards include integrity checks, structured transcript merging, and persona-consistency validation workflows.
 </p>
 
 <h2>Performance Metrics</h2>
@@ -154,6 +164,11 @@ Custom HITL tooling enables high-accuracy speaker labeling, segment repair, and 
 <td>Human-in-the-Loop + Automated Integrity Checks</td>
 </tr>
 </table>
+
+<p>
+Detailed performance instrumentation available 
+<a href="performance.html">here</a>.
+</p>
 
 <div class="footer">
 Mason Thompson · Oakland, CA
