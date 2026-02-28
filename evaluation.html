@@ -1,166 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diarization Evaluation | ALL-LLM Pod</title>
-
-<style>
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #ffffff;
-    color: #111;
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 900px;
-    margin: 60px auto;
-    padding: 0 20px;
-}
-
-h1 { font-size: 32px; }
-
-h2 {
-    margin-top: 60px;
-    font-size: 20px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 8px;
-}
-
-pre {
-    background: #f6f6f6;
-    padding: 20px;
-    overflow-x: auto;
-    font-family: monospace;
-    font-size: 13px;
-    border: 1px solid #e2e2e2;
-}
-
-code {
-    white-space: pre;
-}
-
-.footer {
-    margin-top: 80px;
-    font-size: 14px;
-    color: #666;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<h1>Diarization Model Evaluation</h1>
+<h2>Episode E136: Diarization Architecture Iteration</h2>
 
 <p>
-The diarization subsystem was revised following a concrete instability case observed
-in Episode E136 under WhisperX + Pyannote.
+Episode E136 exposed instability under interruption-dense conversational speech.
+The failure was not singular — it occurred at multiple layers of the pipeline.
+Below is the architectural progression.
 </p>
 
-<h2>Failure Case: Episode E136 (Pyannote)</h2>
+<hr>
 
-<p>
-The excerpt below illustrates overlapping intervals, sub-2 second micro-fragments,
-and UNKNOWN sandwich artifacts under interruption-heavy cross-talk.
-</p>
+<h3>1. Pyannote Baseline (Embedding + Boundary Instability)</h3>
 
 <pre><code>{
-  "episode": "E136_Hacking_the_pod_Threads_launches_Fe_2023_07_09",
   "diarization_source": "PYANNOTE",
   "turns": [
     {
       "speaker": "Friedberg",
       "start": 1.309,
-      "end": 7.09
+      "end": 7.09,
+      "text": "Let me get everything queued up here..."
     },
     {
       "speaker": "Chamath",
       "start": 7.11,
-      "end": 8.791
+      "end": 8.791,
+      "text": "Hey, everybody."
     },
     {
       "speaker": "Friedberg",
       "start": 7.343,
-      "end": 10.991
+      "end": 10.991,
+      "text": "Hey, everybody. Yeah, do it, Chamath."
     },
     {
       "speaker": "SPEAKER_UNKNOWN",
       "start": 25.274,
-      "end": 25.474
+      "end": 25.474,
+      "text": "He's"
     },
     {
       "speaker": "speaker_3",
       "start": 25.514,
-      "end": 26.894
-    },
-    {
-      "speaker": "SPEAKER_UNKNOWN",
-      "start": 27.274,
-      "end": 28.114
+      "end": 26.894,
+      "text": "not even here..."
     }
   ]
 }</code></pre>
 
 <p>
-This revealed:
+Observed:
+• Overlapping intervals  
+• Sub-2 second micro-fragments  
+• UNKNOWN sandwich artifacts  
+• Oscillatory boundary flips under cross-talk  
 </p>
 
-<ul>
-<li>Overlapping speaker intervals (7.11s / 7.343s)</li>
-<li>Sub-2 second micro-fragmentation</li>
-<li>UNKNOWN sandwich patterns (A → UNKNOWN → A)</li>
-<li>Rapid oscillatory flips under cross-talk</li>
-</ul>
+<hr>
 
-<h2>Structural Context</h2>
+<h3>2. NeMo RTTM Injection (No Force Alignment)</h3>
 
 <p>
-Across 80,333 canonical host segments, 37–48% fall under 4 seconds.
-Panel conversation is interruption-dense by structure.
-Short-window embedding variance therefore becomes a critical stability constraint.
+Switching to NeMo TitaNet-L embeddings improved cluster cohesion,
+but naïvely injecting RTTM intervals without reconciling WhisperX
+word-level timestamps introduced lexical fragmentation.
 </p>
 
-<h2>Diagnostic Investigation</h2>
+<pre><code>{
+  "diarization_source": "NEMO",
+  "alignment_strategy": "raw_rttm_injection",
+  "turns": [
+    {
+      "speaker": "speaker_3",
+      "start": 7.11,
+      "end": 8.791,
+      "text": "Hey,"
+    },
+    {
+      "speaker": "speaker_3",
+      "start": 8.811,
+      "end": 10.991,
+      "text": "everybody. Hey, everybody."
+    },
+    {
+      "speaker": "SPEAKER_UNKNOWN",
+      "start": 25.274,
+      "end": 25.474,
+      "text": "He's"
+    }
+  ]
+}</code></pre>
 
 <p>
-Embedding space visualization of the same episode demonstrated higher cluster
-dispersion and fragmentation under Pyannote embeddings.
-This suggested sensitivity to short-duration acoustic variance.
+Observed:
+• Word-level splits inside lexical units  
+• Artificial UNKNOWN fragments mid-token  
+• ASR timestamp / RTTM boundary mismatch  
 </p>
-
-<h2>Alternative Architecture Evaluated</h2>
 
 <p>
-WhisperX + NeMo TitaNet-L (multiscale embeddings) was tested on identical audio inputs.
-Multiscale embedding aggregation reduced intra-speaker variance and improved cluster cohesion
-under rapid turn-taking conditions.
+This demonstrated that diarization stability alone is insufficient.
+Temporal reconciliation between ASR word alignment and diarization
+segments is required to prevent semantic fragmentation.
 </p>
 
-<h2>Cross-Modal Validation</h2>
+<hr>
+
+<h3>3. NeMo + Force-Aligned Reconciliation (Final Architecture)</h3>
+
+<pre><code>{
+  "diarization_source": "NEMO",
+  "alignment_strategy": "force_aligned_merge",
+  "segments": [
+    {
+      "start": 1.309,
+      "end": 10.991,
+      "speaker": "friedberg",
+      "text": "Let me get everything queued up here... Hey, everybody. Yeah, do it, Chamath."
+    },
+    {
+      "start": 12.011,
+      "end": 18.793,
+      "speaker": "chamath",
+      "text": "Hey, everybody. I'm Jcal..."
+    },
+    {
+      "start": 18.853,
+      "end": 29.715,
+      "speaker": "friedberg",
+      "text": "He's not even here. You can't do that. It's awful."
+    }
+  ]
+}</code></pre>
 
 <p>
-Diarized assignments were correlated against sampled face-presence detection
-(segment start / midpoint / end). Persistent contradictions between visual presence
-and audio attribution were treated as instability indicators.
-Sampling preserved computational feasibility while maintaining signal fidelity.
+Result:
+• Same-speaker batching restored  
+• UNKNOWN inflation eliminated  
+• Reduced boundary oscillation  
+• Preserved semantic continuity  
+• Stable canonical dataset export  
 </p>
-
-<h2>Architectural Outcome</h2>
 
 <p>
-NeMo TitaNet-L multiscale embeddings demonstrated improved temporal stability,
-reduced UNKNOWN sandwich artifacts, and stronger cross-modal alignment relative
-to the Pyannote baseline. The diarization subsystem was therefore revised accordingly.
+Episode E136 served as the inflection point for revising the diarization subsystem
+from a model-only dependency to a multi-layer reconciled architecture.
 </p>
-
-<div class="footer">
-Mason Thompson · Berkeley, California
-</div>
-
-</div>
-</body>
-</html>
