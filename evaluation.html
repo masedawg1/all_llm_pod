@@ -6,10 +6,6 @@
 <title>ALL-LLM Pod | Evaluation</title>
 
 <style>
-/* ---- COPY YOUR EXISTING GLOBAL CSS HERE ---- */
-/* DO NOT redefine body/layout/nav/content */
-/* Only add the code-tabs styles below */
-
 .code-tabs {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -54,6 +50,7 @@
 
 pre {
     margin: 0;
+    white-space: pre-wrap;
 }
 </style>
 </head>
@@ -62,71 +59,142 @@ pre {
 
 <div class="layout">
 
-    <!-- LEFT NAVIGATION -->
-    <div class="nav">
-        <h3>ALL-LLM Pod</h3>
+<div class="nav">
+    <h3>ALL-LLM Pod</h3>
+    <a href="index.html">Overview</a>
+    <a href="performance.html">Performance</a>
+    <a href="heuristics.html">Heuristics</a>
+    <a href="evaluation.html">Model Evaluation</a>
+</div>
 
-        <a href="index.html">Overview</a>
-        <a href="performance.html">Performance</a>
-        <a href="heuristics.html">Heuristics</a>
-        <a href="evaluation.html">Model Evaluation</a>
-    </div>
+<div class="content">
 
-    <!-- MAIN CONTENT -->
-    <div class="content">
+<h1>Model Evaluation</h1>
+<h2>Episode E136: Diarization Architecture Iteration</h2>
 
-        <h1>Model Evaluation</h1>
+<div class="code-tabs">
 
-        <h2>Episode E136: Diarization Architecture Iteration</h2>
+<div class="tab-buttons">
+<button class="active" onclick="openTab(event, 'whisperx')">
+WhisperX ASR
+</button>
+<button onclick="openTab(event, 'pyannote')">
+WHX + Pyannote
+</button>
+<button onclick="openTab(event, 'nemo')">
+WHX + NeMo
+</button>
+<button onclick="openTab(event, 'forced')">
+WHX Forced-Alignment + NeMo
+</button>
+</div>
 
-        <p>
-        Episode E136 was selected following transcript validation anomalies
-        identified during structured multi-speaker review.
-        </p>
-
-        <div class="code-tabs">
-
-            <div class="tab-buttons">
-                <button class="active" onclick="openTab(event, 'pyannote')">
-                    Pyannote Baseline
-                </button>
-                <button onclick="openTab(event, 'nemo_raw')">
-                    NeMo RTTM Injection
-                </button>
-                <button onclick="openTab(event, 'nemo_aligned')">
-                    NeMo + Force Alignment
-                </button>
-            </div>
-
-            <div id="pyannote" class="tab-content active">
+<!-- WhisperX -->
+<div id="whisperx" class="tab-content active">
 <pre><code>{
-  "diarization_source": "PYANNOTE",
-  "issues": ["Overlaps", "Micro-fragments", "UNKNOWN sandwich"]
+  "segments": [
+    {
+      "text": "Let me get everything queued up here. How does J. Cal open the show? What does he say? Hey, everybody. Yeah, do it, Chamath. Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest. Oh, my God. He's not even here. You can't do that. It's awful. That's just bullying. It's awful.",
+      "start": 1.246,
+      "end": 30.912
+    }
+  ]
 }</code></pre>
-            </div>
+</div>
 
-            <div id="nemo_raw" class="tab-content">
+<!-- Pyannote -->
+<div id="pyannote" class="tab-content">
 <pre><code>{
-  "diarization_source": "NEMO",
-  "alignment_strategy": "raw_rttm_injection",
-  "issues": ["Mid-token splits", "Timestamp drift"]
+  "processing": "pyannote_stock_diarization + whisperx_asr",
+  "segments": [
+    { "speaker": "SPEAKER_04", "text": "Let me get everything queued up here." },
+    { "speaker": "SPEAKER_04", "text": "How does J. Cal open the show?" },
+    { "speaker": "SPEAKER_04", "text": "What does he say?" },
+    { "speaker": "SPEAKER_04", "text": "Hey, everybody." },
+    { "speaker": "SPEAKER_04", "text": "Hey, everybody." },
+    { "speaker": "SPEAKER_04", "text": "Yeah, do it, Chamath." },
+    { "speaker": "SPEAKER_05", "text": "Hey, everybody." },
+    { "speaker": "SPEAKER_05", "text": "Hey, everybody." },
+    { "speaker": "SPEAKER_05", "text": "I'm Jason Calacanis." },
+    { "speaker": "SPEAKER_05", "text": "I am the grifter with the mostness." },
+    { "speaker": "SPEAKER_05", "text": "The mostness, that's the shortest." },
+    { "speaker": "SPEAKER_05", "text": "The shortest, that's the fattest." },
+    { "speaker": "SPEAKER_05", "text": "And the fattest, that's the dumbest." },
+    { "speaker": "SPEAKER_04", "text": "Oh, my God." },
+    { "speaker": "SPEAKER_04", "text": "He's not even here." },
+    { "speaker": "SPEAKER_04", "text": "You can't do that." },
+    { "speaker": "SPEAKER_04", "text": "It's awful." },
+    { "speaker": "SPEAKER_01", "text": "That's just bullying." },
+    { "speaker": "UNKNOWN", "text": "It's awful." }
+  ]
 }</code></pre>
-            </div>
+</div>
 
-            <div id="nemo_aligned" class="tab-content">
+<!-- NeMo Raw -->
+<div id="nemo" class="tab-content">
 <pre><code>{
-  "alignment_strategy": "force_aligned_merge",
-  "result": ["Stable batching", "No lexical splits"]
+  "episode": "E136_Hacking_the_pod_Threads_launches_Fe_2023_07_09",
+  "turns": [
+    {
+      "speaker": "Friedberg",
+      "text": "Let me get everything queued up here. How does J. Cal open the show? What does he say?"
+    },
+    {
+      "speaker": "Chamath",
+      "text": "Hey, everybody."
+    },
+    {
+      "speaker": "Friedberg",
+      "text": "Hey, everybody. Yeah, do it, Chamath."
+    },
+    {
+      "speaker": "speaker_0",
+      "text": "Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+    },
+    {
+      "speaker": "SPEAKER_UNKNOWN",
+      "text": "He's"
+    },
+    {
+      "speaker": "speaker_3",
+      "text": "not even here. You can't do that. It's"
+    },
+    {
+      "speaker": "SPEAKER_UNKNOWN",
+      "text": "awful."
+    },
+    {
+      "speaker": "speaker_3",
+      "text": "That's just bullying. It's awful."
+    }
+  ]
 }</code></pre>
-            </div>
+</div>
 
-        </div>
+<!-- Forced Alignment -->
+<div id="forced" class="tab-content">
+<pre><code>{
+  "episode": "2023-07-09_hacking-the-pod-threads-launches-fed-minutes-immigration-balloon-farce-heart-health",
+  "transcript": [
+    {
+      "canonical_speaker": "friedberg",
+      "text": "Let me get everything queued up here. How does Jcal open the show? What does he say? Hey, everybody. Hey, everybody. Yeah, do it, Chamath."
+    },
+    {
+      "canonical_speaker": "chamath",
+      "text": "Hey, everybody. Hey, everybody. I'm Jcal Jcal. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest."
+    },
+    {
+      "canonical_speaker": "friedberg",
+      "text": "And the fattest, that's the dumbest. He's not even here. You can't do that. It's awful. That's just bullying."
+    }
+  ]
+}</code></pre>
+</div>
 
-        <div class="footer">
-            Mason Thompson · Berkeley, California
-        </div>
+</div>
 
-    </div>
+</div>
 
 </div>
 
