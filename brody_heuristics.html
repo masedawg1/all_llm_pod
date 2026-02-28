@@ -1,0 +1,9 @@
+<h1>Speaker Boundary Detection Heuristics</h1>
+
+<p>
+Automatic Speech Recognition (ASR) and speaker diarization systems frequently produce boundary inconsistencies during cross-talk, rapid interruptions, and sub-3-second speaker flips typical of multi-speaker conversation. WhisperX generates word-level alignment timestamps, while diarization models produce speaker turn intervals; these independently derived outputs can diverge under conversational volatility.
+</p>
+
+<p>
+The system applies deterministic heuristics to detect alignment discontinuities and temporal boundary conflicts. Detection is driven by structural timing signals—large intra-segment word gaps, cross-speaker overlap windows, and short-duration speaker fragments—rather than linguistic content, enabling efficient Human-in-the-Loop validation prior to dataset export.
+</p>
