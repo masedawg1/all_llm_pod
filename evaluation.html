@@ -1,138 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Diarization Model Evaluation — ALL-LLM</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diarization Evaluation | ALL-LLM Pod</title>
+
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #111;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+h1 { font-size: 32px; }
+
+h2 {
+    margin-top: 60px;
+    font-size: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+pre {
+    background: #f6f6f6;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 13px;
+    border: 1px solid #e2e2e2;
+}
+
+code {
+    white-space: pre;
+}
+
+.footer {
+    margin-top: 80px;
+    font-size: 14px;
+    color: #666;
+}
+</style>
 </head>
 
 <body>
+<div class="container">
 
-<header>
-    <h1>Diarization Model Evaluation</h1>
-    <p>Comparative analysis of diarization architectures under high-interruption panel conditions.</p>
-</header>
+<h1>Diarization Model Evaluation</h1>
 
-<section>
-    <h2>Objective</h2>
-    <p>
-        Evaluate speaker diarization stability and transcription fidelity in multi-speaker,
-        interruption-dense podcast environments (~37–48% of segments under 4 seconds).
-    </p>
-</section>
+<p>
+The diarization subsystem was revised following a concrete instability case observed
+in Episode E136 under WhisperX + Pyannote.
+</p>
 
-<section>
-    <h2>Architectures Compared</h2>
-    <ul>
-        <li><strong>Baseline:</strong> WhisperX + Pyannote embeddings</li>
-        <li><strong>Proposed:</strong> WhisperX + NeMo TitaNet-L (multiscale embeddings)</li>
-    </ul>
-</section>
+<h2>Failure Case: Episode E136 (Pyannote)</h2>
 
-<section>
-    <h2>Evaluation Dimensions</h2>
-    <ul>
-        <li>Embedding cluster cohesion (geometric separability)</li>
-        <li>Speaker fragmentation rate</li>
-        <li>Short-segment robustness (&lt;4s)</li>
-        <li>Unknown “sandwich” artifact frequency</li>
-        <li>Cross-modal validation (face presence vs diarized speaker)</li>
-    </ul>
-</section>
+<p>
+The excerpt below illustrates overlapping intervals, sub-2 second micro-fragments,
+and UNKNOWN sandwich artifacts under interruption-heavy cross-talk.
+</p>
 
-<section>
-    <h2>Embedding Geometry Analysis</h2>
+<pre><code>{
+  "episode": "E136_Hacking_the_pod_Threads_launches_Fe_2023_07_09",
+  "diarization_source": "PYANNOTE",
+  "turns": [
+    {
+      "speaker": "Friedberg",
+      "start": 1.309,
+      "end": 7.09
+    },
+    {
+      "speaker": "Chamath",
+      "start": 7.11,
+      "end": 8.791
+    },
+    {
+      "speaker": "Friedberg",
+      "start": 7.343,
+      "end": 10.991
+    },
+    {
+      "speaker": "SPEAKER_UNKNOWN",
+      "start": 25.274,
+      "end": 25.474
+    },
+    {
+      "speaker": "speaker_3",
+      "start": 25.514,
+      "end": 26.894
+    },
+    {
+      "speaker": "SPEAKER_UNKNOWN",
+      "start": 27.274,
+      "end": 28.114
+    }
+  ]
+}</code></pre>
 
-    <h3>NeMo TitaNet-L</h3>
-    <p>
-        Multiscale embeddings demonstrated tighter intra-speaker clustering and reduced
-        fragmentation under rapid turn-taking conditions.
-    </p>
+<p>
+This revealed:
+</p>
 
-    <h3>Pyannote</h3>
-    <p>
-        Higher dispersion and speaker-ID inflation observed in interruption-dense regions,
-        suggesting greater sensitivity to short-window variance.
-    </p>
-</section>
+<ul>
+<li>Overlapping speaker intervals (7.11s / 7.343s)</li>
+<li>Sub-2 second micro-fragmentation</li>
+<li>UNKNOWN sandwich patterns (A → UNKNOWN → A)</li>
+<li>Rapid oscillatory flips under cross-talk</li>
+</ul>
 
-<section>
-    <h2>Segment Duration Context</h2>
+<h2>Structural Context</h2>
 
-    <table border="1" cellpadding="6">
-        <tr>
-            <th>Host</th>
-            <th>Total Segments</th>
-            <th>&lt;4s</th>
-            <th>% Short</th>
-            <th>Median Duration</th>
-        </tr>
-        <tr>
-            <td>Chamath</td>
-            <td>19,334</td>
-            <td>8,664</td>
-            <td>44.81%</td>
-            <td>5.02s</td>
-        </tr>
-        <tr>
-            <td>Friedberg</td>
-            <td>14,958</td>
-            <td>7,122</td>
-            <td>47.61%</td>
-            <td>4.40s</td>
-        </tr>
-        <tr>
-            <td>JCal</td>
-            <td>29,936</td>
-            <td>13,961</td>
-            <td>46.64%</td>
-            <td>4.54s</td>
-        </tr>
-        <tr>
-            <td>Sacks</td>
-            <td>16,105</td>
-            <td>5,956</td>
-            <td>36.98%</td>
-            <td>7.41s</td>
-        </tr>
-    </table>
+<p>
+Across 80,333 canonical host segments, 37–48% fall under 4 seconds.
+Panel conversation is interruption-dense by structure.
+Short-window embedding variance therefore becomes a critical stability constraint.
+</p>
 
-    <p>
-        High short-segment density increases embedding variance and exposes diarization instability.
-    </p>
-</section>
+<h2>Diagnostic Investigation</h2>
 
-<section>
-    <h2>Cross-Modal Validation</h2>
-    <p>
-        Diarized speaker assignments were correlated against sampled face-presence detection
-        (segment start / midpoint / end). Persistent contradictions between audio attribution
-        and visual presence were treated as instability indicators.
-    </p>
+<p>
+Embedding space visualization of the same episode demonstrated higher cluster
+dispersion and fragmentation under Pyannote embeddings.
+This suggested sensitivity to short-duration acoustic variance.
+</p>
 
-    <p>
-        Sampling-based validation preserved computational feasibility while maintaining signal integrity.
-    </p>
-</section>
+<h2>Alternative Architecture Evaluated</h2>
 
-<section>
-    <h2>Conclusion</h2>
-    <p>
-        Under interruption-heavy, multi-host panel conditions, NeMo TitaNet-L multiscale embeddings
-        demonstrated improved cluster cohesion, reduced speaker fragmentation, and stronger
-        cross-modal alignment relative to the Pyannote baseline.
-    </p>
+<p>
+WhisperX + NeMo TitaNet-L (multiscale embeddings) was tested on identical audio inputs.
+Multiscale embedding aggregation reduced intra-speaker variance and improved cluster cohesion
+under rapid turn-taking conditions.
+</p>
 
-    <p>
-        Final architecture selection was based on embedding stability, attribution consistency,
-        and downstream dataset integrity requirements.
-    </p>
-</section>
+<h2>Cross-Modal Validation</h2>
 
-<footer>
-    <p>← <a href="index.html">Back to Overview</a></p>
-    <p>Mason Thompson · Berkeley, California</p>
-</footer>
+<p>
+Diarized assignments were correlated against sampled face-presence detection
+(segment start / midpoint / end). Persistent contradictions between visual presence
+and audio attribution were treated as instability indicators.
+Sampling preserved computational feasibility while maintaining signal fidelity.
+</p>
 
+<h2>Architectural Outcome</h2>
+
+<p>
+NeMo TitaNet-L multiscale embeddings demonstrated improved temporal stability,
+reduced UNKNOWN sandwich artifacts, and stronger cross-modal alignment relative
+to the Pyannote baseline. The diarization subsystem was therefore revised accordingly.
+</p>
+
+<div class="footer">
+Mason Thompson · Berkeley, California
+</div>
+
+</div>
 </body>
 </html>
