@@ -129,8 +129,7 @@ h2 {
 <body>
 
 <h1>False Boundary Detection</h1>
-<p class="subtitle">Heuristics &amp; Lexical Indicators</p>
-<p class="lead">Surface-level signals used to identify where the diarization pipeline drew a speaker boundary that shouldn't exist. These heuristics don't model semantics — they detect punctuation, casing, and lexical patterns that indicate a single continuous utterance was split and misattributed across two speaker turns.</p>
+<p class="subtitle">Heuristics &amp; Lexical Indicators</p>WhisperX establishes canonical segment and word-level timestamps, and NeMo is constrained to operate within those boundaries to establish speaker identity. Wrong attributions leave textual fingerprints. These heuristics confidently detect them.</p>
 
 <h2>Boundary Integrity Flags</h2>
 
