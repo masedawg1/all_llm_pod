@@ -1,13 +1,56 @@
-<h1>Speaker Boundary Detection Heuristics</h1>
+False boundary indicators
+✂️ ellipsis boundary
+A: "And the thing about that is..." 
+B (different speaker): "Yeah exactly."
+BEFORE 
+Sacks: Interest rates just have to go up to a point that… To what’s happening in Japan, right? 
+AFTER 
+Sacks: Interest rates just have to go up to a point that…
+JCAL:  To what’s happening in Japan, right? 
 
-<p>
-Automatic Speech Recognition (ASR) and speaker diarization systems frequently produce boundary inconsistencies during cross-talk, rapid interruptions, and sub-3-second speaker flips typical of multi-speaker conversation. WhisperX generates word-level alignment timestamps, while diarization models produce speaker turn intervals; these independently derived outputs can diverge under conversational volatility.
-</p>
 
-<p>
-The system applies deterministic heuristics to detect alignment discontinuities and temporal boundary conflicts. Detection is driven by structural timing signals—large intra-segment word gaps, cross-speaker overlap windows, and short-duration speaker fragments—rather than linguistic content, enabling efficient Human-in-the-Loop validation prior to dataset export.
-</p>
+🩸 turn contamination
+Friedberg: "Less than the $1.4 billion in funding it has raised to Friedberg's been bringing this point up over and over about the overfunding..."
+The pipeline missed a speaker transition and emitted both voices as a single segment — surfaced here because the attributed speaker is referring to themselves in the third person.
 
-<div class="footer">
-Mason Thompson · Berkeley, California
-</div>
+The speaker hadn't finished their thought — the boundary is likely drawn mid-utterance.
+
+✂️ hyphen terminator
+A: "And the reason that works is because the under-" 
+B (different speaker): "Right, exactly."
+The speaker was cut off mid-word — the boundary was drawn at an interruption point, not a natural pause.
+
+⬇️ lowercase continuation
+A: "So that's the whole point." 
+B (different speaker): "and that's why it matters."
+ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed to a different speaker.
+
+🔪 no terminal punctuation
+A: "I think what we're seeing here is a fundamental shift in how" 
+B (different speaker): "Right, totally agree."
+The segment ends mid-sentence — the speaker almost certainly kept talking and the boundary is arbitrary.
+
+🚨 ellipsis + lowercase
+A: "The reason it works is..." 
+B (different speaker): "because the model has already seen it."
+Both signals fire together — the two fragments almost certainly belong to the same speaker.
+
+🚨 ellipsis + speaker flip
+A: "So what I'm saying is..." B (different speaker): 
+"We should probably move on."
+An unfinished sentence immediately followed by a new speaker — either the first speaker's tail was clipped or the boundary is misplaced.
+
+🎤 backchannel bleed
+A: "That's the entire thesis of the argument." 
+B (different speaker): "Yeah."
+Single-word backchannels are too short to build a clean embedding — diarization routinely misassigns them to the wrong speaker.
+
+💬 discourse marker injection
+A: "That's a really good point." 
+B (different speaker): "So the way I think about it..."
+Discourse markers signal a speaker resuming — their presence at a flip often means a continuous utterance was split and misattributed.
+
+⚠️ period before conjunction
+A: "That's the end of the first argument." 
+B (different speaker): "But there's another way to look at this."
+Conjunctions grammatically connect to what preceded them — a conjunction opening a new speaker turn suggests a single sentence was cut in half.
