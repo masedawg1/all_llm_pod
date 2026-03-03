@@ -1,219 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALL-LLM Pod | Heuristics</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALL-LLM Pod | Heuristics</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #ffffff;
-    color: #111;
-    padding: 60px 60px 100px 60px;
-    max-width: 860px;
-}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #ffffff;
+      color: #111;
+      padding: 60px 60px 100px 60px;
+      max-width: 860px;
+    }
 
-h1 {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 16px;
-}
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
 
-.subtitle {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 16px;
-}
+    .subtitle {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
 
-.lead {
-    font-size: 15px;
-    line-height: 1.7;
-    color: #222;
-    margin-bottom: 60px;
-}
+    .lead {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #222;
+      margin-bottom: 60px;
+    }
 
-h2 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    margin-top: 60px;
-}
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      margin-top: 60px;
+    }
 
-.block {
-    margin-bottom: 48px;
-}
+    .block {
+      margin-bottom: 48px;
+    }
 
-.block-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
+    .block-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
 
-.block-why {
-    font-size: 14px;
-    color: #444;
-    margin-bottom: 14px;
-    line-height: 1.6;
-}
+    .block-why {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
 
-.code {
-    background: #f6f6f6;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 18px 20px;
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
+    .source {
+      font-size: 11px;
+      color: #aaa;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 16px;
+    }
 
-.spk {
-    color: #888;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    display: block;
-    margin-top: 10px;
-}
-.spk:first-child { margin-top: 0; }
+    .source a {
+      color: #1a6bc4;
+      text-decoration: none;
+    }
 
-.flagged { color: #b00020; }
+    .source a:hover {
+      text-decoration: underline;
+    }
 
-.diff {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
+    .source .ts {
+      color: #bbb;
+    }
 
-.diff .code::before {
-    display: block;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #999;
-    margin-bottom: 10px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-.diff .before::before { content: "before"; }
-.diff .after::before  { content: "after"; }
-.diff .before { border-top: 3px solid #e74c3c; }
-.diff .after  { border-top: 3px solid #27ae60; }
+    .diff {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-.contamination {
-    background: #fff8f8;
-    border: 1px solid #f0d0d0;
-    border-radius: 4px;
-    padding: 18px 20px;
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
+    .diff-right {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.highlight {
-    color: #c0392b;
-    font-weight: 700;
-}
+    .before {
+      background: #fff8f8;
+      border: 1px solid #e0c8c8;
+      border-top: 3px solid #e74c3c;
+      border-radius: 4px;
+      padding: 18px 20px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      text-align: left;
+    }
 
-.footer {
-    margin-top: 100px;
-    font-size: 13px;
-    color: #999;
-}
-</style>
+    .after {
+      background: #f6fff8;
+      border: 1px solid #c8e0cc;
+      border-top: 3px solid #27ae60;
+      border-radius: 4px;
+      padding: 18px 20px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      text-align: left;
+    }
+
+    .panel-label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .before .panel-label {
+      color: #c0392b;
+    }
+
+    .after .panel-label {
+      color: #27ae60;
+    }
+
+    .spk {
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: block;
+      margin-top: 14px;
+    }
+
+    .spk:first-child {
+      margin-top: 0;
+    }
+
+    .flagged {
+      color: #b00020;
+      font-weight: 600;
+    }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 0;
+    }
+
+    .block-header:hover .block-title {
+      text-decoration: underline;
+    }
+
+    .chevron {
+      font-size: 11px;
+      color: #999;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+
+    .block.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .block-body {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .block.open .block-body {
+      display: block;
+    }
+
+    .footer {
+      margin-top: 100px;
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>False Boundary Detection</h1>
-<p class="subtitle">Heuristics &amp; Lexical Indicators</p>WhisperX establishes canonical segment and word-level timestamps, and NeMo is constrained to operate within those boundaries to establish speaker identity. Wrong attributions leave textual fingerprints. These heuristics confidently detect them.</p>
+  <h1>Transcript Forensics and Repair</h1>
+  <p class="subtitle">Heuristic Diarization Repair</p>
+  <p class="lead">WhisperX establishes canonical segment and word-level timestamps; NeMo is constrained to operate
+    within those boundaries to assign speaker identity. One failure mode: NeMo assigned the wrong speaker. It surfaces
+    in two ways — either a segment boundary is misplaced, or the label on a correctly-bounded segment is
+    wrong.<br><br>Both leave fingerprints in the transcript. Some are structural — patterns in how segments begin or
+    end. Others are subtler relics: statements that appear grammatically complete but carry cues that the system was
+    operating at the edge of its confidence.<br><br><strong>Why it matters:</strong> The downstream model trains on this
+    data. A misattributed segment means the wrong persona learns the wrong words — LoRA adapters trained on corrupted
+    labels will interpolate between speakers, and the resulting voice won't sound like anyone. At 460 hours across 538
+    episodes, even a 2% error rate poisons thousands of training examples.<br><br><strong>The solution:</strong>
+    Human-in-the-Loop heuristic repair — flagging suspect segments using lexical patterns, then routing them for human
+    review, where the transcript and audio-file timestamp are presented rather than re-processing the entire corpus. <a
+      href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank" style="color:#1a6bc4;">↗
+      Episode 115 HITL review</a></p>
 
-<h2>Boundary Integrity Flags</h2>
+  <h2>Boundary Integrity Flags</h2>
+  <p style="font-size:13px;color:#999;margin-bottom:24px;margin-top:-16px;">4 heuristics — click any to expand</p>
 
-<div class="block">
-<div class="block-title">1. turn contamination: ellipsis boundary</div>
-<div class="block-why">The speaker hadn't finished their thought — the boundary is likely drawn mid-utterance.</div>
-<div class="diff">
-<div class="code before"><span class="spk">Sacks</span>Interest rates just have to go up to a point that… To what's happening in Japan, right?</div>
-<div class="code after"><span class="spk">Sacks</span><span class="flagged">Interest rates just have to go up to a point that…</span>
-<span class="spk">Jcal</span><span class="flagged">To what's happening in Japan, right?</span></div>
-</div>
-</div>
+  <!-- 1a -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-title">1a. turn contamination: ellipsis boundary</div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="block-why">A segment presents as one speaker having a continuous thought — but in reality, two speakers
+      exist within it. Fingerprint: mid-segment ellipsis. The most common structural cue, but rare false-positives
+      exist. <a href="https://www.loom.com/share/65827f1c9f3f419cac6dd8b544657ca2" target="_blank"
+        style="color:#1a6bc4;">↗ example</a></div>
+    <div class="block-body">
+      <div class="source"><span>X-Sb8sIi22g</span><span class="ts">699.069s</span><a
+          href="https://youtu.be/X-Sb8sIi22g?t=693" target="_blank">↗ episode</a></div>
+      <div class="diff">
+        <div class="before">
+          <span class="panel-label">before</span><span class="spk">Sacks</span>Interest rates just have to go up to a
+          point that<span class="flagged">… To</span> what's happening in Japan, right?
+        </div>
+        <div class="after">
+          <span class="panel-label">after</span><span class="spk">Sacks</span>Interest rates just have to go up to a
+          point that<span class="flagged">…</span>
+          <span class="spk">Jcal</span><span class="flagged">To</span> what's happening in Japan, right?
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="block">
-<div class="block-title">2. turn contamination: speaker refers to self in 3rd person</div>
-<div class="block-why">The pipeline missed a speaker transition and emitted both voices as a single segment — surfaced here because the attributed speaker refers to themselves in the third person.</div>
-<div class="contamination"><span class="spk">[WRONG] Friedberg</span>Less than the $1.4 billion in funding it has raised to <span class="highlight">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen
-<span class="spk">[CORRECT] Jcal</span>Less than the $1.4 billion in funding it has raised to Friedberg's been bringing this point up over and over about the overfunding and cash in less than the valuation most
-<span class="spk">[CORRECT]Friedberg</span>yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen</div>
-</div>
+  <!-- 1b -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-title">1b. turn contamination: speaker sandwich</div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="block-why">Three segments, two speakers, A→B→A. The middle segment (B) is a misattribution — B never
+      spoke. Fingerprint: middle segment ends with ellipsis, third segment opens lowercase.</div>
+    <div class="block-body">
+      <div class="source">
+        <span>AI_Psychosis__America_s_Broken_Soci_WOWLT.json</span>
+        <span class="ts">94.608s – 103.266s</span>
+        <a href="https://youtu.be/Oy4evu1TdiI?t=92" target="_blank">↗ episode</a>
+      </div>
+      <div class="diff">
+        <div class="before">
+          <span class="panel-label">before</span><span class="spk">Jcal</span>I think they did a great job.
+          <span class="spk">Sacks</span>It's like one of those <span class="flagged">weird...</span>
+          <span class="spk">Jcal</span><span class="flagged">you know,</span> superhero groups that it's like a real
+          throwback.
+        </div>
+        <div class="after">
+          <span class="panel-label">after</span><span class="spk">Jcal</span>I think they did a great job.
+          <span class="spk">Jcal</span>It's like one of those <span class="flagged">weird...</span> <span
+            class="flagged">you know,</span> superhero groups that it's like a real throwback.
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="block">
-<div class="block-title">3. hyphen terminator</div>
-<div class="block-why">The speaker was cut off mid-word — the boundary was drawn at an interruption point, not a natural pause.</div>
-<div class="code"><span class="spk">A</span><span class="flagged">"And the reason that works is because the under-"</span>
-<span class="spk">B</span>"Right, exactly."</div>
-</div>
+  <!-- 2 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-title">2. third-person self-reference</div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="block-why">The attributed speaker's own name appears in their own segment — a strong signal the segment
+      belongs to someone else. Unlike boundary heuristics, no ellipsis or capitalization signal is required. The name
+      alone is the fingerprint.</div>
+    <div class="block-body">
+      <div class="source">
+        <span>episode data</span>
+        <span class="ts">4035.425s</span>
+        <a href="https://youtu.be/X-Sb8sIi22g?t=4034" target="_blank">↗ episode</a>
+      </div>
+      <div class="diff">
+        <div class="before">
+          <span class="panel-label">before</span><span class="spk">Friedberg</span>Less than the $1.4 billion in funding
+          it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the
+          overfunding and cash in less than the valuation most yeah of these unicorns are worth less than their total
+          press stack and this is a good example I've been through this week I went and saw a company I was an investor
+          in that I saw this happen
+        </div>
+        <div class="diff-right">
+          <div class="after">
+            <span class="panel-label">after</span><span class="spk">Jcal</span>Less than the $1.4 billion in funding it
+            has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the
+            overfunding and cash in less than the valuation most
+          </div>
+          <div class="after">
+            <span class="panel-label">after</span><span class="spk">Friedberg</span>yeah of these unicorns are worth
+            less than their total press stack and this is a good example I've been through this week I went and saw a
+            company I was an investor in that I saw this happen
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="block">
-<div class="block-title">4. lowercase continuation</div>
-<div class="block-why">ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed to a different speaker.</div>
-<div class="code"><span class="spk">A</span>"So that's the whole point."
-<span class="spk">B</span><span class="flagged">"and that's why it matters."</span></div>
-</div>
+  <!-- 4 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-title">4. lowercase continuation</div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="block-why">ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a
+      continuation misattributed to a different speaker.</div>
+    <div class="block-body">
+      <div class="source">
+        <span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span>
+        <span class="ts">411.02s – 436.16s</span>
+        <a href="https://youtu.be/AsDrfUQImhs?t=410" target="_blank">↗ episode</a>
+      </div>
+      <div class="diff">
+        <div class="before">
+          <span class="panel-label">before</span><span class="spk">Sacks</span>So when he meets with business people,
+          they're all like, oh, I just saw you on the <span class="flagged">all-in pod.</span>
+          <span class="spk">Chamath</span><span class="flagged">so uh he was saying</span> he said we have a big hit on
+          our hands he said uh he said we're like tv stars now that's incredible imagine if uh if we had if we didn't
+          have to push sand uphill with some of these folks...
+        </div>
+        <div class="after">
+          <span class="panel-label">after</span><span class="spk">Sacks</span>So when he meets with business people,
+          they're all like, oh, I just saw you on the <span class="flagged">all-in pod. so uh he was saying</span> he
+          said we have a big hit on our hands he said uh he said we're like tv stars now.
+          <span class="spk">Chamath</span>now that's incredible imagine if uh if we had if we didn't have to push sand
+          uphill with some of these folks...
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="block">
-<div class="block-title">5. missing terminator</div>
-<div class="block-why">The segment ends mid-sentence — the speaker almost certainly kept talking and the boundary is arbitrary.</div>
-<div class="code"><span class="spk">A</span><span class="flagged">"I think what we're seeing here is a fundamental shift in how"</span>
-<span class="spk">B</span>"Right, totally agree."</div>
-</div>
+  <!-- 8 -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-title">8. backchannel bleed</div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="block-why">Short affirmative utterances in rapid exchange fall below the reliable embedding window and
+      get misassigned to the acoustically dominant local speaker. The boundaries are correct, the words are right — the
+      embeddings simply don't have enough audio to build a clean voiceprint.</div>
+    <div class="block-body">
+      <div class="source">
+        <span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span>
+        <span class="ts">354.645s – 369.541s</span>
+        <a href="https://youtu.be/AsDrfUQImhs?t=354" target="_blank">↗ episode</a>
+      </div>
+      <div class="diff">
+        <div class="before">
+          <span class="panel-label">before</span><span class="spk">Sacks</span>Well, I said that even my co-hosts who
+          aren't fans of his had to admit he did a good job. And he said, well, tell them I said hi too. <span
+            class="flagged">Oh, okay.</span>
+          <span class="spk">Jcal</span>So you sandbagged us with the president.
+          <span class="spk">Sacks</span><span class="flagged">Got it.</span>
+          <span class="spk">Jcal</span>Thank you.
+        </div>
+        <div class="after">
+          <span class="panel-label">after</span><span class="spk">Sacks</span>Well, I said that even my co-hosts who
+          aren't fans of his had to admit he did a good job. And he said, well, tell them I said hi too.
+          <span class="spk">Jcal</span><span class="flagged">Oh, okay.</span> So you sandbagged us with the president.
+          <span class="flagged">Got it.</span> Thank you.
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="block">
-<div class="block-title">6. ellipsis + lowercase continuation</div>
-<div class="block-why">Both signals fire together — the two fragments almost certainly belong to the same speaker.</div>
-<div class="code"><span class="spk">A</span><span class="flagged">"The reason it works is..."</span>
-<span class="spk">B</span><span class="flagged">"because the model has already seen it."</span></div>
-</div>
+  <div class="footer">Mason Thompson · Berkeley, California</div>
 
-<div class="block">
-<div class="block-title">7. ellipsis + speaker flip</div>
-<div class="block-why">An unfinished sentence immediately followed by a new speaker — either the first speaker's tail was clipped or the boundary is misplaced.</div>
-<div class="code"><span class="spk">A</span><span class="flagged">"So what I'm saying is..."</span>
-<span class="spk">B</span>"We should probably move on."</div>
-</div>
-
-<div class="block">
-<div class="block-title">8. backchannel bleed</div>
-<div class="block-why">Single-word backchannels are too short to build a clean embedding — diarization routinely misassigns them to the wrong speaker.</div>
-<div class="code"><span class="spk">A</span>"That's the entire thesis of the argument."
-<span class="spk">B</span><span class="flagged">"Yeah."</span></div>
-</div>
-
-<div class="block">
-<div class="block-title">9. discourse marker injection</div>
-<div class="block-why">Discourse markers signal a speaker resuming — their presence at a flip often means a continuous utterance was split and misattributed.</div>
-<div class="code"><span class="spk">A</span>"That's a really good point."
-<span class="spk">B</span><span class="flagged">"So the way I think about it..."</span></div>
-</div>
-
-<div class="block">
-<div class="block-title">10. period before conjunction</div>
-<div class="block-why">Conjunctions grammatically connect to what preceded them — a conjunction opening a new speaker turn suggests a single sentence was cut in half.</div>
-<div class="code"><span class="spk">A</span>"That's the end of the first argument."
-<span class="spk">B</span><span class="flagged">"But there's another way to look at this."</span></div>
-</div>
-
-<div class="block">
-<div class="block-title">11. third-person self-reference</div>
-<div class="block-why">The attributed speaker's own name appears in their segment — a strong signal the segment belongs to someone else entirely.</div>
-<div class="code"><span class="spk">Friedberg</span><span class="flagged">"Less than the $1.4 billion in funding it has raised to <strong>Friedberg's</strong> been bringing this point up over and over..."</span></div>
-</div>
-
-<div class="footer">Mason Thompson · Berkeley, California</div>
-
+  <script>
+    document.querySelectorAll('.block').forEach(block => {
+      const header = block.querySelector('.block-header');
+      if (header) {
+        header.addEventListener('click', () => {
+          block.classList.toggle('open');
+        });
+      }
+    });
+  </script>
 </body>
+
 </html>
