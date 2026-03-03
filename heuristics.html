@@ -1,56 +1,220 @@
-False boundary indicators
-✂️ ellipsis boundary
-A: "And the thing about that is..." 
-B (different speaker): "Yeah exactly."
-BEFORE 
-Sacks: Interest rates just have to go up to a point that… To what’s happening in Japan, right? 
-AFTER 
-Sacks: Interest rates just have to go up to a point that…
-JCAL:  To what’s happening in Japan, right? 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALL-LLM Pod | Heuristics</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #ffffff;
+    color: #111;
+    padding: 60px 60px 100px 60px;
+    max-width: 860px;
+}
 
-🩸 turn contamination
-Friedberg: "Less than the $1.4 billion in funding it has raised to Friedberg's been bringing this point up over and over about the overfunding..."
-The pipeline missed a speaker transition and emitted both voices as a single segment — surfaced here because the attributed speaker is referring to themselves in the third person.
+h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
 
-The speaker hadn't finished their thought — the boundary is likely drawn mid-utterance.
+.subtitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
 
-✂️ hyphen terminator
-A: "And the reason that works is because the under-" 
-B (different speaker): "Right, exactly."
-The speaker was cut off mid-word — the boundary was drawn at an interruption point, not a natural pause.
+.lead {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #222;
+    margin-bottom: 60px;
+}
 
-⬇️ lowercase continuation
-A: "So that's the whole point." 
-B (different speaker): "and that's why it matters."
-ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed to a different speaker.
+h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    margin-top: 60px;
+}
 
-🔪 no terminal punctuation
-A: "I think what we're seeing here is a fundamental shift in how" 
-B (different speaker): "Right, totally agree."
-The segment ends mid-sentence — the speaker almost certainly kept talking and the boundary is arbitrary.
+.block {
+    margin-bottom: 48px;
+}
 
-🚨 ellipsis + lowercase
-A: "The reason it works is..." 
-B (different speaker): "because the model has already seen it."
-Both signals fire together — the two fragments almost certainly belong to the same speaker.
+.block-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
 
-🚨 ellipsis + speaker flip
-A: "So what I'm saying is..." B (different speaker): 
-"We should probably move on."
-An unfinished sentence immediately followed by a new speaker — either the first speaker's tail was clipped or the boundary is misplaced.
+.block-why {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 14px;
+    line-height: 1.6;
+}
 
-🎤 backchannel bleed
-A: "That's the entire thesis of the argument." 
-B (different speaker): "Yeah."
-Single-word backchannels are too short to build a clean embedding — diarization routinely misassigns them to the wrong speaker.
+.code {
+    background: #f6f6f6;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 18px 20px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
 
-💬 discourse marker injection
-A: "That's a really good point." 
-B (different speaker): "So the way I think about it..."
-Discourse markers signal a speaker resuming — their presence at a flip often means a continuous utterance was split and misattributed.
+.spk {
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: block;
+    margin-top: 10px;
+}
+.spk:first-child { margin-top: 0; }
 
-⚠️ period before conjunction
-A: "That's the end of the first argument." 
-B (different speaker): "But there's another way to look at this."
-Conjunctions grammatically connect to what preceded them — a conjunction opening a new speaker turn suggests a single sentence was cut in half.
+.flagged { color: #b00020; }
+
+.diff {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.diff .code::before {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+    margin-bottom: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.diff .before::before { content: "before"; }
+.diff .after::before  { content: "after"; }
+.diff .before { border-top: 3px solid #e74c3c; }
+.diff .after  { border-top: 3px solid #27ae60; }
+
+.contamination {
+    background: #fff8f8;
+    border: 1px solid #f0d0d0;
+    border-radius: 4px;
+    padding: 18px 20px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.highlight {
+    color: #c0392b;
+    font-weight: 700;
+}
+
+.footer {
+    margin-top: 100px;
+    font-size: 13px;
+    color: #999;
+}
+</style>
+</head>
+<body>
+
+<h1>False Boundary Detection</h1>
+<p class="subtitle">Heuristics &amp; Lexical Indicators</p>
+<p class="lead">Surface-level signals used to identify where the diarization pipeline drew a speaker boundary that shouldn't exist. These heuristics don't model semantics — they detect punctuation, casing, and lexical patterns that indicate a single continuous utterance was split and misattributed across two speaker turns.</p>
+
+<h2>Boundary Integrity Flags</h2>
+
+<div class="block">
+<div class="block-title">✂️ ellipsis boundary</div>
+<div class="block-why">The speaker hadn't finished their thought — the boundary is likely drawn mid-utterance.</div>
+<div class="diff">
+<div class="code before"><span class="spk">Sacks</span>Interest rates just have to go up to a point that… To what's happening in Japan, right?</div>
+<div class="code after"><span class="spk">Sacks</span><span class="flagged">Interest rates just have to go up to a point that…</span>
+<span class="spk">Jcal</span><span class="flagged">To what's happening in Japan, right?</span></div>
+</div>
+</div>
+
+<div class="block">
+<div class="block-title">🩸 turn contamination</div>
+<div class="block-why">The pipeline missed a speaker transition and emitted both voices as a single segment — surfaced here because the attributed speaker refers to themselves in the third person.</div>
+<div class="contamination"><span class="spk">Friedberg</span>Less than the $1.4 billion in funding it has raised to <span class="highlight">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen
+<span class="spk">Jcal</span>Less than the $1.4 billion in funding it has raised to Friedberg's been bringing this point up over and over about the overfunding and cash in less than the valuation most
+<span class="spk">Friedberg</span>yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen</div>
+</div>
+
+<div class="block">
+<div class="block-title">✂️ hyphen terminator</div>
+<div class="block-why">The speaker was cut off mid-word — the boundary was drawn at an interruption point, not a natural pause.</div>
+<div class="code"><span class="spk">A</span><span class="flagged">"And the reason that works is because the under-"</span>
+<span class="spk">B</span>"Right, exactly."</div>
+</div>
+
+<div class="block">
+<div class="block-title">⬇️ lowercase continuation</div>
+<div class="block-why">ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed to a different speaker.</div>
+<div class="code"><span class="spk">A</span>"So that's the whole point."
+<span class="spk">B</span><span class="flagged">"and that's why it matters."</span></div>
+</div>
+
+<div class="block">
+<div class="block-title">🔪 no terminal punctuation</div>
+<div class="block-why">The segment ends mid-sentence — the speaker almost certainly kept talking and the boundary is arbitrary.</div>
+<div class="code"><span class="spk">A</span><span class="flagged">"I think what we're seeing here is a fundamental shift in how"</span>
+<span class="spk">B</span>"Right, totally agree."</div>
+</div>
+
+<div class="block">
+<div class="block-title">🚨 ellipsis + lowercase</div>
+<div class="block-why">Both signals fire together — the two fragments almost certainly belong to the same speaker.</div>
+<div class="code"><span class="spk">A</span><span class="flagged">"The reason it works is..."</span>
+<span class="spk">B</span><span class="flagged">"because the model has already seen it."</span></div>
+</div>
+
+<div class="block">
+<div class="block-title">🚨 ellipsis + speaker flip</div>
+<div class="block-why">An unfinished sentence immediately followed by a new speaker — either the first speaker's tail was clipped or the boundary is misplaced.</div>
+<div class="code"><span class="spk">A</span><span class="flagged">"So what I'm saying is..."</span>
+<span class="spk">B</span>"We should probably move on."</div>
+</div>
+
+<div class="block">
+<div class="block-title">🎤 backchannel bleed</div>
+<div class="block-why">Single-word backchannels are too short to build a clean embedding — diarization routinely misassigns them to the wrong speaker.</div>
+<div class="code"><span class="spk">A</span>"That's the entire thesis of the argument."
+<span class="spk">B</span><span class="flagged">"Yeah."</span></div>
+</div>
+
+<div class="block">
+<div class="block-title">💬 discourse marker injection</div>
+<div class="block-why">Discourse markers signal a speaker resuming — their presence at a flip often means a continuous utterance was split and misattributed.</div>
+<div class="code"><span class="spk">A</span>"That's a really good point."
+<span class="spk">B</span><span class="flagged">"So the way I think about it..."</span></div>
+</div>
+
+<div class="block">
+<div class="block-title">⚠️ period before conjunction</div>
+<div class="block-why">Conjunctions grammatically connect to what preceded them — a conjunction opening a new speaker turn suggests a single sentence was cut in half.</div>
+<div class="code"><span class="spk">A</span>"That's the end of the first argument."
+<span class="spk">B</span><span class="flagged">"But there's another way to look at this."</span></div>
+</div>
+
+<div class="block">
+<div class="block-title">🪞 third-person self-reference</div>
+<div class="block-why">The attributed speaker's own name appears in their segment — a strong signal the segment belongs to someone else entirely.</div>
+<div class="code"><span class="spk">Friedberg</span><span class="flagged">"Less than the $1.4 billion in funding it has raised to <strong>Friedberg's</strong> been bringing this point up over and over..."</span></div>
+</div>
+
+<div class="footer">Mason Thompson · Berkeley, California</div>
+
+</body>
+</html>
