@@ -365,98 +365,38 @@
     <p class="page-eyebrow">Project Background</p>
     <h1>How This Got Built</h1>
 
-    <div class="version-row">
-      <span class="version-pill">V1 · Mistral-7B</span>
-      <span class="version-pill">V2 · NeMo</span>
-      <span class="version-pill active">V3 · Clownfish</span>
+    <p class="lead">
+      The project started as a text style transfer helper — rewriting content in another person's voice using the OpenAI API. Audio forensics pulled it in a different direction.<br><br>
+      The All-In Podcast was the obvious corpus: widely followed in technology and venture circles, with a large back-catalog. YouTube provides transcripts, but they aren't usable. A custom transcription pipeline was built from scratch — audio in, structured speaker-labeled text out — and that became the training foundation for each host persona.<br><br>
+      V1 ran on Mistral-7B within a couple of months. The personas were believable, but the architecture was fragile: the voice classifier had been trained only on host audio, which meant guest speech could contaminate host training data. The fix was NeMo — more stable clustering, better speaker segmentation than Pyannote. NeMo had been an earlier failed install; once it worked, it became the backbone.
+    </p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:-24px 0 40px;max-width:680px;">
+      <div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">pyannote.png</span>
+        </div>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px;letter-spacing:.06em;text-transform:uppercase;">Pyannote</p>
+      </div>
+      <div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">nemo.png</span>
+        </div>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px;letter-spacing:.06em;text-transform:uppercase;">NeMo</p>
+      </div>
     </div>
 
     <p class="lead">
-      The project started as a text style transfer helper — a service to rewrite content in another person's voice using the OpenAI API. Audio forensics pulled it in a different direction. It's an active area of AI research, and it scratched an old itch: building systems that generate structured artifacts and sharpening their quality as understanding of the problem deepens.<br><br>
-      The All-In Podcast was the obvious corpus: widely followed in technology and venture circles, with a large back-catalog. YouTube provides transcripts, but they aren't usable. A custom transcription pipeline was built from scratch — audio in, structured speaker-labeled text out — and that became the training foundation for each host persona.
+      What emerged from that rebuild was <strong>Clownfish</strong>: a focused labeling service. NeMo generates <code>speaker_id</code> segments; audio grouped by that ID is reviewed by ear and mapped to a name. Once mapped, the assignment propagates through the transcript. Clownfish then expanded beyond labeling into lexical and heuristic discovery — surfacing transcriptional artifacts and speaker misclassifications that would otherwise pass silently into training data.
     </p>
-  </div>
 
-  <div class="section-heading">
-    <h2>Build History</h2>
-    <span class="section-count">4 phases — click any to expand</span>
-  </div>
+    <a href="https://youtu.be/UPnnOCWqiAw" target="_blank" style="display:inline-block;margin:-24px 0 40px;border:1px solid var(--border);border-radius:3px;overflow:hidden;line-height:0;">
+      <img src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg" alt="YouTube preview" style="width:320px;display:block;">
+    </a>
 
-  <!-- V1 -->
-  <div class="block open" id="v1">  <!-- already open -->
-    <div class="block-header">
-      <div class="block-header-left">
-        <span class="block-id">V1</span>
-        <span class="block-title">mistral-7b · initial personas</span>
-      </div>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="block-body">
-      <div class="block-why">
-        <div class="pivot">Status</div>
-        Running within a couple of months. The personas were believable. Then a structural problem surfaced: the voice classifier had been trained exclusively on host audio, which meant guest speech could theoretically be forced into one of the host classes — contaminating training data at the source.
-        <div class="pull">The failure wasn't observed in practice — an <em>"unknown" class</em> absorbed most guest speech — but the architecture was fragile, and I didn't trust it. Trust is load-bearing in a data pipeline.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- V2 -->
-  <div class="block open" id="v2">
-    <div class="block-header">
-      <div class="block-header-left">
-        <span class="block-id">V2</span>
-        <span class="block-title">nvidia nemo · stable diarization</span>
-      </div>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="block-body">
-      <div class="block-why">
-        <div class="pivot">Trigger</div>
-        NeMo had been an earlier side quest — prior install attempts failed. Once working, it produced far more stable clustering and speaker segmentation than Pyannote. Streamlit tooling expanded quickly: timeline analysis, facial recognition, several other features. Then it contracted deliberately once the right scope became clear.
-        <a href="https://youtu.be/UPnnOCWqiAw" target="_blank" style="display:inline-block;margin:14px 0 4px;border:1px solid var(--border);border-radius:3px;overflow:hidden;line-height:0;">
-          <img src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg" alt="YouTube preview" style="width:320px;display:block;">
-        </a>
-        <div class="pivot" style="margin-top:14px">Outcome</div>
-        What remained became <strong>Clownfish</strong>: a focused labeling service. NeMo generates <code>speaker_id</code> segments; audio grouped by that ID is reviewed by ear and mapped to a name. Once mapped, the assignment propagates through the entire transcript.
-      </div>
-    </div>
-  </div>
-
-  <!-- Classifier -->
-  <div class="block open" id="classifier">
-    <div class="block-header">
-      <div class="block-header-left">
-        <span class="block-id">EXP</span>
-        <span class="block-title">voice classifier · 100k clips</span>
-      </div>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="block-body">
-      <div class="block-why">
-        <div class="pivot">Failure mode</div>
-        A stronger voice classifier was trained on more than 100,000 audio clips across the four hosts and over 100 guests. It still failed where it mattered most: short utterances, overlapping speech, laughter, backchannels.
-        <div class="pull">Episode 136 made this concrete — <em>Brad Gerstner was misclassified as David Friedberg.</em></div>
-        <div class="pivot" style="margin-top:14px">Pivot</div>
-        Rather than chasing classifier accuracy, the approach shifted: treat stable NeMo <code>speaker_id</code>s as the dataset backbone, and build heuristics to surface transcriptional artifacts and misclassifications that would otherwise pass silently into training data. Those heuristics were built directly into Streamlit, where they could be acted on immediately.
-      </div>
-    </div>
-  </div>
-
-  <!-- Result -->
-  <div class="block open" id="result">
-    <div class="block-header">
-      <div class="block-header-left">
-        <span class="block-id">V3</span>
-        <span class="block-title">clownfish · heuristic repair pipeline</span>
-      </div>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="block-body">
-      <div class="block-why">
-        <div class="pivot">Result</div>
-        The pipeline scaled from roughly 185 labeled episodes to more than 530 within a couple of months. Each episode more defensible than the last — not because the models got smarter, but because the process for catching their mistakes did.
-      </div>
-    </div>
+    <p class="lead">
+      The pipeline scaled from roughly 185 labeled episodes to more than 530 within a couple of months. Each episode more defensible than the last — not because the models got smarter, but because the process for catching their mistakes did.
+    </p>
   </div>
 
   <div class="stats-row">
@@ -478,38 +418,8 @@
 </main>
 
 <script>
-window.NAV_ANCHORS = [
-  { href: '#origin',     label: 'Origin' },
-  { href: '#v1',         label: 'V1 · Mistral-7B' },
-  { href: '#v2',         label: 'V2 · NeMo' },
-  { href: '#classifier', label: 'Voice Classifier' },
-  { href: '#result',     label: 'Result' },
-];
+window.NAV_ANCHORS = [];
 </script>
 <script src="nav-loader.js" data-page="about"></script>
-<script>
-  document.querySelectorAll('.block').forEach(block => {
-    const header = block.querySelector('.block-header');
-    if (header) header.addEventListener('click', () => block.classList.toggle('open'));
-  });
-
-  const sections = ['origin','v1','v2','classifier','result'];
-  const navItems = document.querySelectorAll('.nav-item');
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navItems.forEach(a => {
-          a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
-        });
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) observer.observe(el);
-  });
-</script>
 </body>
 </html>
