@@ -67,7 +67,7 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
   margin:18px 0 30px;
   font-size:14px;
   line-height:1.8;
-  max-width:720px;
+  max-width:760px;
   color:#3a3a3a;
 }
 
@@ -108,10 +108,10 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
   cursor:pointer;
 }
 
-.error-grid{
+.image-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:20px;
+  gap:24px;
   margin-top:20px;
 }
 
@@ -133,7 +133,7 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 @media(max-width:900px){
   nav{display:none;}
   main{padding:32px 24px;}
-  .error-grid{grid-template-columns:1fr;}
+  .image-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -154,34 +154,31 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 
 <!-- ================= V1 ================= -->
 <h2 id="v1">V1 — Host-Only Classifier</h2>
+
 <div class="version-text">
-WhisperX segmentation + Pyannote embeddings.
-~9,000 host clips from 44 episodes.
-Guest audio excluded.
+WhisperX segmentation + Pyannote embeddings.  
+~9,000 host clips from 44 episodes. Guest audio excluded.
 
-Structural flaw:
-No guest hard-negatives → risk of confident mislabeling.
-
+Structural flaw: no guest hard-negatives → risk of confident mislabeling.  
 An incidental “unknown” bucket absorbed ambiguity.
-V1 worked in isolation.
-It was fragile in production logic.
+
+V1 worked in isolation. It was structurally fragile.
 </div>
 
 <!-- ================= V2 ================= -->
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
-<div class="version-text">
-Same segmentation and embedding stack.
-Added Clownfish speaker mapping + bulk guest extraction.
 
-Architecture unchanged.
-Data discipline changed.
+<div class="version-text">
+Same segmentation + embedding stack.  
+Added Clownfish speaker verification and large-scale guest extraction.
+
+Architecture unchanged. Data discipline changed.
 </div>
 
 <div class="block">
 <div class="block-header">V2 Dataset & Results</div>
 <div class="block-body">
 <div class="metric-list">
-Dataset Scale:
 61,682 clips
 198.46 hours
 4 hosts + 87 guests
@@ -202,12 +199,12 @@ Host vs Guest ≈ 99%
 
 <!-- ================= V3 ================= -->
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
-<div class="version-text">
-Replaced Pyannote embeddings with NVIDIA NeMo TitaNet.
-Segmentation logic unchanged.
-Classification architecture unchanged.
 
-V2 fixed the dataset.
+<div class="version-text">
+Replaced Pyannote embeddings with NVIDIA NeMo TitaNet.  
+Segmentation logic unchanged. Classification architecture unchanged.
+
+V2 fixed the dataset.  
 V3 corrected the representation layer.
 </div>
 
@@ -217,6 +214,7 @@ V3 corrected the representation layer.
 <div class="metric-list">
 
 Embeddings: 91,410
+
 Train / Val / Test:
 64,131 / 13,062 / 14,217
 
@@ -238,14 +236,9 @@ JCal: 92.64%
 Sacks: 97.80%
 Other: 99.21%
 
-Host Identification Accuracy:
-95.98%
-
-Binary Host vs Other:
-98.52%
-
-End-to-End Combined Accuracy:
-91.19%
+Host Identification Accuracy: 95.98%
+Binary Host vs Other: 98.52%
+End-to-End Combined Accuracy: 91.19%
 
 Primary Confusion Pattern:
 JCal → Chamath (196 errors)
@@ -253,23 +246,42 @@ JCal → Chamath (196 errors)
 Model Saved:
 five_class_classifier.pkl
 </div>
+
+<div class="image-section">
+<h3 style="font-size:13px;margin:30px 0 10px;">Embedding Geometry — Episode 136</h3>
+<div class="image-grid">
+  <div>
+    <div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:6px;">
+      Pyannote Embeddings (Over-Segmentation)
+    </div>
+    <img src="/images/pyanote.png" onclick="openModal(this)">
+  </div>
+  <div>
+    <div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:6px;">
+      NeMo / TitaNet Embeddings (Cleaner Manifold)
+    </div>
+    <img src="/images/nemo.png" onclick="openModal(this)">
+  </div>
+</div>
+</div>
+
 </div>
 </div>
 
 <!-- ================= V4 ================= -->
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
+
 <div class="version-text">
-White papers consistently warn that sub-5s audio degrades embedding stability.
-My 387-episode dataset reflected this pattern.
+White papers warn that sub-5s audio degrades embedding stability.  
+My 387-episode dataset showed the same pattern.
 
-Community consensus: discard short-turn audio.
-
+Community consensus: discard short-turn audio.  
 I refused to drop ~50% of the data.
 
 V4 retrained on >5s audio and restricted classification to ≥5s segments.
 
-Hypothesis:
-Use long-form geometry to anchor speaker identity.
+Strategy:
+Use long-form geometry to anchor identity.
 Map speaker_name → NeMo speaker_ID.
 Backfill short segments via cluster membership.
 
@@ -300,7 +312,7 @@ Shift to HITL verification
 
 <div class="image-section">
 <h3 style="font-size:13px;margin-bottom:10px;">Production Errors</h3>
-<div class="error-grid">
+<div class="image-grid">
 <img src="/images/v4_error_1.png" onclick="openModal(this)">
 <img src="/images/v4_error_2.png" onclick="openModal(this)">
 </div>
