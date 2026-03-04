@@ -100,19 +100,17 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
   white-space:pre-line;
 }
 
-.image-section{margin-top:30px;}
-
-.image-section img{
-  width:100%;
-  border:1px solid var(--border);
-  cursor:pointer;
-}
-
 .image-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:24px;
   margin-top:20px;
+}
+
+.image-grid img{
+  width:100%;
+  border:1px solid var(--border);
+  cursor:pointer;
 }
 
 .modal{
@@ -152,128 +150,113 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 
 <h1>Speaker Classification Policy Evolution</h1>
 
-<!-- V1 -->
+<!-- ================= V1 ================= -->
 <h2 id="v1">V1 — Host-Only Classifier</h2>
+
 <div class="version-text">
 WhisperX segmentation + Pyannote embeddings.
-~9,000 host clips from 44 episodes. Guest audio excluded.
+Guest audio excluded.
 
-Structural flaw: no guest hard-negatives → risk of confident mislabeling.
-An incidental “unknown” bucket absorbed ambiguity.
-
-V1 worked in isolation. It was structurally fragile.
-</div>
-
-<!-- V2 -->
-<h2 id="v2">V2 — Guest-Aware Scaling</h2>
-<div class="version-text">
-Same segmentation + embedding stack.
-Added Clownfish speaker verification and large-scale guest extraction.
-
-Architecture unchanged. Data discipline changed.
+V1 proved feasibility, not robustness.
+Severe class imbalance and incomplete evaluation made generalization unknowable.
 </div>
 
 <div class="block">
-<div class="block-header">V2 Dataset & Results</div>
+<div class="block-header">V1 Original Dataset Reality</div>
 <div class="block-body">
 <div class="metric-list">
-61,682 clips
-198.46 hours
-4 hosts + 87 guests
+Total Samples: 3,859
 
-Host vs Guest ≈ 99%
-5-class (hosts + other) ≈ 96–97%
+Chamath: 716 (100% train, 0 val, 0 test)
+Friedberg: 1,483 (1,016 train, 226 val, 241 test)
+JCal: 840 (594 train, 123 val, 123 test)
+Sacks: 820 (581 train, 129 val, 110 test)
+
+Issues:
+• Severe class imbalance
+• Chamath had no validation/test split
+• No guest hard-negatives
+• No reliable generalization measurement
 </div>
 </div>
 </div>
 
-<!-- V3 -->
-<h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
+<!-- ================= V2 ================= -->
+<h2 id="v2">V2 — Guest-Aware Scaling</h2>
+
 <div class="version-text">
-Replaced Pyannote embeddings with NVIDIA NeMo TitaNet.
-Segmentation logic unchanged. Classification architecture unchanged.
-
-V2 fixed the dataset.
-V3 corrected the representation layer.
+Same architecture.
+Balanced dataset and introduced guest awareness.
+Data discipline changed.
 </div>
 
 <div class="block">
-<div class="block-header">V3 Full Training & Evaluation Metrics</div>
+<div class="block-header">V2 Balanced Dataset</div>
 <div class="block-body">
+<div class="metric-list">
+Total: 9,120 samples
 
+Each Host: 2,280 samples
+
+Chamath: 1,810 train / 234 val / 236 test
+Friedberg: 1,573 train / 345 val / 362 test
+JCal: 1,601 train / 339 val / 340 test
+Sacks: 1,602 train / 348 val / 330 test
+</div>
+</div>
+</div>
+
+<!-- ================= V3 ================= -->
+<h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
+
+<div class="version-text">
+Replaced Pyannote with NVIDIA NeMo TitaNet.
+Cleaner embedding manifold.
+Reduced over-segmentation.
+</div>
+
+<div class="block">
+<div class="block-header">V3 Performance</div>
+<div class="block-body">
 <div class="metric-list">
 Embeddings: 91,410
 Train / Val / Test: 64,131 / 13,062 / 14,217
 Test Accuracy: 96.53%
-Host Identification Accuracy: 95.98%
+Host Identification: 95.98%
 Binary Host vs Other: 98.52%
-End-to-End Combined Accuracy: 91.19%
+Combined End-to-End: 91.19%
 Primary Confusion: JCal → Chamath (196)
 </div>
 
-<div class="image-section">
-<h3 style="font-size:13px;margin:30px 0 10px;">Embedding Geometry — Episode 136</h3>
 <div class="image-grid">
-  <div>
-    <div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:6px;">
-      Pyannote Embeddings
-    </div>
-    <img src="images/pyanote.png" onclick="openModal(this)">
-  </div>
-  <div>
-    <div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:6px;">
-      NeMo / TitaNet Embeddings
-    </div>
-    <img src="images/nemo.png" onclick="openModal(this)">
-  </div>
-</div>
+<img src="images/pyanote.png" onclick="openModal(this)">
+<img src="images/nemo.png" onclick="openModal(this)">
 </div>
 
 </div>
 </div>
 
-<!-- V4 -->
+<!-- ================= V4 ================= -->
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
+
 <div class="version-text">
-White papers warn sub-5s audio degrades embedding stability.
-My 387-episode dataset reflected this.
-
-Community consensus: discard short-turn audio.
-I refused to drop ~50% of the data.
-
-V4 retrained on >5s audio and restricted classification to ≥5s segments.
+Trained only on >5s segments.
+Anchored identity on long-form geometry.
+Backfilled short segments via cluster mapping.
 
 Embedding geometry improved.
 Production exposed confident cluster-level failures.
 
 High accuracy ≠ production reliability.
-
-Architectural pivot:
-Human-In-The-Loop mapping of NeMo speaker_ID → timestamped audio.
 </div>
 
 <div class="block">
-<div class="block-header">V4 Key Findings</div>
+<div class="block-header">V4 Evidence</div>
 <div class="block-body">
 
-<div class="metric-list">
->5s training constraint
-Improved embedding compactness
-Cluster-level confident failures
-Shift to HITL verification
-</div>
-
-<div class="image-section">
-<h3 style="font-size:13px;margin-bottom:10px;">Segment Distribution</h3>
-<img src="images/v4.png" onclick="openModal(this)">
-</div>
-
-<div class="image-section">
-<h3 style="font-size:13px;margin-bottom:10px;">Production Errors</h3>
 <div class="image-grid">
+<img src="images/v4.png" onclick="openModal(this)">
 <img src="images/v4_error_1.png" onclick="openModal(this)">
-<img src="images/v4_error_2.png" onclick="openModal(this)">
-</div>
 </div>
 
 </div>
