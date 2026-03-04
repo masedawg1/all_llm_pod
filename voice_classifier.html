@@ -96,10 +96,9 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 .metric-list{
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;
-  line-height:1.9;
+  line-height:1.8;
+  white-space:pre-line;
 }
-
-.metric-list ul{margin-left:18px;}
 
 .image-section{margin-top:30px;}
 
@@ -153,89 +152,129 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 
 <h1>Speaker Classification Policy Evolution</h1>
 
-<!-- V1 -->
+<!-- ================= V1 ================= -->
 <h2 id="v1">V1 — Host-Only Classifier</h2>
 <div class="version-text">
-WhisperX segmentation + Pyannote embeddings.  
-~9,000 host clips from 44 episodes.  
+WhisperX segmentation + Pyannote embeddings.
+~9,000 host clips from 44 episodes.
 Guest audio excluded.
 
-Structural flaw: no guest hard-negatives → risk of confident mislabeling.  
-An “unknown” bucket absorbed ambiguity, but this was incidental.
+Structural flaw:
+No guest hard-negatives → risk of confident mislabeling.
 
-V1 worked in isolation. It was fragile in principle.
-</div>
-
-<div class="block">
-<div class="block-header">V1 Observations</div>
-<div class="block-body">
-<div class="metric-list">
-<ul>
-<li>~9,000 clips</li>
-<li>44 episodes</li>
-<li>No explicit guest class</li>
-<li>Unknown bucket mitigated contamination</li>
-</ul>
-</div>
-</div>
+An incidental “unknown” bucket absorbed ambiguity.
+V1 worked in isolation.
+It was fragile in production logic.
 </div>
 
-<!-- V2 -->
+<!-- ================= V2 ================= -->
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
 <div class="version-text">
-Same pipeline.  
-Added Clownfish speaker mapping and bulk guest extraction.
+Same segmentation and embedding stack.
+Added Clownfish speaker mapping + bulk guest extraction.
 
-Architecture unchanged. Data discipline changed.
+Architecture unchanged.
+Data discipline changed.
 </div>
 
 <div class="block">
 <div class="block-header">V2 Dataset & Results</div>
 <div class="block-body">
 <div class="metric-list">
-<ul>
-<li>61,682 clips</li>
-<li>198.46 hours</li>
-<li>4 hosts + 87 guests</li>
-<li>Host vs Guest: ~99%</li>
-<li>5-class: ~96–97%</li>
-</ul>
+Dataset Scale:
+61,682 clips
+198.46 hours
+4 hosts + 87 guests
+
+Models:
+RandomForest
+SVM
+Logistic Regression
+MLP
+XGBoost
+
+Performance:
+Host vs Guest ≈ 99%
+5-class (hosts + other) ≈ 96–97%
 </div>
 </div>
 </div>
 
-<!-- V3 -->
+<!-- ================= V3 ================= -->
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
 <div class="version-text">
-Replaced Pyannote embeddings with NeMo TitaNet.
+Replaced Pyannote embeddings with NVIDIA NeMo TitaNet.
+Segmentation logic unchanged.
+Classification architecture unchanged.
 
-Solved over-segmentation (4 speakers → 8–9 clusters).  
-Cleaner embedding manifold.
-
-V2 fixed the dataset.  
-V3 quieted the feature space.
+V2 fixed the dataset.
+V3 corrected the representation layer.
 </div>
 
 <div class="block">
-<div class="block-header">V3 Results</div>
+<div class="block-header">V3 Full Training & Evaluation Metrics</div>
 <div class="block-body">
 <div class="metric-list">
-<ul>
-<li>4-host classifier: 99.38%</li>
-<li>Guest classifier (93 classes): 97.67%</li>
-<li>Reduced cross-host confusion</li>
-</ul>
+
+Embeddings: 91,410
+Train / Val / Test:
+64,131 / 13,062 / 14,217
+
+Training Distribution:
+Chamath: 17,764
+JCal: 16,047
+Other: 11,315
+Friedberg: 9,519
+Sacks: 9,486
+
+Best Model: Random Forest
+Test Accuracy: 96.53%
+Overfitting Gap: 3.25%
+
+Per-Class Accuracy:
+Chamath: 97.94%
+Friedberg: 96.62%
+JCal: 92.64%
+Sacks: 97.80%
+Other: 99.21%
+
+Host Identification Accuracy:
+95.98%
+
+Binary Host vs Other:
+98.52%
+
+End-to-End Combined Accuracy:
+91.19%
+
+Primary Confusion Pattern:
+JCal → Chamath (196 errors)
+
+Model Saved:
+five_class_classifier.pkl
 </div>
 </div>
 </div>
 
-<!-- V4 -->
+<!-- ================= V4 ================= -->
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
 <div class="version-text">
-Training constrained to >5s segments.
+White papers consistently warn that sub-5s audio degrades embedding stability.
+My 387-episode dataset reflected this pattern.
 
-Embedding geometry improved.  
-But production exposed confident cluster-level failures.
+Community consensus: discard short-turn audio.
+
+I refused to drop ~50% of the data.
+
+V4 retrained on >5s audio and restricted classification to ≥5s segments.
+
+Hypothesis:
+Use long-form geometry to anchor speaker identity.
+Map speaker_name → NeMo speaker_ID.
+Backfill short segments via cluster membership.
+
+Embedding geometry improved.
+Production exposed confident cluster-level failures.
 
 High accuracy ≠ production reliability.
 
@@ -246,13 +285,12 @@ Human-In-The-Loop mapping of NeMo speaker_ID → timestamped audio.
 <div class="block">
 <div class="block-header">V4 Key Findings</div>
 <div class="block-body">
+
 <div class="metric-list">
-<ul>
-<li>>5s training constraint</li>
-<li>Improved separation geometry</li>
-<li>Confident production misclassifications</li>
-<li>Shift to HITL verification</li>
-</ul>
+>5s training constraint
+Improved embedding compactness
+Cluster-level confident failures
+Shift to HITL verification
 </div>
 
 <div class="image-section">
