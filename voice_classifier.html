@@ -261,7 +261,55 @@ High accuracy ≠ production reliability.
 
 </div>
 </div>
+<!-- ================= RATIONALE ================= -->
+<h2 id="rationale">Rationale for Dropping Classifiers</h2>
 
+<div class="version-text">
+The failure surfaced during transcript spot-checking for logical inconsistencies.
+
+Long segments should never be <code>speaker_id_propagated</code> — they are directly classified.
+Short segments (<5s) are the ones back-propagated from validated clusters and should contain <code>is_lizard = true</code>.
+
+Here, a long segment was incorrectly marked as propagated.
+That surfaced a deeper issue: confident cluster-level mislabeling.
+
+Whether the Friedberg label was a script bug or classifier confusion remains unclear.
+What is clear: Gerstner’s embeddings sit dangerously close to Sacks and Friedberg.
+
+This is why the classifier layer was removed.
+Cluster first. Verify identity. Then propagate.
+</div>
+
+<div class="image-grid" style="margin-top:30px;">
+
+<pre style="background:#f4f4f4;padding:18px;border:1px solid #ddd;font-size:12px;overflow:auto;">
+{
+  "speaker_id": "SPEAKER_03",
+  "custom_speaker": "friedberg",
+  "confidence": 0.9999877214431763,
+  "start": 425.706,
+  "end": 436.118,
+  "duration": 10.411999999999978,
+  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
+  "speaker_id_propagated": true
+}
+</pre>
+
+<pre style="background:#f4f4f4;padding:18px;border:1px solid #ddd;font-size:12px;overflow:auto;">
+{
+  "speaker_id": "SPEAKER_04",
+  "is_lizard": true,
+  "custom_speaker": "friedberg",
+  "confidence": 0.0,
+  "start": 51.092,
+  "end": 51.412,
+  "duration": 0.3200000000000003,
+  "text": "Where is J. Cal?",
+  "speaker_id_propagated": true
+}
+</pre>
+
+</div>
 </main>
 
 <div id="modal" class="modal" onclick="closeModal()">
