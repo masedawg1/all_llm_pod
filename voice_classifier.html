@@ -9,240 +9,217 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
-  --green:#76b900;
-  --green-dim:rgba(118,185,0,0.12);
-  --bg:#f9f9f9;
-  --surface:#ffffff;
-  --border:#e4e4e4;
-  --text:#1a1a1a;
-  --muted:#6b6b6b;
-  --faint:#aaaaaa;
-  --nav-width:220px;
+--green:#76b900;
+--green-dim:rgba(118,185,0,0.12);
+--bg:#f9f9f9;
+--surface:#ffffff;
+--border:#e4e4e4;
+--code-bg:#0d1117;
+--text:#1a1a1a;
+--muted:#6b6b6b;
+--faint:#aaaaaa;
+--nav-width:220px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
 
 body{
-  font-family:'Inter',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  min-height:100vh;
+font-family:'Inter',sans-serif;
+background:var(--bg);
+color:var(--text);
+display:flex;
+min-height:100vh;
 }
 
 nav{
-  position:sticky;
-  top:0;
-  height:100vh;
-  width:var(--nav-width);
-  background:var(--surface);
-  border-right:1px solid var(--border);
-  padding:32px 0;
-  display:flex;
-  flex-direction:column;
+position:sticky;
+top:0;
+height:100vh;
+width:var(--nav-width);
+background:var(--surface);
+border-right:1px solid var(--border);
+padding:32px 0;
+display:flex;
+flex-direction:column;
 }
 
 .nav-logo{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--green);
-  padding:0 24px 24px;
-  border-bottom:1px solid var(--border);
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+font-weight:600;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--green);
+padding:0 24px 24px;
+border-bottom:1px solid var(--border);
 }
 
 .nav-item{
-  display:block;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  color:var(--muted);
-  text-decoration:none;
-  padding:7px 24px;
-  border-left:2px solid transparent;
+display:block;
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+color:var(--muted);
+text-decoration:none;
+padding:7px 24px;
+border-left:2px solid transparent;
 }
 
 .nav-item:hover{
-  color:var(--green);
-  background:var(--green-dim);
+color:var(--green);
+background:var(--green-dim);
 }
 
 main{
-  flex:1;
-  padding:56px 64px 120px;
-  max-width:1000px;
+flex:1;
+padding:56px 64px 120px;
+max-width:900px;
 }
 
 .page-eyebrow{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--green);
-  margin-bottom:12px;
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--green);
+margin-bottom:12px;
 }
 
 h1{
-  font-size:28px;
-  font-weight:700;
-  letter-spacing:-.02em;
-  margin-bottom:16px;
+font-size:28px;
+font-weight:700;
+letter-spacing:-.02em;
+margin-bottom:20px;
 }
 
 h2{
-  font-size:13px;
-  text-transform:uppercase;
-  margin-top:60px;
-  margin-bottom:14px;
-  font-family:'IBM Plex Mono',monospace;
-  letter-spacing:.08em;
+font-family:'IBM Plex Mono',monospace;
+font-size:13px;
+text-transform:uppercase;
+letter-spacing:.08em;
+margin-top:64px;
+margin-bottom:12px;
 }
 
 .lead{
-  font-size:14px;
-  line-height:1.75;
-  color:#3a3a3a;
-  max-width:760px;
-  margin-bottom:22px;
+font-size:14px;
+line-height:1.75;
+color:#3a3a3a;
+max-width:720px;
+margin-bottom:22px;
 }
 
 /* ACCORDION */
 
 .block{
-  border:1px solid var(--border);
-  border-radius:6px;
-  overflow:hidden;
-  margin-bottom:20px;
+border:1px solid var(--border);
+border-radius:4px;
+overflow:hidden;
+margin-bottom:16px;
+background:var(--surface);
 }
 
 .block-header{
-  padding:14px 18px;
-  cursor:pointer;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  background:#fafafa;
+padding:14px 18px;
+cursor:pointer;
+font-family:'IBM Plex Mono',monospace;
+font-size:12px;
+background:#fafafa;
 }
 
 .block-body{
-  display:none;
-  padding:24px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  line-height:1.8;
-  white-space:pre-line;
+display:none;
+padding:22px 24px;
+font-family:'IBM Plex Mono',monospace;
+font-size:12px;
+line-height:1.9;
+white-space:pre-line;
 }
 
-.block.open .block-body{ display:block; }
+.block.open .block-body{display:block}
 
-/* IMAGES */
+/* IMAGE GRID */
 
 .image-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:24px;
-  margin-top:24px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+margin-top:28px;
 }
 
 .image-grid img{
-  width:100%;
-  border:1px solid var(--border);
-  cursor:pointer;
-  transition:transform .15s ease;
+width:100%;
+border:1px solid var(--border);
+cursor:pointer;
+transition:transform .15s ease;
 }
 
-.image-grid img:hover{
-  transform:scale(1.02);
-}
+.image-grid img:hover{transform:scale(1.02);}
 
-/* CODE */
+/* CODE PANELS */
 
 .two-col{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:40px;
-  margin-top:48px;
-  max-width:900px;
-  margin-left:auto;
-  margin-right:auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+margin-top:56px;
 }
 
-.nav-section-label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--faint);
-  margin-bottom:12px;
+.panel-label{
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+text-transform:uppercase;
+letter-spacing:.1em;
+color:var(--faint);
+margin-bottom:10px;
 }
 
-.code-container{
-  background:#0d1117;
-  border:1px solid #30363d;
-  border-radius:6px;
-  overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,0.05);
+.code{
+background:var(--code-bg);
+border-radius:4px;
+border:1px solid #1e2530;
+padding:20px;
+overflow-x:auto;
 }
 
-.code-header{
-  background:#161b22;
-  padding:10px 14px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  color:#8b949e;
-  border-bottom:1px solid #30363d;
+.code pre{
+font-family:'IBM Plex Mono',monospace;
+font-size:12px;
+line-height:1.6;
+color:#c9d1d9;
 }
 
-.code-body{
-  padding:18px;
-  overflow-x:auto;
-}
+.red{color:#ff7b72;font-weight:600;}
 
-.code-body pre{
-  margin:0;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  line-height:1.6;
-  color:#c9d1d9;
-}
-
-.code-red{
-  color:#ff7b72;
-  font-weight:500;
-}
-
-.analysis-text{
-  font-size:14px;
-  line-height:1.75;
-  color:#3a3a3a;
-  max-width:760px;
-  margin:56px auto 0;
+.analysis{
+font-size:14px;
+line-height:1.75;
+color:#3a3a3a;
+max-width:720px;
+margin:60px auto 0;
 }
 
 /* MODAL */
 
 .modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.9);
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+justify-content:center;
+align-items:center;
+z-index:9999;
 }
 
 .modal img{
-  max-width:90%;
-  max-height:90%;
+max-width:90%;
+max-height:90%;
 }
 
 @media(max-width:900px){
-  nav{display:none;}
-  main{padding:32px 24px;}
-  .image-grid{grid-template-columns:1fr;}
-  .two-col{grid-template-columns:1fr;}
+nav{display:none;}
+main{padding:32px 24px;}
+.image-grid{grid-template-columns:1fr;}
+.two-col{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -250,12 +227,12 @@ h2{
 <body>
 
 <nav>
-  <div class="nav-logo">ALL-LLM Pod</div>
-  <a href="#v1" class="nav-item">V1</a>
-  <a href="#v2" class="nav-item">V2</a>
-  <a href="#v3" class="nav-item">V3</a>
-  <a href="#v4" class="nav-item">V4</a>
-  <a href="#rationale" class="nav-item">Rationale</a>
+<div class="nav-logo">ALL-LLM Pod</div>
+<a href="#v1" class="nav-item">V1</a>
+<a href="#v2" class="nav-item">V2</a>
+<a href="#v3" class="nav-item">V3</a>
+<a href="#v4" class="nav-item">V4</a>
+<a href="#rationale" class="nav-item">Rationale</a>
 </nav>
 
 <main>
@@ -266,9 +243,10 @@ h2{
 <!-- V1 -->
 
 <h2 id="v1">V1 — Host-Only Classifier</h2>
+
 <p class="lead">
-WhisperX segmentation + Pyannote embeddings. Guest audio excluded.
-V1 proved feasibility, not robustness.
+Initial feasibility experiment. WhisperX segmentation with Pyannote embeddings.
+Guest audio excluded from the dataset.
 </p>
 
 <div class="block">
@@ -276,53 +254,61 @@ V1 proved feasibility, not robustness.
 <div class="block-body">
 Total V1: 3,859 samples
 
-Chamath: 716 (100% train)
-Friedberg: 1,483 (1,016 train, 226 val, 241 test)
-JCal: 840 (594 train, 123 val, 123 test)
-Sacks: 820 (581 train, 129 val, 110 test)
+Chamath: 716  
+Friedberg: 1,483  
+Jcal: 840  
+Sacks: 820  
 
-Issues:
-• Severe class imbalance
-• No guest hard-negatives
-• No meaningful generalization measurement
+Issues
+
+• Severe class imbalance  
+• Guest audio excluded  
+• No meaningful generalization test
 </div>
 </div>
 
 <!-- V2 -->
 
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
+
 <p class="lead">
-Same architecture. Balanced dataset. Guest awareness introduced.
-Data discipline changed.
+Dataset discipline introduced. Host classes balanced and guest audio included.
 </p>
 
 <div class="block">
-<div class="block-header">V2 Balanced Dataset</div>
+<div class="block-header">V2-Actual Balanced Dataset</div>
 <div class="block-body">
+Chamath: 2,280 total (1,810 train, 234 val, 236 test)
+Friedberg: 2,280 total (1,573 train, 345 val, 362 test)
+Jcal: 2,280 total (1,601 train, 339 val, 340 test)
+Sacks: 2,280 total (1,602 train, 348 val, 330 test)
+
 Total V2-Actual: 9,120 samples
-
-Chamath: 2,280 (1,810 train, 234 val, 236 test)
-Friedberg: 2,280 (1,573 train, 345 val, 362 test)
-JCal: 2,280 (1,601 train, 339 val, 340 test)
-Sacks: 2,280 (1,602 train, 348 val, 330 test)
-
-Class balance corrected.
-Evaluation meaningful.
 </div>
 </div>
 
 <!-- V3 -->
 
-<h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
+<h2 id="v3">V3 — NeMo / TitaNet Embeddings</h2>
 
 <div class="block">
-<div class="block-header">V3 Metrics</div>
+<div class="block-header">V3 Classifier Performance</div>
 <div class="block-body">
-Test Accuracy: 96.53%
-Binary Host vs Other: 98.52%
-Primary Confusion: JCal → Chamath
-Cleaner embedding manifold.
-Reduced over-segmentation.
+Binary classifier (host vs other): 98.52%
+
+Host identification accuracy: 96.73%
+
+End-to-end system accuracy: 91.19%
+
+Best model: Random Forest
+Test accuracy: 96.53%
+
+Primary confusion:
+
+Jcal → Chamath: 196 errors  
+Chamath → Jcal: 43 errors  
+
+Other classes remain above ~97–99% accuracy.
 </div>
 </div>
 
@@ -333,74 +319,101 @@ Reduced over-segmentation.
 
 <!-- V4 -->
 
-<h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
+<h2 id="v4">V4 — Duration Constraint (>5s)</h2>
 
 <div class="block">
-<div class="block-header">V4 Observations</div>
+<div class="block-header">Embedding Geometry Shift</div>
 <div class="block-body">
-Trained only on >5s segments.
-Embedding geometry improved.
-Production exposed confident cluster-level failures.
-High accuracy ≠ production reliability.
+Old separation ratio: 1.19×
+
+New separation ratio: 4.18×
+
+Embedding separation improved by roughly +250%.
+
+Accuracy decreased slightly:
+
+98.5% → 96%
+
+But cluster structure became dramatically more stable and generalizable.
 </div>
+</div>
+
+<div class="block">
+<div class="block-header">Why Accuracy Dropped</div>
+<div class="block-body">
+Short clips (<5s) were removed.
+
+Short segments often contain extremely strong voice cues.
+
+Removing them introduces more difficult examples:
+
+• overlapping speech  
+• mixed acoustic environments  
+• harder speaker boundaries  
+
+The classifier therefore becomes more honest about uncertainty.
+</div>
+</div>
+
+<!-- JSON BLOCKS OUTSIDE ACCORDION -->
+
+<div class="two-col">
+
+<div>
+<div class="panel-label">Long Segment · Correct Identity</div>
+
+<div class="code">
+<pre>{
+"speaker_id": "SPEAKER_03",
+"is_lizard": false,
+"custom_speaker": "friedberg",
+"confidence": 0.999987,
+"duration": 10.41,
+"text": "Number one, if we flashback...",
+<span class="red">"speaker_id_propagated": true</span>
+}</pre>
+</div>
+</div>
+
+<div>
+<div class="panel-label">Short Segment · Backfilled</div>
+
+<div class="code">
+<pre>{
+"speaker_id": "SPEAKER_04",
+"is_lizard": true,
+"custom_speaker": "friedberg",
+"confidence": 0.0,
+"duration": 0.32,
+"text": "Where is Jcal?",
+"speaker_id_propagated": true
+}</pre>
+</div>
+</div>
+
 </div>
 
 <!-- RATIONALE -->
 
 <h2 id="rationale">Rationale for Dropping the Classifier Layer</h2>
 
-<div class="two-col">
+<div class="analysis">
 
-<div>
-<div class="nav-section-label">LONG SEGMENT · SHOULD BE CLASSIFIED</div>
-<div class="code-container">
-<div class="code-header">Segment A — 10.4s</div>
-<div class="code-body">
-<pre>{
-  "speaker_id": "SPEAKER_03", // this is Brad's ID
-  "is_lizard": false,
-  "custom_speaker": "friedberg",
-  "confidence": 0.9999877214431763,
-  "duration": 10.4119,
-  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
-  <span class="code-red">"speaker_id_propagated": true</span>
-}</pre>
-</div>
-</div>
-</div>
-
-<div>
-<div class="nav-section-label">SHORT SEGMENT · BACKFILLED</div>
-<div class="code-container">
-<div class="code-header">Segment B — 0.32s</div>
-<div class="code-body">
-<pre>{
-  "speaker_id": "SPEAKER_04", // This is Friedberg's ID
-  "is_lizard": true,
-  "custom_speaker": "friedberg",
-  "confidence": 0.0,
-  "duration": 0.3200,
-  "text": "Where is Jcal?",
-  "speaker_id_propagated": true
-}</pre>
-</div>
-</div>
-</div>
-
-</div>
-
-<div class="analysis-text">
-Brad Gerstner’s embeddings overlap with Sacks and Friedberg.
+Brad Gerstner’s embeddings overlap with both Sacks and Friedberg.
 
 Cosine distance (mean):
-<br><br>
-Brad → Sacks: 0.7774 (most similar)<br>
-Brad → Friedberg: 0.8007
-<br><br>
 
-If inference logic prevented Brad from ever being eligible to be labeled “brad,” then the system was not confused — it was structurally incapable of being correct.
+Brad → Sacks: 0.7774  
+Brad → Friedberg: 0.8007  
 
-Cluster first. Verify identity. Then propagate.
+If the inference system cannot output the label “brad,” the model is not confused — it is structurally incapable of being correct.
+
+Correct pipeline:
+
+Cluster speakers first.  
+Verify identity externally.  
+Then propagate speaker labels.
+
 </div>
 
 </main>
@@ -410,20 +423,22 @@ Cluster first. Verify identity. Then propagate.
 </div>
 
 <script>
+
 document.querySelectorAll('.block-header').forEach(h=>{
-  h.addEventListener('click',()=>{
-    h.parentElement.classList.toggle('open');
-  });
+h.addEventListener('click',()=>{
+h.parentElement.classList.toggle('open');
+});
 });
 
 function openModal(img){
-  document.getElementById("modalImg").src = img.src;
-  document.getElementById("modal").style.display = "flex";
+document.getElementById("modalImg").src = img.src;
+document.getElementById("modal").style.display = "flex";
 }
 
 function closeModal(){
-  document.getElementById("modal").style.display = "none";
+document.getElementById("modal").style.display = "none";
 }
+
 </script>
 
 </body>
