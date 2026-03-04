@@ -113,6 +113,16 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
   cursor:pointer;
 }
 
+pre{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  line-height:1.6;
+  background:#fafafa;
+  padding:16px;
+  border:1px solid var(--border);
+  overflow-x:auto;
+}
+
 .modal{
   display:none;
   position:fixed;
@@ -154,8 +164,7 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 <h2 id="v1">V1 — Host-Only Classifier</h2>
 
 <div class="version-text">
-WhisperX segmentation + Pyannote embeddings.
-Guest audio excluded.
+WhisperX segmentation + Pyannote embeddings. Guest audio excluded.
 
 V1 proved feasibility, not robustness.
 Severe class imbalance and incomplete evaluation made generalization unknowable.
@@ -167,14 +176,13 @@ Severe class imbalance and incomplete evaluation made generalization unknowable.
 <div class="metric-list">
 Total Samples: 3,859
 
-Chamath: 716 (100% train, 0 val, 0 test)
-Friedberg: 1,483 (1,016 train, 226 val, 241 test)
-JCal: 840 (594 train, 123 val, 123 test)
-Sacks: 820 (581 train, 129 val, 110 test)
+Chamath: 716 (100% train)
+Friedberg: 1,483
+JCal: 840
+Sacks: 820
 
 Issues:
 • Severe class imbalance
-• Chamath had no validation/test split
 • No guest hard-negatives
 • No reliable generalization measurement
 </div>
@@ -185,47 +193,18 @@ Issues:
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
 
 <div class="version-text">
-Same architecture.
-Balanced dataset and introduced guest awareness.
+Same architecture. Balanced dataset. Guest awareness added.
 Data discipline changed.
-</div>
-
-<div class="block">
-<div class="block-header">V2 Balanced Dataset</div>
-<div class="block-body">
-<div class="metric-list">
-Total: 9,120 samples
-
-Each Host: 2,280 samples
-
-Chamath: 1,810 train / 234 val / 236 test
-Friedberg: 1,573 train / 345 val / 362 test
-JCal: 1,601 train / 339 val / 340 test
-Sacks: 1,602 train / 348 val / 330 test
-</div>
-</div>
 </div>
 
 <!-- ================= V3 ================= -->
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
 
 <div class="version-text">
-Replaced Pyannote with NVIDIA NeMo TitaNet.
-Cleaner embedding manifold.
-Reduced over-segmentation.
-</div>
-
-<div class="block">
-<div class="block-header">V3 Performance</div>
-<div class="block-body">
-<div class="metric-list">
-Embeddings: 91,410
-Train / Val / Test: 64,131 / 13,062 / 14,217
+Cleaner embedding manifold. Reduced over-segmentation.
 Test Accuracy: 96.53%
-Host Identification: 95.98%
 Binary Host vs Other: 98.52%
-Combined End-to-End: 91.19%
-Primary Confusion: JCal → Chamath (196)
+Primary Confusion: JCal → Chamath
 </div>
 
 <div class="image-grid">
@@ -233,31 +212,16 @@ Primary Confusion: JCal → Chamath (196)
 <img src="images/nemo.png" onclick="openModal(this)">
 </div>
 
-</div>
-</div>
-
 <!-- ================= V4 ================= -->
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
 
 <div class="version-text">
 Trained only on >5s segments.
-Anchored identity on long-form geometry.
-Backfilled short segments via cluster mapping.
-
 Embedding geometry improved.
+
 Production exposed confident cluster-level failures.
 
 High accuracy ≠ production reliability.
-</div>
-
-<div class="block">
-<div class="block-header">V4 Evidence</div>
-<div class="block-body">
-<div class="image-grid">
-<img src="images/v4.png" onclick="openModal(this)">
-<img src="images/v4_error_1.png" onclick="openModal(this)">
-</div>
-</div>
 </div>
 
 <!-- ================= RATIONALE ================= -->
@@ -265,77 +229,69 @@ High accuracy ≠ production reliability.
 
 <div class="version-text">
 
-The failure of the V4 classifier was non-obvious.  
-It surfaced during manual transcript spot-checking for logical inconsistencies.
+The failure surfaced during manual transcript spot-checking.
 
-<br><br>
+A 10.4s segment was incorrectly marked as propagated.
 
-<strong>Expected Logic</strong><br>
+</div>
 
-• Segments ≥5s are directly classified → <code>speaker_id_propagated = false</code>  
-• Segments &lt;5s are backfilled from validated clusters → <code>is_lizard = true</code>  
+<div class="image-grid">
 
-<br>
+<div>
+<div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:8px;">
+10.4s Segment (Incorrectly Propagated)
+</div>
+<pre>{
+  "speaker_id": "SPEAKER_03",
+  "custom_speaker": "friedberg",
+  "confidence": 0.9999877214431763,
+  "start": 425.706,
+  "end": 436.118,
+  "duration": 10.411999999999978,
+  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
+  "speaker_id_propagated": true
+}</pre>
+</div>
 
-Instead, a 10.4s segment appeared with:
+<div>
+<div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:8px;">
+0.32s Segment (Backfilled)
+</div>
+<pre>{
+  "speaker_id": "SPEAKER_04",
+  "is_lizard": true,
+  "custom_speaker": "friedberg",
+  "confidence": 0.0,
+  "start": 51.092,
+  "end": 51.412,
+  "duration": 0.3200000000000003,
+  "text": "Where is J. Cal?",
+  "speaker_id_propagated": true
+}</pre>
+</div>
 
-<code>speaker_id_propagated = true</code>
+</div>
 
-This should never happen under V4 rules.
+<div class="version-text">
 
-<br><br>
+Brad Gerstner’s embeddings overlap with Sacks and Friedberg. That’s why his segments were getting wrongly attributed.
 
-<strong>What That Revealed</strong><br>
+This is a fundamental voice-similarity problem, made worse by a classifier that’s forced to act as the source of truth inside a fixed label space.
 
-The long segment was labeled as Friedberg.  
-But it was Brad Gerstner.
+Cosine distance (mean):
 
-This exposed a deeper issue: confident cluster-level mislabeling.
+Brad → Sacks: 0.7774 (most similar)  
+Brad → Friedberg: 0.8007  
 
-<br><br>
+Two things worth noting.
 
-<strong>Brad Gerstner Embedding Analysis</strong><br>
+First, I didn’t go back and audit whether any of Brad’s segments were incorrectly labeled as Sacks. The analysis focused on the Friedberg misattribution that surfaced.
 
-327 Brad clips were compared against all hosts.
+Second, I don’t recall doing a deeper post-mortem on the transcript processing script itself. It’s entirely possible there was additional logic influencing propagation — for example, code-gen that unintentionally constrained the classifier to label only the four hosts, even though guests were intentionally created as a class.
 
-Average cosine distances:
+I also find it suspicious that there is no "custom_speaker": "brad" in any of the segment records. There’s also no "custom_speaker": "jcal" — but JCal wasn’t in that episode. The difference is that Brad’s cosine cluster sits much closer to Sacks and Friedberg than it does to JCal, which makes it unsurprising that we don’t see any JCal misattribution.
 
-• Brad → Sacks: 0.7774  
-• Brad → Friedberg: 0.8007  
-• Brad → JCal: 0.8665  
-• Brad → Chamath: 0.9181  
-
-Baseline:
-
-• Average intra-host distance: 0.3642  
-• Average inter-host distance: 0.8740  
-
-Critical finding:
-
-Minimum Brad → JCal distance: 0.2507  
-This is below the average intra-host baseline.
-
-Meaning:
-
-Some Brad clips are closer to JCal than hosts are to themselves.
-
-<br><br>
-
-<strong>Implication</strong><br>
-
-Brad’s embedding manifold overlaps with Sacks and Friedberg.
-
-A forced 5-class classifier will confidently mislabel him.
-Confidence was not the issue.
-Label-space constraint was.
-
-<br><br>
-
-<strong>Conclusion</strong><br>
-
-The mis-propagated long segment exposed the architectural flaw.
-
-High accuracy ≠ production reliability.
+If Brad’s clips were never actually eligible to be labeled as Brad at inference time, then the system wasn’t merely confused — it was structurally incapable of being correct.
 
 The classifier layer was removed.
 
@@ -352,21 +308,13 @@ Then propagate.
 </div>
 
 <script>
-document.querySelectorAll('.block-header').forEach(h=>{
-  h.addEventListener('click',()=>{
-    h.parentElement.classList.toggle('open');
-  });
-});
-
 function openModal(img){
   document.getElementById("modalImg").src = img.src;
   document.getElementById("modal").style.display = "flex";
 }
-
 function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
-
 document.addEventListener("keydown", e=>{
   if(e.key==="Escape") closeModal();
 });
