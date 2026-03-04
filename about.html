@@ -366,37 +366,40 @@
     <h1>How This Got Built</h1>
 
     <p class="lead">
-      The project started as a text style transfer helper — rewriting content in another person's voice using the OpenAI API. Audio forensics pulled it in a different direction.<br><br>
-      The All-In Podcast was the obvious corpus: widely followed in technology and venture circles, with a large back-catalog. YouTube provides transcripts, but they aren't usable. A custom transcription pipeline was built from scratch — audio in, structured speaker-labeled text out — and that became the training foundation for each host persona.<br><br>
-      V1 ran on Mistral-7B within a couple of months. The personas were believable, but the architecture was fragile: the voice classifier had been trained only on host audio, which meant guest speech could contaminate host training data. The fix was NeMo — more stable clustering, better speaker segmentation than Pyannote. NeMo had been an earlier failed install; once it worked, it became the backbone.
+      The goal was a persona-driven chatbot that could reproduce how people speak, not just what they say. The All-In Podcast was the obvious corpus — widely followed in tech circles, hundreds of episodes. The first challenge wasn't modeling language at all. YouTube transcripts lacked speaker attribution, so a custom pipeline was built to convert raw audio into speaker-labeled transcripts. That pipeline became the foundation of everything that followed.<br><br>
+      V1 took a couple of months. ASR plus a voice classifier trained on host audio identified speakers; Mistral-7B ran the personas. On the surface it worked. Then a structural weakness surfaced: the classifier had only seen the four hosts, meaning guest speech could be silently forced into a host label. Looking back, that failure didn't appear often — an "unknown" bucket absorbed most guest audio — but the architecture was fragile enough to rebuild. Extensive work followed on custom embeddings and classifiers to find and label speakers at scale. <a href="voice_classifier.html" style="color:var(--green);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:12px;">↗</a>
     </p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:-24px 0 40px;max-width:680px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:-8px 0 40px;max-width:680px;">
       <div>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">pyannote.PNG</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">pyannote.png</span>
         </div>
-        <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px;letter-spacing:.06em;text-transform:uppercase;">Pyannote</p>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:6px;letter-spacing:.1em;text-transform:uppercase;">Pyannote</p>
       </div>
       <div>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">nemo.PNG</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">nemo.png</span>
         </div>
-        <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px;letter-spacing:.06em;text-transform:uppercase;">NeMo</p>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:6px;letter-spacing:.1em;text-transform:uppercase;">NeMo</p>
       </div>
     </div>
 
     <p class="lead">
-      What emerged from that rebuild was <strong>Clownfish</strong>: a focused labeling service. NeMo generates <code>speaker_id</code> segments; audio grouped by that ID is reviewed by ear and mapped to a name. Once mapped, the assignment propagates through the transcript. Clownfish then expanded beyond labeling into lexical and heuristic discovery — surfacing transcriptional artifacts and speaker misclassifications that would otherwise pass silently into training data.
+      Getting NVIDIA NeMo running locally was the turning point. It produced far more stable diarization than Pyannote. Streamlit tooling expanded around it — timeline analysis, facial recognition, cross-validation signals. Within a day or two it had grown too complicated to reason about. So it was stripped back.<br><br>
+      What remained was <strong>Clownfish</strong>: NeMo produces stable speaker IDs, the interface groups clips by ID, you listen and map the ID to a name. Once mapped, the assignment propagates through the transcript. That simplicity let the pipeline scale from roughly 185 labeled episodes to more than 500 within a couple of months.
     </p>
 
-    <a href="https://youtu.be/UPnnOCWqiAw" target="_blank" style="display:inline-block;margin:-24px 0 40px;border:1px solid var(--border);border-radius:3px;overflow:hidden;line-height:0;">
+    <a href="https://youtu.be/UPnnOCWqiAw" target="_blank" style="display:inline-block;margin:-8px 0 40px;border:1px solid var(--border);border-radius:3px;overflow:hidden;line-height:0;">
       <img src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg" alt="YouTube preview" style="width:320px;display:block;">
     </a>
 
     <p class="lead">
-      The pipeline scaled from roughly 185 labeled episodes to more than 530 within a couple of months. Each episode more defensible than the last — not because the models got smarter, but because the process for catching their mistakes did.
+      In parallel, speaker classification evolved alongside the transcript pipeline. A first classifier — 9,120 balanced clips, four hosts, Pyannote embeddings — hit 95.3% test accuracy with proper train/val/test splits for all speakers. A second generation scaled to 76,000+ host clips and 14,000+ guest clips across 114 guests. Two embedding tracks ran in parallel: Pyannote XGBoost reached 99.41% on binary host/guest detection; NeMo TitaNet XGBoost reached 99.38% on 4-host identification with a 3.96x cluster separation ratio — a fundamentally tighter geometry.<br><br>
+      By every benchmark, strong results. But production behavior told a different story. Episode 136 made this concrete: Brad Gerstner was misclassified as David Friedberg. The embeddings revealed why — some of Brad's clips landed closer to host clusters than same-speaker clips do to each other. No classifier could reliably separate those cases. The embedding space itself overlapped.<br><br>
+      That finding drove the final architectural decision: abandon classifier-based labeling, rely on NeMo's stable <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green);">speaker_id</code> backbone, and use HITL heuristic review to surface edge cases. Generating trustworthy training data requires guarding against worst-case errors, not optimizing average accuracy. <a href="voice_classifier.html" style="color:var(--green);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:12px;">Full classifier detail ↗</a>
     </p>
+
   </div>
 
   <div class="stats-row">
