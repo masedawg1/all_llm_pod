@@ -50,27 +50,19 @@ h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
 <main>
 <p class="page-eyebrow">ASR Forensics · Episode E136</p>
 <h1>Chasing Ghosts: capturing nearly imperceptible spoken words</h1>
+
 <p class="lead">"Chasing ghosts" refers to the forensic process of investigating moments where speech clearly exists in the recording, but never appears in the transcript.</p>
+
 <p class="lead">E136's opening shows how quickly modern ASR systems can fail under real conversational audio, where in roughly fifteen seconds four distinct failure conditions occur simultaneously. (<a href="https://youtu.be/JD-b-Zl7yso?t=10" target="_blank">YouTube</a>)</p>
+
 <ul class="lead" style="padding-left: 24px;">
 <li>Speaker mimicry — Chamath imitating Jcal's voice</li>
 <li>Group laughter</li>
 <li>Muffled speech — Friedberg's nearly imperceptible "Oh, my god" muttering</li>
 <li>Intro music with lyrics</li>
 </ul>
-<p class="lead"><strong>Why this example matters:</strong> The segment required more than two dozen pipeline iterations before it appeared reliably in the transcript. Each run completed successfully and produced no warnings.</p>
-<p class="lead">The speech was always present in the recording, but the transcription system silently omitted it.</p>
 
-<p class="lead">This is a specific kind of failure — one that's easy to overlook precisely because nothing breaks. No error is thrown. No flag is raised. The pipeline completes and returns a transcript that looks complete. The comparison below is meant to illustrate why silent omission is the hardest failure mode to defend against: in every other well-known case of lost speech, someone at least knew to go looking.</p>
-
-<table class="compare-table">
-<tr><th>Scenario</th><th>Audio exists</th><th>Someone knows it's missing</th><th>Recoverable</th></tr>
-<tr><td>Watergate tapes</td><td>❌ erased</td><td>✅ yes — the gap was known</td><td>❌ no</td></tr>
-<tr><td>Cockpit voice recorders</td><td>✅ present</td><td>✅ yes — crash investigators know to check</td><td>⚠️ quite possibly</td></tr>
-<tr><td>This ASR case</td><td>✅ present</td><td>❌ no — the transcript looks fine</td><td>⚠️ only if someone goes looking</td></tr>
-</table>
-
-<p class="lead">Without intentional inspection of the audio, nothing indicates that Friedberg's <em>"Oh, my god."</em> was lost. Although this example is a short utterance and its value as training data is low, there could be omissions that are larger — and omissions propagate throughout the dataset: original speech disappears while other speakers' reactions to it remain.</p>
+<p class="lead">The segment required more than two dozen pipeline iterations before Friedberg's utterance appeared reliably in the transcript. Each run completed successfully and produced no warnings. The speech was present in the recording the entire time.</p>
 
 <div class="two-col">
 <div>
@@ -158,6 +150,17 @@ h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
   </div>
 </div>
 </div>
+
+<p class="lead" style="margin-top:52px;">This is a specific kind of failure — one that's easy to overlook precisely because nothing breaks. No error is thrown. No flag is raised. The pipeline completes and returns a transcript that looks fine. In every other well-known case of lost speech, someone at least knew to go looking.</p>
+
+<table class="compare-table">
+<tr><th>Scenario</th><th>Audio exists</th><th>Someone knows it's missing</th><th>Recoverable</th></tr>
+<tr><td>Watergate tapes</td><td>❌ erased</td><td>✅ yes — the gap was known</td><td>❌ no</td></tr>
+<tr><td>Cockpit voice recorders</td><td>✅ present</td><td>✅ yes — investigators know to check</td><td>⚠️ partially</td></tr>
+<tr><td>This ASR case</td><td>✅ present</td><td>❌ no — the transcript looks fine</td><td>⚠️ only if someone goes looking</td></tr>
+</table>
+
+<p class="lead">Without intentional forensic inspection of the audio, nothing indicates that Friedberg's <em>"Oh, my god."</em> was lost. Although this example is a short utterance and its value as training data is low, there could be omissions that are larger — and omissions propagate throughout the dataset: original speech disappears while other speakers' reactions to it remain.</p>
 
 <div class="footer"><span>Mason Thompson · Berkeley, California</span><span>ALL-LLM Pod</span></div>
 </main>
