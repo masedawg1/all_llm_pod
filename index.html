@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALL-LLM Pod | Mason Thompson</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
     :root {
       --green: #76b900;
       --green-dim: rgba(118, 185, 0, 0.12);
@@ -29,7 +30,6 @@
       min-height: 100vh;
     }
 
-    /* ── LEFT NAV ── */
     nav {
       position: sticky;
       top: 0;
@@ -101,7 +101,6 @@
       line-height: 1.6;
     }
 
-    /* ── MAIN ── */
     main {
       flex: 1;
       padding: 56px 64px 120px;
@@ -136,7 +135,6 @@
 
     .lead strong { font-weight: 600; color: var(--text); }
 
-    /* ── SECTION ── */
     .section-heading {
       display: flex;
       align-items: baseline;
@@ -155,6 +153,117 @@
       color: var(--text);
     }
 
+    /* ── SPEAKER STAT GRID ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 3px 3px 0 0;
+      overflow: hidden;
+    }
+
+    .stats-total {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 3px 3px;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .stat {
+      background: var(--surface);
+      padding: 16px 18px;
+    }
+
+    .stat.dimmed {
+      background: var(--bg);
+    }
+
+    .stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--green);
+      display: block;
+      line-height: 1.1;
+    }
+
+    .stat.dimmed .stat-value {
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .stat-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+      display: block;
+      margin-top: 5px;
+    }
+
+    /* ── SPEAKER TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    td {
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      color: #3a3a3a;
+      background: var(--surface);
+    }
+
+    td:first-child {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    tr.total-row td {
+      background: var(--bg);
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      border-bottom: none;
+    }
+
+    .bar-cell { width: 140px; }
+    .bar-wrap {
+      background: var(--bg);
+      border-radius: 2px;
+      height: 5px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 2px;
+      opacity: 0.65;
+    }
+
     /* ── DIAGRAM ── */
     .diagram {
       background: var(--code-bg);
@@ -166,82 +275,8 @@
       line-height: 1.9;
       color: #c9d1d9;
       white-space: pre-wrap;
-      margin-top: 4px;
     }
 
-    .diagram .tree-key {
-      color: var(--green);
-    }
-
-    /* ── TABLE ── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-      font-size: 13px;
-    }
-
-    th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
-
-    td {
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      color: #3a3a3a;
-      background: var(--surface);
-    }
-
-    td:first-child {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      color: var(--text);
-    }
-
-    /* ── STAT PILLS ── */
-    .stats {
-      display: flex;
-      gap: 12px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 14px 20px;
-    }
-
-    .stat-value {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--green);
-      display: block;
-      line-height: 1.1;
-    }
-
-    .stat-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      display: block;
-      margin-top: 4px;
-    }
-
-    /* ── FOOTER ── */
     .footer {
       margin-top: 80px;
       font-family: 'IBM Plex Mono', monospace;
@@ -254,27 +289,22 @@
     @media (max-width: 768px) {
       nav { display: none; }
       main { padding: 32px 24px 80px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
 
-  <!-- LEFT NAV -->
   <nav>
     <div class="nav-logo">ALL-LLM Pod</div>
-
     <div class="nav-section-label">Pages</div>
     <a href="index.html" class="nav-item active">Overview</a>
     <a href="performance.html" class="nav-item">Performance</a>
-    <a href="heuristics.html" class="nav-item">HITL Transcript Forensics</a>
+    <a href="heuristics.html" class="nav-item">HITL Heuristics</a>
     <a href="chasing_ghosts.html" class="nav-item">Chasing Ghosts</a>
-
-    <div class="nav-footer">
-      Mason Thompson<br>Berkeley, CA
-    </div>
+    <div class="nav-footer">Mason Thompson<br>Berkeley, CA</div>
   </nav>
 
-  <!-- MAIN -->
   <main>
     <p class="page-eyebrow">Multi-Agent LLM System</p>
     <h1>ALL-LLM Pod</h1>
@@ -287,24 +317,86 @@
       Human-in-the-Loop validation tooling, and a SwiftUI client application.
     </p>
 
-    <div class="section-heading"><h2>Scale</h2></div>
-    <div class="stats">
+    <div class="section-heading"><h2>Dataset Scale</h2></div>
+
+    <!-- per-speaker segment counts -->
+    <div class="stats-grid">
       <div class="stat">
-        <span class="stat-value">538</span>
-        <span class="stat-label">Episodes Processed</span>
+        <span class="stat-value">23,074</span>
+        <span class="stat-label">Jcal · segments</span>
       </div>
       <div class="stat">
-        <span class="stat-value">460+</span>
-        <span class="stat-label">Audio Hours</span>
+        <span class="stat-value">14,732</span>
+        <span class="stat-label">Chamath · segments</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">12,479</span>
+        <span class="stat-label">Sacks · segments</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">11,595</span>
+        <span class="stat-label">Friedberg · segments</span>
       </div>
     </div>
+    <!-- totals -->
+    <div class="stats-total">
+      <div class="stat dimmed">
+        <span class="stat-value">61,880</span>
+        <span class="stat-label">Total segments</span>
+      </div>
+      <div class="stat dimmed">
+        <span class="stat-value">538 eps · 77 hrs spoken</span>
+        <span class="stat-label">460+ hrs raw audio</span>
+      </div>
+    </div>
+
+    <!-- hours per speaker -->
+    <div class="section-heading"><h2>Spoken Time by Speaker</h2></div>
+    <table>
+      <tr>
+        <th>Speaker</th>
+        <th>Hours</th>
+        <th>Segments</th>
+        <th class="bar-cell"></th>
+      </tr>
+      <tr>
+        <td>Jcal</td>
+        <td>24.07</td>
+        <td>23,074</td>
+        <td><div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div></td>
+      </tr>
+      <tr>
+        <td>Chamath</td>
+        <td>19.90</td>
+        <td>14,732</td>
+        <td><div class="bar-wrap"><div class="bar-fill" style="width:83%"></div></div></td>
+      </tr>
+      <tr>
+        <td>Sacks</td>
+        <td>18.31</td>
+        <td>12,479</td>
+        <td><div class="bar-wrap"><div class="bar-fill" style="width:76%"></div></div></td>
+      </tr>
+      <tr>
+        <td>Friedberg</td>
+        <td>14.75</td>
+        <td>11,595</td>
+        <td><div class="bar-wrap"><div class="bar-fill" style="width:61%"></div></div></td>
+      </tr>
+      <tr class="total-row">
+        <td>Total</td>
+        <td>77.03</td>
+        <td>61,880</td>
+        <td></td>
+      </tr>
+    </table>
 
     <div class="section-heading"><h2>System Architecture</h2></div>
     <div class="diagram">iOS SwiftUI App
     ↓ (Tailscale)
 FastAPI Backend (Local GPU Workstation)
     ├── LLM (Mistral + LoRA Adapters)
-    ├── TTS Engine
+    ├── TTS Engine (F5-TTS)
     ├── Hybrid RAG Layer
     ├── Behavioral Memory Store
     ├── WhisperX (ASR)
