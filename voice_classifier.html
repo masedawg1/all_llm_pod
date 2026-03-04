@@ -262,53 +262,89 @@ High accuracy ≠ production reliability.
 </div>
 </div>
 <!-- ================= RATIONALE ================= -->
-<h2 id="rationale">Rationale for Dropping Classifiers</h2>
+<h2 id="rationale">Rationale for Dropping the Classifier Layer</h2>
 
 <div class="version-text">
-The failure surfaced during transcript spot-checking for logical inconsistencies.
 
-Long segments should never be <code>speaker_id_propagated</code> — they are directly classified.
-Short segments (<5s) are the ones back-propagated from validated clusters and should contain <code>is_lizard = true</code>.
+The failure of the V4 classifier was non-obvious.  
+It surfaced during manual transcript spot-checking for logical inconsistencies.
 
-Here, a long segment was incorrectly marked as propagated.
-That surfaced a deeper issue: confident cluster-level mislabeling.
+<br><br>
 
-Whether the Friedberg label was a script bug or classifier confusion remains unclear.
-What is clear: Gerstner’s embeddings sit dangerously close to Sacks and Friedberg.
+<strong>Expected Logic</strong><br>
 
-This is why the classifier layer was removed.
-Cluster first. Verify identity. Then propagate.
+• Segments ≥5s are directly classified → <code>speaker_id_propagated = false</code>  
+• Segments &lt;5s are backfilled from validated clusters → <code>is_lizard = true</code>  
+
+<br>
+
+Instead, a 10.4s segment appeared with:
+
+<code>speaker_id_propagated = true</code>
+
+This should never happen under V4 rules.
+
+<br><br>
+
+<strong>What That Revealed</strong><br>
+
+The long segment was labeled as Friedberg.  
+But it was Brad Gerstner.
+
+This exposed a deeper issue: confident cluster-level mislabeling.
+
+<br><br>
+
+<strong>Brad Gerstner Embedding Analysis</strong><br>
+
+327 Brad clips were compared against all hosts.
+
+Average cosine distances:
+
+• Brad → Sacks: 0.7774  
+• Brad → Friedberg: 0.8007  
+• Brad → JCal: 0.8665  
+• Brad → Chamath: 0.9181  
+
+Baseline:
+
+• Average intra-host distance: 0.3642  
+• Average inter-host distance: 0.8740  
+
+Critical finding:
+
+Minimum Brad → JCal distance: 0.2507  
+This is below the average intra-host baseline.
+
+Meaning:
+
+Some Brad clips are closer to JCal than hosts are to themselves.
+
+<br><br>
+
+<strong>Implication</strong><br>
+
+Brad’s embedding manifold overlaps with Sacks and Friedberg.
+
+A forced 5-class classifier will confidently mislabel him.
+Confidence was not the issue.
+Label-space constraint was.
+
+<br><br>
+
+<strong>Conclusion</strong><br>
+
+The mis-propagated long segment exposed the architectural flaw.
+
+High accuracy ≠ production reliability.
+
+The classifier layer was removed.
+
+Cluster first.  
+Verify identity.  
+Then propagate.
+
 </div>
-
-<div class="image-grid" style="margin-top:30px;">
-
-<pre style="background:#f4f4f4;padding:18px;border:1px solid #ddd;font-size:12px;overflow:auto;">
-{
-  "speaker_id": "SPEAKER_03",
-  "custom_speaker": "friedberg",
-  "confidence": 0.9999877214431763,
-  "start": 425.706,
-  "end": 436.118,
-  "duration": 10.411999999999978,
-  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
-  "speaker_id_propagated": true
-}
-</pre>
-
-<pre style="background:#f4f4f4;padding:18px;border:1px solid #ddd;font-size:12px;overflow:auto;">
-{
-  "speaker_id": "SPEAKER_04",
-  "is_lizard": true,
-  "custom_speaker": "friedberg",
-  "confidence": 0.0,
-  "start": 51.092,
-  "end": 51.412,
-  "duration": 0.3200000000000003,
-  "text": "Where is J. Cal?",
-  "speaker_id_propagated": true
-}
-</pre>
-
 </div>
 </main>
 
