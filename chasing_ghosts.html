@@ -8,13 +8,12 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-:root {
+:root{
 --green:#76b900;
 --green-dim:rgba(118,185,0,0.12);
 --bg:#f9f9f9;
 --surface:#ffffff;
 --border:#e4e4e4;
---code-bg:#0d1117;
 --text:#1a1a1a;
 --muted:#6b6b6b;
 --faint:#aaaaaa;
@@ -36,7 +35,6 @@ position:sticky;
 top:0;
 height:100vh;
 width:var(--nav-width);
-flex-shrink:0;
 background:var(--surface);
 border-right:1px solid var(--border);
 display:flex;
@@ -73,13 +71,6 @@ color:var(--muted);
 text-decoration:none;
 padding:7px 24px;
 border-left:2px solid transparent;
-transition:color .15s,border-color .15s,background .15s;
-}
-
-.nav-item:hover{
-color:var(--text);
-background:var(--bg);
-border-left-color:var(--border);
 }
 
 .nav-item.active{
@@ -100,7 +91,7 @@ color:var(--faint);
 main{
 flex:1;
 padding:56px 64px 120px;
-max-width:860px;
+max-width:1000px;
 }
 
 .page-eyebrow{
@@ -124,34 +115,35 @@ margin-bottom:10px;
 font-size:14px;
 line-height:1.75;
 color:#3a3a3a;
-max-width:680px;
+max-width:720px;
 margin-bottom:22px;
 }
 
 /* FIXED LAYOUT */
+
 .two-col{
 display:grid;
-grid-template-columns:280px 1fr;
-gap:32px;
+grid-template-columns:420px 1fr;
+gap:40px;
 align-items:start;
-margin-top:30px;
+margin-top:34px;
 }
 
 .analysis-img{
 width:100%;
-max-width:280px;
 border:1px solid var(--border);
-border-radius:3px;
+border-radius:4px;
 }
 
 .img-caption{
 font-family:'IBM Plex Mono',monospace;
 font-size:11px;
-line-height:1.4;
 letter-spacing:.06em;
 color:var(--faint);
 margin-top:8px;
 }
+
+/* CODE BLOCK */
 
 .code-tabs{
 border:1px solid #2a2a2a;
@@ -160,6 +152,7 @@ background:#0d1117;
 color:#c9d1d9;
 font-family:'IBM Plex Mono',monospace;
 overflow:hidden;
+max-width:480px;
 }
 
 .tab-buttons{
@@ -201,7 +194,7 @@ font-family:'IBM Plex Mono',monospace;
 font-size:10px;
 letter-spacing:.06em;
 text-transform:uppercase;
-color:var(--text);
+color:#000;
 display:flex;
 justify-content:space-between;
 }
@@ -210,6 +203,7 @@ justify-content:space-between;
 nav{display:none;}
 main{padding:32px 24px 80px;}
 .two-col{grid-template-columns:1fr;}
+.code-tabs{max-width:100%;}
 }
 </style>
 </head>
@@ -236,8 +230,7 @@ Mason Thompson<br>Berkeley, CA
 <h1>Chasing Ghosts: capturing nearly imperceptible spoken words</h1>
 
 <p class="lead">
-E136's opening is a quintessential example of where modern ASR can be overwhelmed — four failure conditions,
-all within about 15 seconds.
+E136's opening shows how quickly modern ASR systems can fail under real conversational audio. In roughly fifteen seconds, four distinct failure conditions occur simultaneously. “Chasing ghosts” refers to the forensic process of investigating moments where speech clearly exists in the recording, but never appears in the transcript.
 (<a href="https://youtu.be/JD-b-Zl7yso?t=10" target="_blank">YouTube</a>)
 </p>
 
@@ -250,8 +243,8 @@ all within about 15 seconds.
 
 <p class="lead">
 <strong>Why this example matters:</strong>
-Two dozen pipeline iterations were required before the segment surfaced reliably.
-The pipeline completed successfully every time with no warnings.
+Two dozen pipeline iterations were required before the segment surfaced reliably.  
+The pipeline completed successfully every time with no warnings.  
 At scale, silent failures like this compound into training data.
 </p>
 
@@ -291,12 +284,12 @@ At scale, silent failures like this compound into training data.
 "speaker":"chamath",
 "text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
 },
-<span style="color:#e05c5c;font-weight:600;">{
+{
 "start":21.110,
 "end":24.251,
 "speaker":"friedberg",
 "text":"Oh, my God."
-},</span>
+},
 {
 "start":25.271,
 "end":26.691,
