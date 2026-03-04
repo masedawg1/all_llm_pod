@@ -280,9 +280,6 @@
 
     <div class="nav-section-label">On This Page</div>
     <a href="#runtime" class="nav-item">Inference Runtime</a>
-    <a href="#asr" class="nav-item">ASR & Diarization</a>
-    <a href="#coverage" class="nav-item">Instrumentation</a>
-    <a href="#constraints" class="nav-item">Design Constraints</a>
 
     <div class="nav-footer">
       Mason Thompson<br>Berkeley, CA
@@ -296,7 +293,7 @@
     <p class="lead">
       The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation.
       Latency instrumentation is implemented end-to-end across ASR, diarization,
-      LLM inference, and F5 TTS playback using structured logging and trace-level metrics.
+      LLM inference, and TTS playback using structured logging and trace-level metrics.
     </p>
 
     <!-- INFERENCE RUNTIME -->
@@ -316,35 +313,7 @@
       <tr><td>Peak VRAM Usage</td><td><span class="placeholder">~XXX MB</span></td></tr>
     </table>
 
-    <!-- ASR & DIARIZATION -->
-    <div class="section-heading" id="asr"><h2>ASR &amp; Diarization Throughput</h2></div>
-    <table>
-      <tr><th>Component</th><th>Notes</th></tr>
-      <tr><td>WhisperX Transcription</td><td>Batched long-form decoding with word-level alignment</td></tr>
-      <tr><td>NVIDIA NeMo Diarization</td><td>Multiscale embedding + clustering-based speaker attribution</td></tr>
-      <tr><td>Episodes Processed</td><td>538</td></tr>
-      <tr><td>Total Audio Indexed</td><td>460+ hours</td></tr>
-    </table>
 
-    <!-- INSTRUMENTATION -->
-    <div class="section-heading" id="coverage"><h2>Instrumentation Coverage</h2></div>
-    <div class="coverage-list">
-      <div class="coverage-item">ASR processing duration</div>
-      <div class="coverage-item">Diarization runtime</div>
-      <div class="coverage-item">LLM generation latency</div>
-      <div class="coverage-item">F5 TTS synthesis latency</div>
-      <div class="coverage-item">WebSocket transmission time</div>
-      <div class="coverage-item">End-to-end user input → audio playback latency</div>
-    </div>
-
-    <!-- DESIGN CONSTRAINTS -->
-    <div class="section-heading" id="constraints"><h2>Design Constraints</h2></div>
-    <div class="constraint-box">
-      <span class="constraint-label">12GB VRAM ceiling</span>
-      Operating within a 12GB VRAM ceiling required careful memory management,
-      LoRA hot-swapping, quantized model loading, and selective RAG activation
-      to prevent fragmentation and maintain real-time responsiveness.
-    </div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
   </main>
