@@ -128,27 +128,29 @@ max-width:680px;
 margin-bottom:22px;
 }
 
+/* FIXED LAYOUT */
 .two-col{
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:26px;
+grid-template-columns:280px 1fr;
+gap:32px;
 align-items:start;
 margin-top:30px;
 }
 
 .analysis-img{
 width:100%;
+max-width:280px;
 border:1px solid var(--border);
 border-radius:3px;
 }
 
 .img-caption{
 font-family:'IBM Plex Mono',monospace;
-font-size:10px;
-letter-spacing:.08em;
-text-transform:uppercase;
+font-size:11px;
+line-height:1.4;
+letter-spacing:.06em;
 color:var(--faint);
-margin-top:6px;
+margin-top:8px;
 }
 
 .code-tabs{
