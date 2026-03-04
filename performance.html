@@ -1,100 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Performance & Instrumentation | ALL-LLM Pod</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance & Instrumentation | ALL-LLM Pod</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-<style>
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    padding: 40px;
-    background: #ffffff;
-    color: #111;
-    max-width: 900px;
-}
-h1 { font-size: 28px; }
-h2 { margin-top: 40px; }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-th, td {
-    text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-a {
-    color: #111;
-    text-decoration: underline;
-}
-.footer {
-    margin-top: 60px;
-    font-size: 14px;
-    color: #666;
-}
-</style>
+    :root {
+      --green: #76b900;
+      --green-dim: rgba(118, 185, 0, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --code-bg: #0d1117;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #aaaaaa;
+      --nav-width: 220px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── LEFT NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+      overflow-y: auto;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 20px 24px 8px;
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 24px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--bg);
+      border-left-color: var(--border);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      padding: 20px 24px 0;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--faint);
+      line-height: 1.6;
+    }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      padding: 56px 64px 120px;
+      max-width: 860px;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 680px;
+      margin-bottom: 52px;
+    }
+
+    /* ── SECTION ── */
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-top: 52px;
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    td {
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      color: #3a3a3a;
+      background: var(--surface);
+      line-height: 1.5;
+    }
+
+    td:first-child {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text);
+      width: 42%;
+    }
+
+    /* placeholder values */
+    .placeholder {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--faint);
+      font-style: italic;
+    }
+
+    /* ── BULLET LIST ── */
+    .coverage-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .coverage-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: #3a3a3a;
+    }
+
+    .coverage-item:last-child {
+      border-bottom: none;
+    }
+
+    .coverage-item::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    /* ── CONSTRAINT BLOCK ── */
+    .constraint-box {
+      background: var(--code-bg);
+      border: 1px solid #1e2530;
+      border-left: 3px solid var(--green);
+      border-radius: 3px;
+      padding: 20px 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 1.85;
+      color: #c9d1d9;
+    }
+
+    .constraint-box .constraint-label {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 80px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { padding: 32px 24px 80px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>Performance & Instrumentation</h1>
+  <!-- LEFT NAV -->
+  <nav>
+    <div class="nav-logo">ALL-LLM Pod</div>
 
-<p>
-The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation.
-Latency instrumentation is implemented end-to-end across ASR, diarization,
-LLM inference, and TTS playback using structured logging and trace-level metrics.
-</p>
+    <div class="nav-section-label">Pages</div>
+    <a href="index.html" class="nav-item">Overview</a>
+    <a href="performance.html" class="nav-item active">Performance</a>
+    <a href="heuristics.html" class="nav-item">HITL Heuristics</a>
+    <a href="chasing_ghosts.html" class="nav-item">Chasing Ghosts</a>
 
-<h2>Inference Runtime</h2>
+    <div class="nav-section-label">On This Page</div>
+    <a href="#runtime" class="nav-item">Inference Runtime</a>
+    <a href="#asr" class="nav-item">ASR & Diarization</a>
+    <a href="#coverage" class="nav-item">Instrumentation</a>
+    <a href="#constraints" class="nav-item">Design Constraints</a>
 
-<table>
-<tr><th>Metric</th><th>Value</th></tr>
-<tr><td>Model</td><td>Mistral 7B + LoRA Adapters</td></tr>
-<tr><td>GPU</td><td>RTX 4070 Super (12GB VRAM)</td></tr>
-<tr><td>Quantization</td><td>4-bit / 8-bit (VRAM-constrained)</td></tr>
-<tr><td>First-Token Latency</td><td>~XXX ms</td></tr>
-<tr><td>Tokens / Second</td><td>~XXX tok/s</td></tr>
-<tr><td>First-Audio Playback</td><td>~XXX ms</td></tr>
-<tr><td>Peak VRAM Usage</td><td>~XXX MB</td></tr>
-</table>
+    <div class="nav-footer">
+      Mason Thompson<br>Berkeley, CA
+    </div>
+  </nav>
 
-<h2>ASR & Diarization Throughput</h2>
+  <!-- MAIN -->
+  <main>
+    <p class="page-eyebrow">Local GPU · RTX 4070 Super</p>
+    <h1>Performance &amp; Instrumentation</h1>
+    <p class="lead">
+      The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation.
+      Latency instrumentation is implemented end-to-end across ASR, diarization,
+      LLM inference, and TTS playback using structured logging and trace-level metrics.
+    </p>
 
-<table>
-<tr><th>Component</th><th>Notes</th></tr>
-<tr><td>WhisperX Transcription</td><td>Batched long-form decoding with word-level alignment</td></tr>
-<tr><td>NVIDIA NeMo Diarization</td><td>Multiscale embedding + clustering-based speaker attribution</td></tr>
-<tr><td>Episodes Processed</td><td>538</td></tr>
-<tr><td>Total Audio Indexed</td><td>460+ hours</td></tr>
-</table>
+    <!-- INFERENCE RUNTIME -->
+    <div class="section-heading" id="runtime"><h2>Inference Runtime</h2></div>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Model</td><td>Mistral 7B + LoRA Adapters</td></tr>
+      <tr><td>GPU</td><td>RTX 4070 Super (12GB VRAM)</td></tr>
+      <tr><td>Quantization</td><td>4-bit / 8-bit (VRAM-constrained)</td></tr>
+      <tr><td>ASR (WhisperX small, CPU)</td><td>388 ms</td></tr>
+      <tr><td>LLM First-Token Latency</td><td>692 ms</td></tr>
+      <tr><td>TTS[0] Synthesis</td><td>1,078 ms</td></tr>
+      <tr><td>Time to First Audio (ttFA)</td><td>2,167 ms</td></tr>
+      <tr><td>TTS[1] Synthesis</td><td>1,908 ms</td></tr>
+      <tr><td>TTS[2] Synthesis</td><td>1,090 ms</td></tr>
+      <tr><td>Peak VRAM Usage</td><td><span class="placeholder">~XXX MB</span></td></tr>
+    </table>
 
-<h2>Instrumentation Coverage</h2>
+    <!-- ASR & DIARIZATION -->
+    <div class="section-heading" id="asr"><h2>ASR &amp; Diarization Throughput</h2></div>
+    <table>
+      <tr><th>Component</th><th>Notes</th></tr>
+      <tr><td>WhisperX Transcription</td><td>Batched long-form decoding with word-level alignment</td></tr>
+      <tr><td>NVIDIA NeMo Diarization</td><td>Multiscale embedding + clustering-based speaker attribution</td></tr>
+      <tr><td>Episodes Processed</td><td>538</td></tr>
+      <tr><td>Total Audio Indexed</td><td>460+ hours</td></tr>
+    </table>
 
-<ul>
-<li>ASR processing duration</li>
-<li>Diarization runtime</li>
-<li>LLM generation latency</li>
-<li>TTS synthesis latency</li>
-<li>WebSocket transmission time</li>
-<li>End-to-end user input → audio playback latency</li>
-</ul>
+    <!-- INSTRUMENTATION -->
+    <div class="section-heading" id="coverage"><h2>Instrumentation Coverage</h2></div>
+    <div class="coverage-list">
+      <div class="coverage-item">ASR processing duration</div>
+      <div class="coverage-item">Diarization runtime</div>
+      <div class="coverage-item">LLM generation latency</div>
+      <div class="coverage-item">TTS synthesis latency</div>
+      <div class="coverage-item">WebSocket transmission time</div>
+      <div class="coverage-item">End-to-end user input → audio playback latency</div>
+    </div>
 
-<h2>Design Constraints</h2>
+    <!-- DESIGN CONSTRAINTS -->
+    <div class="section-heading" id="constraints"><h2>Design Constraints</h2></div>
+    <div class="constraint-box">
+      <span class="constraint-label">12GB VRAM ceiling</span>
+      Operating within a 12GB VRAM ceiling required careful memory management,
+      LoRA hot-swapping, quantized model loading, and selective RAG activation
+      to prevent fragmentation and maintain real-time responsiveness.
+    </div>
 
-<p>
-Operating within a 12GB VRAM ceiling required careful memory management,
-LoRA hot-swapping, quantized model loading, and selective RAG activation
-to prevent fragmentation and maintain real-time responsiveness.
-</p>
-
-<p><a href="index.html">← Back to Main Page</a></p>
-
-<div class="footer">
-Mason Thompson · Berkeley, California
-</div>
+    <div class="footer">Mason Thompson · Berkeley, California</div>
+  </main>
 
 </body>
 </html>
