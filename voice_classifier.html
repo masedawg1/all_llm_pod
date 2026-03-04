@@ -117,65 +117,6 @@ h2{
   color:var(--faint);
 }
 
-.block{
-  margin-bottom:2px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:3px;
-  overflow:hidden;
-}
-
-.block-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  cursor:pointer;
-  padding:14px 18px;
-}
-
-.block-id{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--green);
-  background:var(--green-dim);
-  padding:2px 7px;
-  border-radius:2px;
-}
-
-.block-title{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-}
-
-.block-body{
-  display:none;
-  padding:24px;
-  border-top:1px solid var(--border);
-  font-size:13px;
-  line-height:1.8;
-  color:#3a3a3a;
-}
-
-.block.open .block-body{display:block;}
-
-.metrics-section{
-  margin-bottom:28px;
-}
-
-.metrics-section h4{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  margin-bottom:10px;
-  color:var(--muted);
-}
-
-.metric-list{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  line-height:1.9;
-}
-
 .footer{
   margin-top:100px;
   font-family:'IBM Plex Mono',monospace;
@@ -198,6 +139,7 @@ h2{
   <a href="#intro" class="nav-item">Intro</a>
   <a href="#v1" class="nav-item">V1</a>
   <a href="#v2" class="nav-item">V2</a>
+  <a href="#v3" class="nav-item">V3</a>
 </nav>
 
 <main>
@@ -206,11 +148,10 @@ h2{
   <p class="page-eyebrow">Voice Classification Architecture</p>
   <h1>Speaker Classification Policy Evolution</h1>
   <p class="lead">
-    This page documents the evolution of the multi-speaker classifier
-    and the statistical constraints that shaped its training policy.
-    Sub-5 second audio segments are unstable for embedding-based speaker
-    classification. Version 2 introduced structural gating to enforce
-    a stable embedding domain.
+    The classifier evolved in three stages.  
+    V1 exposed structural fragility.  
+    V2 fixed the data.  
+    V3 upgraded the embedding backbone.
   </p>
 </div>
 
@@ -218,101 +159,71 @@ h2{
 
 <div class="section-heading" id="v1">
   <h2>Version 1 — Host-Only Classifier</h2>
-  <span class="section-count">initial architecture</span>
+  <span class="section-count">structural fragility</span>
 </div>
 
-<div style="margin:18px 0 40px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
-  Version 1 transcripts were generated using a WhisperX + Pyannote pipeline that extracted ~9,000 host audio samples from 44 episodes via four binary classifiers. These samples were used to train a multi-speaker classifier capable of labeling the four hosts across transcripts at scale.
+<div style="margin:18px 0 60px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
 
-  <br><br>
+V1 used WhisperX segmentation and Pyannote embeddings.  
+Four binary classifiers extracted ~9,000 host clips from 44 episodes and trained a multi-speaker model for the four hosts.
 
-  Guest audio was intentionally excluded. At the time, I saw no value in collecting it, and doing so accurately at scale would have been operationally tedious.
+Guest audio was intentionally excluded. At the time, it seemed unnecessary and operationally tedious to collect.
 
-  <br><br>
+The flaw became clear later: without guest hard-negatives, a host-only classifier risks mislabeling guest speech as a host — contaminating downstream persona training.
 
-  Weeks later — after viable persona models already existed — I recognized the structural flaw. Guest audio provides essential hard-negative examples. More critically, a host-only classifier without a guest class risks mislabeling guest speech as a host, contaminating downstream training data.
+An “unknown” class appeared and captured low-confidence segments, preventing catastrophic contamination. But this was incidental, not architectural. The system was structurally fragile.
 
-  <br><br>
-
-  An “unknown” class did appear in the transcripts, capturing low-confidence non-host speech. While this mitigated immediate failure, it was not intentionally designed as a formal guest class. The system was structurally fragile — and that realization triggered the redesign that became V2.
-</div>
-
-<div class="block">
-  <div class="block-header">
-    <div>
-      <span class="block-id">V1</span>
-      <span class="block-title">Empirical Performance Report (145 Episodes)</span>
-    </div>
-  </div>
-
-  <div class="block-body">
-
-    <div class="metrics-section">
-      <h4>Dataset Overview</h4>
-      <div class="metric-list">
-        Episodes analyzed: 145<br>
-        Total content: 214.6 hours<br>
-        Average low-confidence rate: 23.1%<br>
-        High-confidence host identification: 76.9%
-      </div>
-    </div>
-
-    <div class="metrics-section">
-      <h4>Highest Confidence Episodes</h4>
-      <div class="metric-list">
-        EP152 Real Estate Chaos — 11.2% uncertain<br>
-        EP114 Markets Update Whipsaw — 11.7% uncertain<br>
-        EP150 Israel Gaza Escalating — 11.8% uncertain
-      </div>
-    </div>
-
-    <div class="metrics-section">
-      <h4>Most Challenging Episodes</h4>
-      <div class="metric-list">
-        E02 - reboot — 37.8% uncertain<br>
-        EP79 Analyzing Leaked Draft — 38.4% uncertain<br>
-        EP61 2022 Predictions Business — 39.2% uncertain
-      </div>
-    </div>
-
-    <div class="metrics-section">
-      <h4>Natural Speaker Distribution (High Confidence Only)</h4>
-      <div class="metric-list">
-        Sacks: 26.0%<br>
-        Chamath: 24.2%<br>
-        Friedberg: 19.9%<br>
-        JCal: 13.2%<br>
-        Guest/Unknown: 16.6%
-      </div>
-    </div>
-
-    <div class="metrics-section">
-      <h4>Key Takeaway</h4>
-      <div>
-        The 23% guest rate reflects intelligent uncertainty handling,
-        not model failure. 44 balanced episodes were identified as high-quality seed data for V2.
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <!-- ================= V2 ================= -->
 
 <div class="section-heading" id="v2">
-  <h2>Version 2 — Duration-Gated Classifier</h2>
-  <span class="section-count">statistical discipline</span>
+  <h2>Version 2 — Guest-Aware Scaling</h2>
+  <span class="section-count">data correction</span>
 </div>
 
-<div style="margin:18px 0 40px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
-  Version 2 introduced a structural constraint:
-  the classifier was trained on ≥4s segments and
-  applied only to ≥5s segments.
+<div style="margin:18px 0 60px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
 
-  Sub-5s segments were labeled “lizard”
-  and inherited speaker identity via cluster propagation.
+V2 reused the same WhisperX + Pyannote embedding pipeline, but introduced verified speaker mapping through Clownfish and large-scale guest extraction.
 
-  This enforced operation inside the stable embedding regime.
+Dataset scale:
+- 61,682 clips  
+- 198.46 hours  
+- 4 hosts + 87 guests  
+
+Embeddings: Pyannote  
+Models: RandomForest, SVM, Logistic Regression, MLP, XGBoost  
+
+Results:
+- Host vs Guest: ~99% accuracy  
+- 5-class (hosts + other): ~96–97%  
+
+V2 solved the structural flaw by balancing the dataset and introducing explicit guest awareness. The architecture remained the same; the data discipline changed.
+
+</div>
+
+<!-- ================= V3 ================= -->
+
+<div class="section-heading" id="v3">
+  <h2>Version 3 — Embedding Upgrade (NeMo / TitaNet)</h2>
+  <span class="section-count">representation correction</span>
+</div>
+
+<div style="margin:18px 0 60px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
+
+V3 replaced Pyannote embeddings with NVIDIA NeMo TitaNet embeddings.  
+Segmentation, balancing strategy, and classification architecture remained conceptually unchanged.
+
+The representation layer improved.
+
+Results:
+- 4-host classifier: 99.38% test accuracy  
+- Guest classifier (93 classes): 97.67%  
+- Reduced confusion between similar hosts  
+
+V2 fixed the dataset.  
+V3 fixed the feature space.
+
 </div>
 
 <div class="footer">
@@ -322,10 +233,6 @@ Mason Thompson · Berkeley, California
 </main>
 
 <script>
-document.querySelectorAll('.block').forEach(b=>{
-  b.querySelector('.block-header').addEventListener('click',()=>b.classList.toggle('open'));
-});
-
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
@@ -336,7 +243,7 @@ const observer=new IntersectionObserver(entries=>{
   });
 },{rootMargin:'-20% 0px -70% 0px'});
 
-['intro','v1','v2'].forEach(id=>{
+['intro','v1','v2','v3'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)observer.observe(el);
 });
