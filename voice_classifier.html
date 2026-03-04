@@ -70,7 +70,7 @@ nav{
 main{
   flex:1;
   padding:56px 64px 120px;
-  max-width:900px;
+  max-width:1000px;
 }
 
 .page-eyebrow{
@@ -100,7 +100,7 @@ h1{
   display:flex;
   align-items:baseline;
   gap:16px;
-  margin-bottom:8px;
+  margin-bottom:12px;
   padding-bottom:10px;
   border-bottom:1px solid var(--border);
 }
@@ -117,6 +117,69 @@ h2{
   color:var(--faint);
 }
 
+.version-text{
+  margin:18px 0 40px;
+  font-size:14px;
+  line-height:1.8;
+  max-width:720px;
+  color:#3a3a3a;
+}
+
+.block{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  margin-bottom:20px;
+  overflow:hidden;
+}
+
+.block-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  padding:16px 20px;
+}
+
+.block-title{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+}
+
+.block-body{
+  display:none;
+  padding:24px;
+  border-top:1px solid var(--border);
+}
+
+.block.open .block-body{display:block;}
+
+.metrics-grid{
+  display:grid;
+  grid-template-columns:1fr 280px;
+  gap:40px;
+  align-items:start;
+}
+
+.metric-list{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  line-height:1.9;
+  text-align:left;
+}
+
+.thumbnail{
+  width:100%;
+  height:160px;
+  background:#ddd;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:#555;
+}
+
 .footer{
   margin-top:100px;
   font-family:'IBM Plex Mono',monospace;
@@ -125,7 +188,8 @@ h2{
   text-transform:uppercase;
 }
 
-@media(max-width:768px){
+@media(max-width:900px){
+  .metrics-grid{grid-template-columns:1fr;}
   nav{display:none;}
   main{padding:32px 24px;}
 }
@@ -150,7 +214,7 @@ h2{
   <p class="lead">
     The classifier evolved in three stages.  
     V1 exposed structural fragility.  
-    V2 fixed the data.  
+    V2 corrected the dataset.  
     V3 upgraded the embedding backbone.
   </p>
 </div>
@@ -162,16 +226,28 @@ h2{
   <span class="section-count">structural fragility</span>
 </div>
 
-<div style="margin:18px 0 60px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
+<div class="version-text">
 
-V1 used WhisperX segmentation and Pyannote embeddings.  
-Four binary classifiers extracted ~9,000 host clips from 44 episodes and trained a multi-speaker model for the four hosts.
+<strong>Pipeline</strong><br>
+WhisperX segmentation + Pyannote embeddings.<br>
+Four binary classifiers extracted ~9,000 host clips from 44 episodes.
 
-Guest audio was intentionally excluded. At the time, it seemed unnecessary and operationally tedious to collect.
+<br><br>
 
-The flaw became clear later: without guest hard-negatives, a host-only classifier risks mislabeling guest speech as a host — contaminating downstream persona training.
+<strong>Design Assumption</strong><br>
+Guest audio was excluded intentionally.  
+At the time, it appeared unnecessary and operationally tedious.
 
-An “unknown” class appeared and captured low-confidence segments, preventing catastrophic contamination. But this was incidental, not architectural. The system was structurally fragile.
+<br><br>
+
+<strong>Structural Flaw</strong><br>
+Without guest hard-negatives, a host-only classifier risks labeling guest speech as a host — contaminating downstream persona training.
+
+<br><br>
+
+<strong>Incidental Safeguard</strong><br>
+An “unknown” class captured low-confidence segments.  
+This prevented catastrophic contamination — but it was incidental, not architectural.
 
 </div>
 
@@ -182,24 +258,49 @@ An “unknown” class appeared and captured low-confidence segments, preventing
   <span class="section-count">data correction</span>
 </div>
 
-<div style="margin:18px 0 60px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
+<div class="version-text">
+V2 reused the same segmentation and embedding stack, but introduced verified speaker mapping (Clownfish) and large-scale guest extraction.
 
-V2 reused the same WhisperX + Pyannote embedding pipeline, but introduced verified speaker mapping through Clownfish and large-scale guest extraction.
+The architecture remained the same.  
+The data discipline changed.
+</div>
 
+<div class="block">
+  <div class="block-header">
+    <div class="block-title">V2 Dataset & Results</div>
+  </div>
+  <div class="block-body">
+    <div class="metrics-grid">
+
+      <div class="metric-list">
 Dataset scale:
 - 61,682 clips  
 - 198.46 hours  
 - 4 hosts + 87 guests  
 
-Embeddings: Pyannote  
-Models: RandomForest, SVM, Logistic Regression, MLP, XGBoost  
+Embeddings:
+- Pyannote  
+
+Models:
+- RandomForest  
+- SVM  
+- Logistic Regression  
+- MLP  
+- XGBoost  
 
 Results:
 - Host vs Guest: ~99% accuracy  
 - 5-class (hosts + other): ~96–97%  
 
-V2 solved the structural flaw by balancing the dataset and introducing explicit guest awareness. The architecture remained the same; the data discipline changed.
+V2 introduced explicit guest awareness and class balance.
+      </div>
 
+      <div class="thumbnail">
+        YouTube Thumbnail<br>Placeholder
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- ================= V3 ================= -->
@@ -209,21 +310,31 @@ V2 solved the structural flaw by balancing the dataset and introducing explicit 
   <span class="section-count">representation correction</span>
 </div>
 
-<div style="margin:18px 0 60px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
-
+<div class="version-text">
 V3 replaced Pyannote embeddings with NVIDIA NeMo TitaNet embeddings.  
-Segmentation, balancing strategy, and classification architecture remained conceptually unchanged.
+Segmentation logic and classification architecture remained conceptually unchanged.
 
-The representation layer improved.
+V2 fixed the dataset.  
+V3 fixed the feature space.
+</div>
 
+<div class="block">
+  <div class="block-header">
+    <div class="block-title">V3 Performance</div>
+  </div>
+  <div class="block-body">
+    <div class="metric-list">
 Results:
 - 4-host classifier: 99.38% test accuracy  
 - Guest classifier (93 classes): 97.67%  
 - Reduced confusion between similar hosts  
 
-V2 fixed the dataset.  
-V3 fixed the feature space.
-
+Improvement source:
+- Better embedding geometry  
+- Unit-norm cosine stability  
+- Stronger class separability  
+    </div>
+  </div>
 </div>
 
 <div class="footer">
@@ -233,6 +344,13 @@ Mason Thompson · Berkeley, California
 </main>
 
 <script>
+
+document.querySelectorAll('.block').forEach(b=>{
+  b.querySelector('.block-header').addEventListener('click',()=>{
+    b.classList.toggle('open');
+  });
+});
+
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
@@ -247,6 +365,7 @@ const observer=new IntersectionObserver(entries=>{
   const el=document.getElementById(id);
   if(el)observer.observe(el);
 });
+
 </script>
 
 </body>
