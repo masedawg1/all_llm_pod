@@ -7,590 +7,184 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
     :root {
-      --green: #76b900;
-      --green-dim: rgba(118, 185, 0, 0.12);
-      --bg: #f9f9f9;
-      --surface: #ffffff;
-      --border: #e4e4e4;
-      --code-bg: #0d1117;
-      --text: #1a1a1a;
-      --muted: #6b6b6b;
-      --faint: #aaaaaa;
-      --nav-width: 220px;
-      --red: #c0392b;
+      --green: #76b900; --green-dim: rgba(118, 185, 0, 0.12); --bg: #f9f9f9; --surface: #ffffff; --border: #e4e4e4; --code-bg: #0d1117; --text: #1a1a1a; --muted: #6b6b6b; --faint: #aaaaaa; --nav-width: 220px; --red: #c0392b;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      min-height: 100vh;
-    }
+    nav { position: sticky; top: 0; height: 100vh; width: var(--nav-width); flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 32px 0; overflow-y: auto; }
+    .nav-logo { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); padding: 0 24px 28px; border-bottom: 1px solid var(--border); }
+    .nav-section-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); padding: 20px 24px 8px; }
+    .nav-item { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; padding: 7px 24px; border-left: 2px solid transparent; transition: color 0.15s, border-color 0.15s, background 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nav-item:hover { color: var(--text); background: var(--bg); border-left-color: var(--border); }
+    .nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
+    .nav-footer { margin-top: auto; padding: 20px 24px 0; border-top: 1px solid var(--border); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--faint); line-height: 1.6; }
 
-    /* ── LEFT NAV ── */
-    nav {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: var(--nav-width);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 32px 0;
-      overflow-y: auto;
-    }
-
-    .nav-logo {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 0 24px 28px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 20px 24px 8px;
-    }
-
-    .nav-item {
-      display: block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 7px 24px;
-      border-left: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
-
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
-
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
-    }
-
-    /* ── MAIN CONTENT ── */
-    main {
-      flex: 1;
-      padding: 56px 64px 120px;
-      max-width: 860px;
-    }
-
-    /* ── HEADER ── */
-    .page-eyebrow {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-family: 'Inter', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      color: var(--text);
-      margin-bottom: 20px;
-    }
-
-    .lead {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      margin-bottom: 52px;
-      max-width: 680px;
-    }
-
-    .lead strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .lead a {
-      color: var(--green);
-      text-decoration: none;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-    }
-
+    main { flex: 1; padding: 56px 64px 120px; max-width: 860px; }
+    .page-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    h1 { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--text); margin-bottom: 20px; }
+    .lead { font-size: 14px; line-height: 1.75; color: #3a3a3a; margin-bottom: 52px; max-width: 680px; }
+    .lead strong { color: var(--text); font-weight: 600; }
+    .lead a { color: var(--green); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
     .lead a:hover { text-decoration: underline; }
 
-    /* ── SECTION HEADING ── */
-    .section-heading {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      margin-bottom: 6px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
+    .section-heading { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    h2 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+    .section-count { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--faint); }
 
-    h2 {
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
-
-    .section-count {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-    }
-
-    /* ── BLOCKS ── */
-    .block {
-      margin-bottom: 2px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .block-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      user-select: none;
-      padding: 14px 18px;
-      gap: 12px;
-      transition: background 0.1s;
-    }
-
-    .block-header:hover {
-      background: var(--bg);
-    }
-
-    .block-header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .block-id {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--green);
-      background: var(--green-dim);
-      padding: 2px 7px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-
-    .block-title {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .chevron {
-      font-size: 10px;
-      color: var(--faint);
-      transition: transform 0.2s ease;
-      flex-shrink: 0;
-    }
-
+    .block { margin-bottom: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+    .block-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; padding: 14px 18px; gap: 12px; transition: background 0.1s; }
+    .block-header:hover { background: var(--bg); }
+    .block-header-left { display: flex; align-items: center; gap: 12px; }
+    .block-id { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: var(--green); background: var(--green-dim); padding: 2px 7px; border-radius: 2px; flex-shrink: 0; }
+    .block-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); }
+    .chevron { font-size: 10px; color: var(--faint); transition: transform 0.2s ease; flex-shrink: 0; }
     .block.open .chevron { transform: rotate(180deg); }
-
-    /* ── BLOCK BODY ── */
-    .block-body {
-      display: none;
-      padding: 0 18px 18px;
-      border-top: 1px solid var(--border);
-    }
-
+    .block-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
     .block.open .block-body { display: block; }
-
-    .block-why {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-      padding: 14px 0 12px;
-    }
-
-    .block-why a {
-      color: var(--green);
-      text-decoration: none;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-    }
-
+    .block-why { font-size: 13px; color: var(--muted); line-height: 1.65; padding: 14px 0 12px; }
+    .block-why a { color: var(--green); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
     .block-why a:hover { text-decoration: underline; }
 
-    /* ── SOURCE TAG ── */
-    .source {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      margin-bottom: 12px;
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .source a {
-      color: var(--green);
-      text-decoration: none;
-    }
-
+    .source { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--faint); margin-bottom: 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .source a { color: var(--green); text-decoration: none; }
     .source a:hover { text-decoration: underline; }
 
-    /* ── DIFF PANELS ── */
-    .diff {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .diff-right {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .before, .after {
-      background: var(--code-bg);
-      border-radius: 3px;
-      padding: 16px 18px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 1.8;
-      word-break: break-word;
-      overflow-wrap: break-word;
-      border: 1px solid #1e2530;
-      border-top: 2px solid transparent;
-    }
-
+    .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .diff-right { display: flex; flex-direction: column; gap: 8px; }
+    .before, .after { background: var(--code-bg); border-radius: 3px; padding: 16px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; word-break: break-word; overflow-wrap: break-word; border: 1px solid #1e2530; border-top: 2px solid transparent; }
     .before { border-top-color: #c0392b; }
-    .after  { border-top-color: var(--green); }
-
-    .panel-label {
-      display: block;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 10px;
-      font-family: 'IBM Plex Mono', monospace;
-    }
-
+    .after { border-top-color: var(--green); }
+    .panel-label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace; }
     .before .panel-label { color: #e74c3c; }
-    .after  .panel-label { color: var(--green); }
-
-    .spk {
-      color: #8b9eb0;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      display: block;
-      margin-top: 12px;
-      font-weight: 600;
-    }
-
+    .after .panel-label { color: var(--green); }
+    .spk { color: #8b9eb0; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-top: 12px; font-weight: 600; }
     .spk:first-child { margin-top: 0; }
-
-    /* text content in panels */
-    .before span:not(.panel-label):not(.spk):not(.flagged),
-    .after span:not(.panel-label):not(.spk):not(.flagged) {
-      color: #c9d1d9;
-    }
+    .before span:not(.panel-label):not(.spk):not(.flagged), .after span:not(.panel-label):not(.spk):not(.flagged) { color: #c9d1d9; }
     .before, .after { color: #c9d1d9; }
-
-    .flagged {
-      color: #ff6b6b;
-      font-weight: 600;
-    }
-
+    .flagged { color: #ff6b6b; font-weight: 600; }
     .after .flagged { color: #a8d672; }
 
-    /* ── FOOTER ── */
-    .footer {
-      margin-top: 80px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      color: var(--faint);
-      text-transform: uppercase;
-    }
+    .footer { margin-top: 80px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: var(--faint); text-transform: uppercase; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 32px 24px 80px; }
-      .diff { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 768px) { nav { display: none; } main { padding: 32px 24px 80px; } .diff { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-  <!-- LEFT NAV -->
-  <nav>
-    <div class="nav-logo">ALL-LLM Pod</div>
+  <nav id="shared-nav"></nav>
 
-    <div class="nav-section-label">Pages</div>
-    <a href="index.html" class="nav-item">Overview</a>
-    <a href="performance.html" class="nav-item">Performance</a>
-    <a href="heuristics.html" class="nav-item active">HITL Heuristics</a>
-    <a href="chasing_ghosts.html" class="nav-item">Chasing Ghosts</a>
-
-    <div class="nav-section-label">On This Page</div>
-    <a href="#intro" class="nav-item">Intro</a>
-    <a href="#h1a" class="nav-item">1a. ellipsis boundary</a>
-    <a href="#h1b" class="nav-item">1b. speaker sandwich</a>
-    <a href="#h2"  class="nav-item">2. self-reference</a>
-    <a href="#h4"  class="nav-item">4. lowercase cont.</a>
-    <a href="#h8"  class="nav-item">8. backchannel bleed</a>
-
-    <div class="nav-footer">
-      Mason Thompson<br>Berkeley, CA
-    </div>
-  </nav>
-
-  <!-- MAIN -->
   <main>
     <div id="intro">
       <p class="page-eyebrow">Heuristic Diarization Repair</p>
       <h1>Transcript Forensics and Repair</h1>
       <p class="lead">
         WhisperX establishes canonical segment and word-level timestamps; NeMo is constrained to operate
-        within those boundaries to assign speaker identity. One failure mode: NeMo assigned the wrong speaker. It surfaces
-        in two ways — either a segment boundary is misplaced, or the label on a correctly-bounded segment is
-        wrong.<br><br>
-        Both leave fingerprints in the transcript. Some are structural — patterns in how segments begin or
-        end. Others are subtler relics: statements that appear grammatically complete but carry cues that the system was
-        operating at the edge of its confidence.<br><br>
-        <strong>Why it matters:</strong> The downstream model trains on this data. A misattributed segment means the wrong
-        persona learns the wrong words — LoRA adapters trained on corrupted labels will interpolate between speakers, and
-        the resulting voice won't sound like anyone. At 460 hours across 538 episodes, even a 2% error rate poisons
-        thousands of training examples.<br><br>
-        <strong>The solution:</strong> Human-in-the-Loop heuristic repair — flagging suspect segments using lexical
-        patterns, then routing them for human review, where the transcript and audio-file timestamp are presented rather
-        than re-processing the entire corpus.
+        within those boundaries to assign speaker identity. Generally (so far) this creates a single failure mode: NeMo tags the wrong speaker. This surfaces
+        in two ways — either a segment boundary is misplaced, or the assigned speaker on a correctly-bounded segment is wrong.<br><br>
+        Both leave fingerprints in the transcript. Some are structural — patterns in how segments begin or end. Others are subtler relics: statements that appear grammatically complete but carry cues that the system was operating at the edge of its confidence.<br><br>
+        <strong>Why it matters:</strong> The downstream model trains on this data. A misattributed segment means the wrong persona learns the wrong words — LoRA adapters trained on corrupted labels will interpolate between speakers, and the resulting voice won't sound like anyone. At 460 hours across 538 episodes, even a 2% error rate poisons thousands of training examples.<br><br>
+        <strong>The solution:</strong> Human-in-the-Loop heuristic repair — flagging suspect segments using lexical patterns, then routing them for human review, where the transcript and audio-file timestamp are presented rather than re-processing the entire corpus.
         <a href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">↗ Episode 115 HITL review</a>
       </p>
     </div>
 
     <div class="section-heading">
       <h2>Boundary Integrity Flags</h2>
-      <span class="section-count">5 heuristics — click any to expand</span>
+      <span class="section-count">6 heuristics — click any to expand</span>
     </div>
 
-    <!-- 1a -->
     <div class="block" id="h1a">
       <div class="block-header">
-        <div class="block-header-left">
-          <span class="block-id">1a</span>
-          <span class="block-title">turn contamination: ellipsis boundary</span>
-        </div>
+        <div class="block-header-left"><span class="block-id">1a</span><span class="block-title">turn contamination: ellipsis boundary</span></div>
         <span class="chevron">▼</span>
       </div>
       <div class="block-body">
-        <div class="block-why">
-          A segment presents as one speaker having a continuous thought — but in reality, two speakers exist within it.
-          Fingerprint: mid-segment ellipsis. The most common structural cue, but rare false-positives exist.
-          <a href="https://www.loom.com/share/65827f1c9f3f419cac6dd8b544657ca2" target="_blank">↗ example</a>
-        </div>
-        <div class="source">
-          <span>X-Sb8sIi22g</span><span>699.069s</span>
-          <a href="https://youtu.be/X-Sb8sIi22g?t=693" target="_blank">click here for the video timestamp: ↗ episode</a>
-        </div>
+        <div class="block-why">A segment presents as one speaker having a continuous thought — but in reality, two speakers exist within it. Fingerprint: mid-segment ellipsis. The most common structural cue, but rare false-positives exist. <a href="https://www.loom.com/share/65827f1c9f3f419cac6dd8b544657ca2" target="_blank">↗ example</a></div>
+        <div class="source"><span>X-Sb8sIi22g</span><span>699.069s</span><a href="https://youtu.be/X-Sb8sIi22g?t=693" target="_blank">click here for the video timestamp: ↗ episode</a></div>
         <div class="diff">
-          <div class="before">
-            <span class="panel-label">before</span>
-            <span class="spk">Sacks</span>Interest rates just have to go up to a point that<span class="flagged">… To</span> what's happening in Japan, right?
-          </div>
-          <div class="after">
-            <span class="panel-label">after</span>
-            <span class="spk">Sacks</span>Interest rates just have to go up to a point that<span class="flagged">…</span>
-            <span class="spk">Jcal</span><span class="flagged">To</span> what's happening in Japan, right?
-          </div>
+          <div class="before"><span class="panel-label">before</span><span class="spk">Sacks</span>Interest rates just have to go up to a point that<span class="flagged">… To</span> what's happening in Japan, right?</div>
+          <div class="after"><span class="panel-label">after</span><span class="spk">Sacks</span>Interest rates just have to go up to a point that<span class="flagged">…</span><span class="spk">Jcal</span><span class="flagged">To</span> what's happening in Japan, right?</div>
         </div>
       </div>
     </div>
 
-    <!-- 1b -->
     <div class="block" id="h1b">
       <div class="block-header">
-        <div class="block-header-left">
-          <span class="block-id">1b</span>
-          <span class="block-title">turn contamination: speaker sandwich</span>
-        </div>
+        <div class="block-header-left"><span class="block-id">1b</span><span class="block-title">turn contamination: speaker sandwich</span></div>
         <span class="chevron">▼</span>
       </div>
       <div class="block-body">
-        <div class="block-why">
-          Three segments, two speakers, A→B→A. The middle segment (B) is a misattribution — B never spoke.
-          Fingerprint: middle segment ends with ellipsis, third segment opens lowercase.
-        </div>
-        <div class="source">
-          <span>AI_Psychosis__America_s_Broken_Soci_WOWLT.json</span>
-          <span>94.608s – 103.266s</span>
-          <a href="https://youtu.be/Oy4evu1TdiI?t=92" target="_blank">click here for the video timestamp: ↗ episode</a>
-        </div>
+        <div class="block-why">Three segments, two speakers, A→B→A. The middle segment (B) is a misattribution — B never spoke. Fingerprint: middle segment ends with ellipsis, third segment opens lowercase.</div>
+        <div class="source"><span>AI_Psychosis__America_s_Broken_Soci_WOWLT.json</span><span>94.608s – 103.266s</span><a href="https://youtu.be/Oy4evu1TdiI?t=92" target="_blank">click here for the video timestamp: ↗ episode</a></div>
         <div class="diff">
-          <div class="before">
-            <span class="panel-label">before</span>
-            <span class="spk">Jcal</span>I think they did a great job.
-            <span class="spk">Sacks</span>It's like one of those <span class="flagged">weird...</span>
-            <span class="spk">Jcal</span><span class="flagged">you know,</span> superhero groups that it's like a real throwback.
-          </div>
-          <div class="after">
-            <span class="panel-label">after</span>
-            <span class="spk">Jcal</span>I think they did a great job.
-            <span class="spk">Jcal</span>It's like one of those <span class="flagged">weird...</span> <span class="flagged">you know,</span> superhero groups that it's like a real throwback.
-          </div>
+          <div class="before"><span class="panel-label">before</span><span class="spk">Jcal</span>I think they did a great job.<span class="spk">Sacks</span>It's like one of those <span class="flagged">weird...</span><span class="spk">Jcal</span><span class="flagged">you know,</span> superhero groups that it's like a real throwback.</div>
+          <div class="after"><span class="panel-label">after</span><span class="spk">Jcal</span>I think they did a great job.<span class="spk">Jcal</span>It's like one of those <span class="flagged">weird...</span> <span class="flagged">you know,</span> superhero groups that it's like a real throwback.</div>
         </div>
       </div>
     </div>
 
-    <!-- 2 -->
     <div class="block" id="h2">
       <div class="block-header">
-        <div class="block-header-left">
-          <span class="block-id">2</span>
-          <span class="block-title">third-person self-reference</span>
-        </div>
+        <div class="block-header-left"><span class="block-id">2</span><span class="block-title">third-person self-reference</span></div>
         <span class="chevron">▼</span>
       </div>
       <div class="block-body">
-        <div class="block-why">
-          The attributed speaker's own name appears in their own segment — a strong signal the segment belongs to someone
-          else. Unlike boundary heuristics, no ellipsis or capitalization signal is required. The name alone is the fingerprint.
-        </div>
-        <div class="source">
-          <span>episode data</span>
-          <span>4035.425s</span>
-          <a href="https://youtu.be/X-Sb8sIi22g?t=4034" target="_blank">click here for the video timestamp: ↗ episode</a>
-        </div>
+        <div class="block-why">The attributed speaker's own name appears in their own segment — a strong signal the segment belongs to someone else. Unlike boundary heuristics, no ellipsis or capitalization signal is required. The name alone is the fingerprint.</div>
+        <div class="source"><span>episode data</span><span>4035.425s</span><a href="https://youtu.be/X-Sb8sIi22g?t=4034" target="_blank">click here for the video timestamp: ↗ episode</a></div>
         <div class="diff">
-          <div class="before">
-            <span class="panel-label">before</span>
-            <span class="spk">Friedberg</span>Less than the $1.4 billion in funding it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen
-          </div>
+          <div class="before"><span class="panel-label">before</span><span class="spk">Friedberg</span>Less than the $1.4 billion in funding it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen</div>
           <div class="diff-right">
-            <div class="after">
-              <span class="panel-label">after</span>
-              <span class="spk">Jcal</span>Less than the $1.4 billion in funding it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most
-            </div>
-            <div class="after">
-              <span class="panel-label">after</span>
-              <span class="spk">Friedberg</span>yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen
-            </div>
+            <div class="after"><span class="panel-label">after</span><span class="spk">Jcal</span>Less than the $1.4 billion in funding it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most</div>
+            <div class="after"><span class="panel-label">after</span><span class="spk">Friedberg</span>yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 4 -->
+    <div class="block" id="h3">
+      <div class="block-header">
+        <div class="block-header-left"><span class="block-id">3</span><span class="block-title">lowercase continuation</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="block-body">
+        <div class="block-why">ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed to a different speaker.</div>
+        <div class="source"><span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span><span>411.02s – 436.16s</span><a href="https://youtu.be/AsDrfUQImhs?t=410" target="_blank">click here for the video timestamp: ↗ episode</a></div>
+        <div class="diff">
+          <div class="before"><span class="panel-label">before</span><span class="spk">Sacks</span>So when he meets with business people, they're all like, oh, I just saw you on the <span class="flagged">all-in pod.</span><span class="spk">Chamath</span><span class="flagged">so uh he was saying</span> he said we have a big hit on our hands he said uh he said we're like tv stars now that's incredible imagine if uh if we had if we didn't have to push sand uphill with some of these folks...</div>
+          <div class="after"><span class="panel-label">after</span><span class="spk">Sacks</span>So when he meets with business people, they're all like, oh, I just saw you on the <span class="flagged">all-in pod. so uh he was saying</span> he said we have a big hit on our hands he said uh he said we're like tv stars now.<span class="spk">Chamath</span>now that's incredible imagine if uh if we had if we didn't have to push sand uphill with some of these folks...</div>
+        </div>
+      </div>
+    </div>
+
     <div class="block" id="h4">
       <div class="block-header">
-        <div class="block-header-left">
-          <span class="block-id">4</span>
-          <span class="block-title">lowercase continuation</span>
-        </div>
+        <div class="block-header-left"><span class="block-id">4</span><span class="block-title">backchannel bleed</span></div>
         <span class="chevron">▼</span>
       </div>
       <div class="block-body">
-        <div class="block-why">
-          ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed
-          to a different speaker.
-        </div>
-        <div class="source">
-          <span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span>
-          <span>411.02s – 436.16s</span>
-          <a href="https://youtu.be/AsDrfUQImhs?t=410" target="_blank">click here for the video timestamp: ↗ episode</a>
-        </div>
+        <div class="block-why">Short affirmative utterances in rapid exchange fall below the reliable embedding window and get misassigned to the acoustically dominant local speaker. The boundaries are correct, the words are right — the embeddings simply don't have enough audio to build a clean voiceprint.</div>
+        <div class="source"><span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span><span>354.645s – 369.541s</span><a href="https://youtu.be/AsDrfUQImhs?t=354" target="_blank">click here for the video timestamp: ↗ episode</a></div>
         <div class="diff">
-          <div class="before">
-            <span class="panel-label">before</span>
-            <span class="spk">Sacks</span>So when he meets with business people, they're all like, oh, I just saw you on the <span class="flagged">all-in pod.</span>
-            <span class="spk">Chamath</span><span class="flagged">so uh he was saying</span> he said we have a big hit on our hands he said uh he said we're like tv stars now that's incredible imagine if uh if we had if we didn't have to push sand uphill with some of these folks...
-          </div>
-          <div class="after">
-            <span class="panel-label">after</span>
-            <span class="spk">Sacks</span>So when he meets with business people, they're all like, oh, I just saw you on the <span class="flagged">all-in pod. so uh he was saying</span> he said we have a big hit on our hands he said uh he said we're like tv stars now.
-            <span class="spk">Chamath</span>now that's incredible imagine if uh if we had if we didn't have to push sand uphill with some of these folks...
-          </div>
+          <div class="before"><span class="panel-label">before</span><span class="spk">Sacks</span>Well, I said that even my co-hosts who aren't fans of his had to admit he did a good job. And he said, well, tell them I said hi too. <span class="flagged">Oh, okay.</span><span class="spk">Jcal</span>So you sandbagged us with the president.<span class="spk">Sacks</span><span class="flagged">Got it.</span><span class="spk">Jcal</span>Thank you.</div>
+          <div class="after"><span class="panel-label">after</span><span class="spk">Sacks</span>Well, I said that even my co-hosts who aren't fans of his had to admit he did a good job. And he said, well, tell them I said hi too.<span class="spk">Jcal</span><span class="flagged">Oh, okay.</span> So you sandbagged us with the president. <span class="flagged">Got it.</span> Thank you.</div>
         </div>
       </div>
     </div>
 
-    <!-- 8 -->
-    <div class="block" id="h8">
+    <div class="block" id="h5">
       <div class="block-header">
-        <div class="block-header-left">
-          <span class="block-id">8</span>
-          <span class="block-title">backchannel bleed</span>
-        </div>
+        <div class="block-header-left"><span class="block-id">5</span><span class="block-title">blob: gross overclassification</span></div>
         <span class="chevron">▼</span>
       </div>
       <div class="block-body">
         <div class="block-why">
-          Short affirmative utterances in rapid exchange fall below the reliable embedding window and get misassigned to
-          the acoustically dominant local speaker. The boundaries are correct, the words are right — the embeddings
-          simply don't have enough audio to build a clean voiceprint.
+          A single NeMo <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);">speaker_id</code> absorbs a long, multi-speaker passage — multiple speakers collapsed into one label. The fingerprint is a segment spanning 20+ seconds attributed to a single speaker, containing speech that clearly belongs to several. In the example below (E50, 187.8s–208.4s), a 20-second wall of text assigned to Jcal was split across three speakers on review.<br><br>Root cause is not yet known. They are rare and have not been observed in recent months.
         </div>
-        <div class="source">
-          <span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span>
-          <span>354.645s – 369.541s</span>
-          <a href="https://youtu.be/AsDrfUQImhs?t=354" target="_blank">click here for the video timestamp: ↗ episode</a>
-        </div>
-        <div class="diff">
-          <div class="before">
-            <span class="panel-label">before</span>
-            <span class="spk">Sacks</span>Well, I said that even my co-hosts who aren't fans of his had to admit he did a good job. And he said, well, tell them I said hi too. <span class="flagged">Oh, okay.</span>
-            <span class="spk">Jcal</span>So you sandbagged us with the president.
-            <span class="spk">Sacks</span><span class="flagged">Got it.</span>
-            <span class="spk">Jcal</span>Thank you.
-          </div>
-          <div class="after">
-            <span class="panel-label">after</span>
-            <span class="spk">Sacks</span>Well, I said that even my co-hosts who aren't fans of his had to admit he did a good job. And he said, well, tell them I said hi too.
-            <span class="spk">Jcal</span><span class="flagged">Oh, okay.</span> So you sandbagged us with the president. <span class="flagged">Got it.</span> Thank you.
-          </div>
-        </div>
+        <div class="source"><span>E50_Crypto_investing_deep_dive__Facebook_s_whistleblower_fallout</span><span>187.8s – 208.4s</span></div>
+        <a href="https://youtu.be/seg-lbqHcwo" target="_blank" style="display:inline-block;margin:14px 0 4px;border:1px solid var(--border);border-radius:3px;overflow:hidden;line-height:0;">
+          <img src="https://img.youtube.com/vi/seg-lbqHcwo/mqdefault.jpg" alt="Blob repair example" style="width:320px;display:block;">
+        </a>
       </div>
     </div>
 
@@ -598,32 +192,33 @@
   </main>
 
   <script>
-    // Accordion
+    window.NAV_ANCHORS = [
+      { href: '#intro', label: 'Intro' },
+      { href: '#h1a',  label: '1a. ellipsis boundary' },
+      { href: '#h1b',  label: '1b. speaker sandwich' },
+      { href: '#h2',   label: '2. self-reference' },
+      { href: '#h3',   label: '3. lowercase cont.' },
+      { href: '#h4',   label: '4. backchannel bleed' },
+      { href: '#h5',   label: '5. blob' },
+    ];
+  </script>
+  <script src="nav-loader.js" data-page="heuristics"></script>
+  <script>
     document.querySelectorAll('.block').forEach(block => {
-      const header = block.querySelector('.block-header');
-      if (header) {
-        header.addEventListener('click', () => block.classList.toggle('open'));
-      }
+      block.querySelector('.block-header').addEventListener('click', () => block.classList.toggle('open'));
     });
 
-    // Active nav highlight on scroll
-    const sections = ['intro','h1a','h1b','h2','h4','h8'];
-    const navItems = document.querySelectorAll('.nav-item');
-
+    const sections = ['intro','h1a','h1b','h2','h3','h4','h5'];
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          navItems.forEach(a => {
+          document.querySelectorAll('.nav-item').forEach(a => {
             a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
           });
         }
       });
     }, { rootMargin: '-20% 0px -70% 0px' });
-
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+    sections.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
   </script>
 </body>
 </html>
