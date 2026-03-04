@@ -1,322 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Performance & Instrumentation | ALL-LLM Pod</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance & Instrumentation | ALL-LLM Pod</title>
 
-    :root {
-      --green: #76b900;
-      --green-dim: rgba(118, 185, 0, 0.12);
-      --bg: #f9f9f9;
-      --surface: #ffffff;
-      --border: #e4e4e4;
-      --code-bg: #0d1117;
-      --text: #1a1a1a;
-      --muted: #6b6b6b;
-      --faint: #aaaaaa;
-      --nav-width: 220px;
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+:root{
+--green:#76b900;
+--green-dim:rgba(118,185,0,0.12);
+--bg:#f9f9f9;
+--surface:#ffffff;
+--border:#e4e4e4;
+--code-bg:#0d1117;
+--text:#1a1a1a;
+--muted:#6b6b6b;
+--faint:#aaaaaa;
+--nav-width:220px;
+}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      min-height: 100vh;
-    }
+*{box-sizing:border-box;margin:0;padding:0;}
 
-    /* ── LEFT NAV ── */
-    nav {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: var(--nav-width);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 32px 0;
-      overflow-y: auto;
-    }
+body{
+font-family:'Inter',sans-serif;
+background:var(--bg);
+color:var(--text);
+display:flex;
+min-height:100vh;
+}
 
-    .nav-logo {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 0 24px 28px;
-      border-bottom: 1px solid var(--border);
-    }
+nav{
+position:sticky;
+top:0;
+height:100vh;
+width:var(--nav-width);
+background:var(--surface);
+border-right:1px solid var(--border);
+display:flex;
+flex-direction:column;
+padding:32px 0;
+}
 
-    .nav-section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 20px 24px 8px;
-    }
+.nav-logo{
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+font-weight:600;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--green);
+padding:0 24px 28px;
+border-bottom:1px solid var(--border);
+}
 
-    .nav-item {
-      display: block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 7px 24px;
-      border-left: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.nav-section-label{
+font-family:'IBM Plex Mono',monospace;
+font-size:9px;
+font-weight:600;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--faint);
+padding:20px 24px 8px;
+}
 
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
+.nav-item{
+display:block;
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+color:var(--muted);
+text-decoration:none;
+padding:7px 24px;
+border-left:2px solid transparent;
+}
 
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
+.nav-item.active{
+color:var(--green);
+border-left-color:var(--green);
+background:var(--green-dim);
+}
 
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
-    }
+.nav-footer{
+margin-top:auto;
+padding:20px 24px 0;
+border-top:1px solid var(--border);
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+color:var(--faint);
+}
 
-    /* ── MAIN ── */
-    main {
-      flex: 1;
-      padding: 56px 64px 120px;
-      max-width: 860px;
-    }
+main{
+flex:1;
+padding:56px 64px 120px;
+max-width:860px;
+}
 
-    .page-eyebrow {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 12px;
-    }
+.page-eyebrow{
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+font-weight:600;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--green);
+margin-bottom:12px;
+}
 
-    h1 {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 14px;
-    }
+h1{
+font-size:28px;
+font-weight:700;
+letter-spacing:-.02em;
+margin-bottom:14px;
+}
 
-    .lead {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      max-width: 680px;
-      margin-bottom: 52px;
-    }
+.lead{
+font-size:14px;
+line-height:1.75;
+color:#3a3a3a;
+max-width:680px;
+margin-bottom:52px;
+}
 
-    /* ── SECTION ── */
-    .section-heading {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      margin-top: 52px;
-    }
+.section-heading{
+margin-top:52px;
+margin-bottom:14px;
+padding-bottom:10px;
+border-bottom:1px solid var(--border);
+}
 
-    h2 {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
+h2{
+font-size:13px;
+font-weight:700;
+letter-spacing:.06em;
+text-transform:uppercase;
+}
 
-    /* ── TABLE ── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+}
 
-    th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
+th{
+font-family:'IBM Plex Mono',monospace;
+font-size:9px;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:var(--faint);
+padding:10px 14px;
+border-bottom:1px solid var(--border);
+background:var(--bg);
+text-align:left;
+}
 
-    td {
-      padding: 11px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      color: #3a3a3a;
-      background: var(--surface);
-      line-height: 1.5;
-    }
+td{
+padding:11px 14px;
+border-bottom:1px solid var(--border);
+background:var(--surface);
+}
 
-    td:first-child {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--text);
-      width: 42%;
-    }
+td:first-child{
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+width:42%;
+}
 
-    /* placeholder values */
-    .placeholder {
-      font-family: 'IBM Plex Mono', monospace;
-      color: var(--faint);
-      font-style: italic;
-    }
+.placeholder{
+font-family:'IBM Plex Mono',monospace;
+color:var(--faint);
+font-style:italic;
+}
 
-    /* ── BULLET LIST ── */
-    .coverage-list {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-    }
+/* VIDEO */
 
-    .coverage-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 16px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-      color: #3a3a3a;
-    }
+.video-player{
+width:100%;
+border:1px solid var(--border);
+border-radius:4px;
+margin-top:16px;
+}
 
-    .coverage-item:last-child {
-      border-bottom: none;
-    }
+.video-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-top:20px;
+}
 
-    .coverage-item::before {
-      content: '';
-      display: block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--green);
-      flex-shrink: 0;
-    }
+.video-card{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:4px;
+padding:12px;
+}
 
-    /* ── CONSTRAINT BLOCK ── */
-    .constraint-box {
-      background: var(--code-bg);
-      border: 1px solid #1e2530;
-      border-left: 3px solid var(--green);
-      border-radius: 3px;
-      padding: 20px 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 1.85;
-      color: #c9d1d9;
-    }
+.video-label{
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+letter-spacing:.06em;
+text-transform:uppercase;
+color:var(--faint);
+margin-bottom:8px;
+}
 
-    .constraint-box .constraint-label {
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      display: block;
-      margin-bottom: 10px;
-    }
+.footer{
+margin-top:80px;
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+letter-spacing:.06em;
+text-transform:uppercase;
+}
 
-    /* ── FOOTER ── */
-    .footer {
-      margin-top: 80px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
-
-    @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 32px 24px 80px; }
-    }
-  </style>
+@media (max-width:768px){
+nav{display:none;}
+main{padding:32px 24px 80px;}
+.video-grid{grid-template-columns:1fr;}
+}
+</style>
 </head>
+
 <body>
 
-  <!-- LEFT NAV -->
-  <nav>
-    <div class="nav-logo">ALL-LLM Pod</div>
+<nav>
 
-    <div class="nav-section-label">Pages</div>
-    <a href="index.html" class="nav-item">Overview</a>
-    <a href="performance.html" class="nav-item active">Performance</a>
-    <a href="heuristics.html" class="nav-item">HITL Heuristics</a>
-    <a href="chasing_ghosts.html" class="nav-item">Chasing Ghosts</a>
+<div class="nav-logo">ALL-LLM Pod</div>
 
-    <div class="nav-section-label">On This Page</div>
-    <a href="#runtime" class="nav-item">Inference Runtime</a>
+<div class="nav-section-label">Pages</div>
+<a href="index.html" class="nav-item">Overview</a>
+<a href="performance.html" class="nav-item active">Performance</a>
+<a href="heuristics.html" class="nav-item">HITL Heuristics</a>
+<a href="chasing_ghosts.html" class="nav-item">Chasing Ghosts</a>
 
-    <div class="nav-footer">
-      Mason Thompson<br>Berkeley, CA
-    </div>
-  </nav>
+<div class="nav-section-label">On This Page</div>
+<a href="#runtime" class="nav-item">Inference Runtime</a>
+<a href="#video" class="nav-item">Video Demonstrations</a>
 
-  <!-- MAIN -->
-  <main>
-    <p class="page-eyebrow">Local GPU · RTX 4070 Super</p>
-    <h1>Performance &amp; Instrumentation</h1>
-    <p class="lead">
-      The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation.
-      Latency instrumentation is implemented end-to-end across ASR, diarization,
-      LLM inference, and TTS playback using structured logging and trace-level metrics.
-    </p>
+<div class="nav-footer">
+Mason Thompson<br>Berkeley, CA
+</div>
 
-    <!-- INFERENCE RUNTIME -->
-    <div class="section-heading" id="runtime"><h2>Inference Runtime</h2></div>
-    <table>
-      <tr><th>Metric</th><th>Value</th></tr>
-      <tr><td>Model</td><td>Mistral 7B + LoRA Adapters</td></tr>
-      <tr><td>TTS System</td><td>F5-TTS</td></tr>
-      <tr><td>GPU</td><td>RTX 4070 Super (12GB VRAM)</td></tr>
-      <tr><td>Quantization</td><td>4-bit / 8-bit (VRAM-constrained)</td></tr>
-      <tr><td>ASR (WhisperX small, CPU)</td><td>388 ms</td></tr>
-      <tr><td>LLM First-Token Latency</td><td>692 ms</td></tr>
-      <tr><td>TTS[0] Synthesis</td><td>1,078 ms</td></tr>
-      <tr><td>Time to First Audio (ttFA)</td><td>2,167 ms</td></tr>
-      <tr><td>TTS[1] Synthesis</td><td>1,908 ms</td></tr>
-      <tr><td>TTS[2] Synthesis</td><td>1,090 ms</td></tr>
-      <tr><td>Peak VRAM Usage</td><td><span class="placeholder">~XXX MB</span></td></tr>
-    </table>
+</nav>
 
+<main>
 
+<p class="page-eyebrow">Local GPU · RTX 4070 Super</p>
 
-    <div class="footer">Mason Thompson · Berkeley, California</div>
-  </main>
+<h1>Performance & Instrumentation</h1>
+
+<p class="lead">
+The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation.
+Latency instrumentation is implemented end-to-end across ASR, diarization,
+LLM inference, and TTS playback using structured logging and trace-level metrics.
+</p>
+
+<div class="section-heading" id="runtime">
+<h2>Inference Runtime</h2>
+</div>
+
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Model</td><td>Mistral 7B + LoRA Adapters</td></tr>
+<tr><td>TTS System</td><td>F5-TTS</td></tr>
+<tr><td>GPU</td><td>RTX 4070 Super (12GB VRAM)</td></tr>
+<tr><td>Quantization</td><td>4-bit / 8-bit (VRAM-constrained)</td></tr>
+<tr><td>ASR (WhisperX small, CPU)</td><td>388 ms</td></tr>
+<tr><td>LLM First-Token Latency</td><td>692 ms</td></tr>
+<tr><td>TTS[0] Synthesis</td><td>1,078 ms</td></tr>
+<tr><td>Time to First Audio (ttFA)</td><td>2,167 ms</td></tr>
+<tr><td>TTS[1] Synthesis</td><td>1,908 ms</td></tr>
+<tr><td>TTS[2] Synthesis</td><td>1,090 ms</td></tr>
+<tr><td>Peak VRAM Usage</td><td><span class="placeholder">~XXX MB</span></td></tr>
+</table>
+
+<div class="section-heading" id="video">
+<h2>Video Demonstrations</h2>
+</div>
+
+<p class="lead">
+The system supports both multi-host group conversation generation and
+1:1 conversational interfaces with individual hosts.
+</p>
+
+<h3 style="font-size:13px;margin-top:20px;">Group Chat (Episode 107 Simulation)</h3>
+
+<video class="video-player" controls>
+<source src="video/all-lllm_f5.mp4" type="video/mp4">
+</video>
+
+<h3 style="font-size:13px;margin-top:36px;">1:1 FaceTime Interface</h3>
+
+<div class="video-grid">
+
+<div class="video-card">
+<div class="video-label">David Sacks</div>
+<video controls width="100%">
+<source src="video/Sacks.mp4" type="video/mp4">
+</video>
+</div>
+
+<div class="video-card">
+<div class="video-label">Chamath Palihapitiya</div>
+<video controls width="100%">
+<source src="video/Chamath.mp4" type="video/mp4">
+</video>
+</div>
+
+<div class="video-card">
+<div class="video-label">David Friedberg</div>
+<video controls width="100%">
+<source src="video/Friedberg.mp4" type="video/mp4">
+</video>
+</div>
+
+<div class="video-card">
+<div class="video-label">Jason Calacanis</div>
+<video controls width="100%">
+<source src="video/Jcal.mp4" type="video/mp4">
+</video>
+</div>
+
+</div>
+
+<div class="footer">
+Mason Thompson · Berkeley, California
+</div>
+
+</main>
 
 </body>
 </html>
