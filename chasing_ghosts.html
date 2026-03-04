@@ -210,6 +210,13 @@ line-height:1.6;
 display:block;
 }
 
+/* highlight ghost speech */
+
+.code-highlight{
+color:#ff6b6b;
+font-weight:500;
+}
+
 .footer{
 margin-top:80px;
 font-family:'IBM Plex Mono',monospace;
@@ -265,9 +272,11 @@ E136's opening shows how quickly modern ASR systems can fail under real conversa
 
 <p class="lead">
 <strong>Why this example matters:</strong>
-Two dozen pipeline iterations were required before the segment surfaced reliably.  
-The system completed successfully each time with no warnings.  
-The speech existed in the recording but was silently omitted from the transcript.
+The segment required more than two dozen pipeline iterations before it appeared reliably in the transcript. Each run completed successfully and produced no warnings.
+</p>
+
+<p class="lead">
+The speech was always present in the recording, but the transcription system silently omitted it.
 </p>
 
 <table class="compare-table">
@@ -277,18 +286,21 @@ The speech existed in the recording but was silently omitted from the transcript
 <th>Investigators know something is missing</th>
 <th>Recoverable</th>
 </tr>
+
 <tr>
 <td>Watergate tapes</td>
 <td>❌ destroyed</td>
 <td>✅ yes</td>
 <td>❌ no</td>
 </tr>
+
 <tr>
 <td>Cockpit voice recorders</td>
 <td>✅ present</td>
 <td>✅ yes</td>
 <td>⚠️ partially</td>
 </tr>
+
 <tr>
 <td>This ASR case</td>
 <td>✅ present</td>
@@ -298,7 +310,7 @@ The speech existed in the recording but was silently omitted from the transcript
 </table>
 
 <p class="lead">
-Unless a human listens to the audio with intent, there is no indication that anything was missed. At scale, failures like this compound into training data through the omission of the original speech and the preserved references to it by other speakers.
+Without deliberate forensic inspection of the audio, nothing indicates that speech was lost. At scale, omissions like this propagate into training datasets: the original speech disappears while other speakers’ reactions to it remain.
 </p>
 
 <div class="two-col">
@@ -337,12 +349,12 @@ Unless a human listens to the audio with intent, there is no indication that any
 "speaker":"chamath",
 "text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
 },
-{
+<span class="code-highlight">{
 "start":21.110,
 "end":24.251,
 "speaker":"friedberg",
 "text":"Oh, my God."
-},
+},</span>
 {
 "start":25.271,
 "end":26.691,
