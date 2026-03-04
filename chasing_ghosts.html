@@ -119,6 +119,28 @@ max-width:720px;
 margin-bottom:22px;
 }
 
+/* comparison table */
+
+.compare-table{
+width:100%;
+border-collapse:collapse;
+margin:20px 0 26px;
+font-size:13px;
+}
+
+.compare-table th{
+text-align:left;
+font-weight:600;
+border-bottom:2px solid var(--border);
+padding:10px 12px;
+background:#fafafa;
+}
+
+.compare-table td{
+padding:10px 12px;
+border-bottom:1px solid var(--border);
+}
+
 /* FIXED LAYOUT */
 
 .two-col{
@@ -244,8 +266,39 @@ E136's opening shows how quickly modern ASR systems can fail under real conversa
 <p class="lead">
 <strong>Why this example matters:</strong>
 Two dozen pipeline iterations were required before the segment surfaced reliably.  
-The pipeline completed successfully every time with no warnings.  
-At scale, silent failures like this compound into training data.
+The system completed successfully each time with no warnings.  
+The speech existed in the recording but was silently omitted from the transcript.
+</p>
+
+<table class="compare-table">
+<tr>
+<th>Scenario</th>
+<th>Audio exists</th>
+<th>Investigators know something is missing</th>
+<th>Recoverable</th>
+</tr>
+<tr>
+<td>Watergate tapes</td>
+<td>❌ destroyed</td>
+<td>✅ yes</td>
+<td>❌ no</td>
+</tr>
+<tr>
+<td>Cockpit voice recorders</td>
+<td>✅ present</td>
+<td>✅ yes</td>
+<td>⚠️ partially</td>
+</tr>
+<tr>
+<td>This ASR case</td>
+<td>✅ present</td>
+<td>❌ no</td>
+<td>⚠️ only if discovered</td>
+</tr>
+</table>
+
+<p class="lead">
+Unless a human listens to the audio with intent, there is no indication that anything was missed. At scale, failures like this compound into training data through the omission of the original speech and the preserved references to it by other speakers.
 </p>
 
 <div class="two-col">
