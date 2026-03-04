@@ -8,7 +8,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-:root {
+:root{
   --green:#76b900;
   --green-dim:rgba(118,185,0,0.12);
   --bg:#f9f9f9;
@@ -21,9 +21,9 @@
   --nav-width:220px;
 }
 
-* { box-sizing:border-box; margin:0; padding:0; }
+*{box-sizing:border-box;margin:0;padding:0;}
 
-body {
+body{
   font-family:'Inter',sans-serif;
   background:var(--bg);
   color:var(--text);
@@ -31,18 +31,17 @@ body {
   min-height:100vh;
 }
 
-nav {
+nav{
   position:sticky;
   top:0;
   height:100vh;
   width:var(--nav-width);
-  flex-shrink:0;
   background:var(--surface);
   border-right:1px solid var(--border);
   padding:32px 0;
 }
 
-.nav-logo {
+.nav-logo{
   font-family:'IBM Plex Mono',monospace;
   font-size:11px;
   letter-spacing:.08em;
@@ -52,7 +51,7 @@ nav {
   border-bottom:1px solid var(--border);
 }
 
-.nav-item {
+.nav-item{
   display:block;
   font-family:'IBM Plex Mono',monospace;
   font-size:11px;
@@ -62,20 +61,20 @@ nav {
   border-left:2px solid transparent;
 }
 
-.nav-item:hover { color:var(--text); }
-.nav-item.active {
+.nav-item:hover{color:var(--text);}
+.nav-item.active{
   color:var(--green);
   border-left-color:var(--green);
   background:var(--green-dim);
 }
 
-main {
+main{
   flex:1;
   padding:56px 64px 120px;
-  max-width:860px;
+  max-width:900px;
 }
 
-.page-eyebrow {
+.page-eyebrow{
   font-family:'IBM Plex Mono',monospace;
   font-size:10px;
   letter-spacing:.12em;
@@ -84,41 +83,42 @@ main {
   margin-bottom:12px;
 }
 
-h1 {
+h1{
   font-size:28px;
   font-weight:700;
   margin-bottom:20px;
 }
 
-.lead {
+.lead{
   font-size:14px;
   line-height:1.75;
   color:#3a3a3a;
   margin-bottom:60px;
+  max-width:720px;
 }
 
-.section-heading {
+.section-heading{
   display:flex;
   align-items:baseline;
   gap:16px;
-  margin-bottom:6px;
+  margin-bottom:8px;
   padding-bottom:10px;
   border-bottom:1px solid var(--border);
 }
 
-h2 {
+h2{
   font-size:13px;
   letter-spacing:.06em;
   text-transform:uppercase;
 }
 
-.section-count {
+.section-count{
   font-family:'IBM Plex Mono',monospace;
   font-size:10px;
   color:var(--faint);
 }
 
-.block {
+.block{
   margin-bottom:2px;
   background:var(--surface);
   border:1px solid var(--border);
@@ -126,7 +126,7 @@ h2 {
   overflow:hidden;
 }
 
-.block-header {
+.block-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -134,7 +134,7 @@ h2 {
   padding:14px 18px;
 }
 
-.block-id {
+.block-id{
   font-family:'IBM Plex Mono',monospace;
   font-size:10px;
   color:var(--green);
@@ -143,49 +143,33 @@ h2 {
   border-radius:2px;
 }
 
-.block-title {
+.block-title{
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;
 }
 
-.block-body {
+.block-body{
   display:none;
   padding:18px;
   border-top:1px solid var(--border);
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;
-  line-height:1.7;
+  line-height:1.8;
 }
 
-.block.open .block-body { display:block; }
+.block.open .block-body{display:block;}
 
-.diff {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.panel {
-  background:var(--code-bg);
-  color:#c9d1d9;
-  padding:18px;
-  border-radius:3px;
-  border:1px solid #1e2530;
-}
-
-.panel-label {
-  font-size:9px;
-  letter-spacing:.12em;
+.footer{
+  margin-top:100px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--faint);
   text-transform:uppercase;
-  margin-bottom:10px;
-  display:block;
-  color:var(--green);
 }
 
 @media(max-width:768px){
   nav{display:none;}
   main{padding:32px 24px;}
-  .diff{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -195,9 +179,8 @@ h2 {
 <nav>
   <div class="nav-logo">ALL-LLM Pod</div>
   <a href="#intro" class="nav-item">Intro</a>
-  <a href="#versions" class="nav-item">Versions</a>
-  <a href="#v1" class="nav-item">V1 Metrics</a>
-  <a href="#v2" class="nav-item">V2 Metrics</a>
+  <a href="#v1" class="nav-item">V1</a>
+  <a href="#v2" class="nav-item">V2</a>
 </nav>
 
 <main>
@@ -206,80 +189,135 @@ h2 {
   <p class="page-eyebrow">Voice Classification Architecture</p>
   <h1>Speaker Classification Policy Evolution</h1>
   <p class="lead">
-  This page documents the evolution of transcript generation and classification policy.
-  The core constraint: sub-5 second audio is statistically unstable for speaker embedding classification.
-  Version 2 introduced structural gating to enforce a stable embedding regime.
+    This page documents the evolution of the multi-speaker classifier
+    and the statistical constraints that shaped its training policy.
+    Sub-5 second audio segments are unstable for embedding-based speaker
+    classification. Version 2 introduced structural gating to enforce
+    a stable embedding domain.
   </p>
 </div>
 
-<div class="section-heading" id="versions">
-  <h2>Version Comparison</h2>
-  <span class="section-count">structural differences</span>
+<!-- ================= V1 ================= -->
+
+<div class="section-heading" id="v1">
+  <h2>Version 1 — Host-Only Classifier</h2>
+  <span class="section-count">initial architecture</span>
 </div>
 
-<div class="block open">
+<div style="margin:18px 0 40px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
+  <strong>Version 1</strong> of the multi-speaker host-only classifier
+  was trained on approximately 9,000 audio files derived from a 44-episode corpus.
+  The model was trained exclusively on the four core hosts —
+  no guest audio was included in training.
+
+  <br><br>
+
+  A fifth class (<strong>“unknown”</strong>) was introduced during implementation.
+  This allowed low-confidence, non-host audio to be labeled explicitly rather
+  than forced into a host identity.
+
+  <br><br>
+
+  This prevented catastrophic training data contamination.
+  Uncertain segments were isolated instead of misassigned.
+</div>
+
+<div class="block">
   <div class="block-header">
-    <div><span class="block-id">Σ</span> <span class="block-title">V1 vs V2</span></div>
-  </div>
-  <div class="block-body">
-    <div class="diff">
-      <div class="panel">
-        <span class="panel-label">V1 — exploratory</span>
-        ~9k files<br>
-        No duration gating<br>
-        Classified all segments<br>
-        Sub-4s included<br>
-        No propagation system<br><br>
-        Risk: classifier operating in instability zone
-      </div>
-      <div class="panel">
-        <span class="panel-label">V2 — disciplined</span>
-        383 episodes<br>
-        ≥5s classifier policy<br>
-        Sub-5s marked "lizard"<br>
-        Cluster-based propagation<br>
-        Error curve validated empirically<br><br>
-        Result: stable embedding domain
-      </div>
+    <div>
+      <span class="block-id">V1</span>
+      <span class="block-title">Empirical Performance Report (145 Episodes)</span>
     </div>
   </div>
+  <div class="block-body">
+
+📊 DATASET OVERVIEW  
+----------------------------------------------------------------  
+Episodes analyzed: 145  
+Total content: 214.6 hours  
+
+Average low-confidence rate: 23.1%  
+High-confidence host identification: 76.9%  
+
+🏆 HIGHEST CONFIDENCE EPISODES  
+----------------------------------------------------------------  
+EP152 Real Estate Chaos            : 11.2% uncertain  
+EP114 Markets Update Whipsaw       : 11.7% uncertain  
+EP150 Israel Gaza Escalating       : 11.8% uncertain  
+
+⚠️ MOST CHALLENGING EPISODES  
+----------------------------------------------------------------  
+E02 - reboot                       : 37.8% uncertain  
+EP79 Analyzing Leaked Draft        : 38.4% uncertain  
+EP61 2022 Predictions Business     : 39.2% uncertain  
+
+🎤 NATURAL SPEAKER DISTRIBUTION (HIGH-CONFIDENCE ONLY)  
+----------------------------------------------------------------  
+Sacks:      26.0%  
+Chamath:    24.2%  
+Friedberg:  19.9%  
+JCal:       13.2%  
+Guest/Unknown: 16.6%  
+
+🎯 44 balanced episodes identified for V2 seed training  
+
+💡 KEY TAKEAWAY  
+----------------------------------------------------------------  
+The 23% guest rate reflects intelligent uncertainty handling,
+not model failure.
+
+  </div>
 </div>
 
-<div class="section-heading">
-  <h2>Detailed Metrics</h2>
+<!-- ================= V2 ================= -->
+
+<div class="section-heading" id="v2">
+  <h2>Version 2 — Duration-Gated Classifier</h2>
+  <span class="section-count">statistical discipline</span>
 </div>
 
-<div class="block" id="v1">
+<div style="margin:18px 0 40px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
+  Version 2 introduced a structural constraint:
+  the classifier was trained on ≥4s segments and
+  applied only to ≥5s segments.
+
+  Sub-5s segments were labeled “lizard”
+  and inherited speaker identity via cluster propagation.
+
+  This enforced operation inside the stable embedding regime.
+</div>
+
+<div class="block">
   <div class="block-header">
-    <div><span class="block-id">V1</span> <span class="block-title">Segment Distribution</span></div>
+    <div>
+      <span class="block-id">V2</span>
+      <span class="block-title">Segment Distribution (383 Episodes)</span>
+    </div>
   </div>
   <div class="block-body">
-    ~9k audio files<br>
-    No enforced minimum duration<br>
-    Sub-4s segments classified directly<br>
-    No propagation layer<br>
-    Error rate elevated in micro-segments
+
+Segments: 350,645  
+Mean: 4.02s  
+Median: 2.90s  
+P10: 0.80s  
+P25: 1.46s  
+P75: 5.47s  
+P90: 8.73s  
+
+% <2s: 35.83%  
+% <4s: 62.77%  
+% <6s: 78.45%  
+
+Classifier trained on ≥4s  
+Applied only ≥5s  
+
+Sub-5s segments propagated via cluster identity.
+
   </div>
 </div>
 
-<div class="block" id="v2">
-  <div class="block-header">
-    <div><span class="block-id">V2</span> <span class="block-title">Segment Distribution (383 Episodes)</span></div>
-  </div>
-  <div class="block-body">
-    Segments: 350,645<br>
-    Mean: 4.02s<br>
-    Median: 2.90s<br>
-    P10: 0.80s<br>
-    P25: 1.46s<br>
-    P75: 5.47s<br>
-    P90: 8.73s<br>
-    % &lt;2s: 35.83%<br>
-    % &lt;4s: 62.77%<br>
-    % &lt;6s: 78.45%<br><br>
-    Classifier trained on ≥4s, applied only ≥5s.
-    Sub-5s segments propagated via cluster identity.
-  </div>
+<div class="footer">
+Mason Thompson · Berkeley, California
 </div>
 
 </main>
@@ -289,7 +327,7 @@ document.querySelectorAll('.block').forEach(b=>{
   b.querySelector('.block-header').addEventListener('click',()=>b.classList.toggle('open'));
 });
 
-const observer = new IntersectionObserver(entries=>{
+const observer=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
       document.querySelectorAll('.nav-item').forEach(a=>{
@@ -299,7 +337,7 @@ const observer = new IntersectionObserver(entries=>{
   });
 },{rootMargin:'-20% 0px -70% 0px'});
 
-['intro','versions','v1','v2'].forEach(id=>{
+['intro','v1','v2'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)observer.observe(el);
 });
