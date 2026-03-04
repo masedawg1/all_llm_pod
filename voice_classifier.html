@@ -73,29 +73,6 @@ main{
   max-width:1000px;
 }
 
-.page-eyebrow{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--green);
-  margin-bottom:12px;
-}
-
-h1{
-  font-size:28px;
-  font-weight:700;
-  margin-bottom:20px;
-}
-
-.lead{
-  font-size:14px;
-  line-height:1.75;
-  color:#3a3a3a;
-  margin-bottom:60px;
-  max-width:720px;
-}
-
 .section-heading{
   display:flex;
   align-items:baseline;
@@ -105,17 +82,8 @@ h1{
   border-bottom:1px solid var(--border);
 }
 
-h2{
-  font-size:13px;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-}
-
-.section-count{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--faint);
-}
+h1{font-size:28px;font-weight:700;margin-bottom:20px;}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;}
 
 .version-text{
   margin:18px 0 40px;
@@ -160,8 +128,46 @@ h2{
   line-height:1.9;
 }
 
-.metric-list ul{
-  margin-left:18px;
+.metric-list ul{margin-left:18px;}
+
+.image-section{
+  margin-top:30px;
+}
+
+.image-section img{
+  width:100%;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:transform .15s ease;
+}
+
+.image-section img:hover{
+  transform:scale(1.01);
+}
+
+.error-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-top:20px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  z-index:9999;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.85);
+  align-items:center;
+  justify-content:center;
+}
+
+.modal img{
+  max-width:90%;
+  max-height:90%;
 }
 
 .footer{
@@ -175,6 +181,7 @@ h2{
 @media(max-width:900px){
   nav{display:none;}
   main{padding:32px 24px;}
+  .error-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -183,7 +190,6 @@ h2{
 
 <nav>
   <div class="nav-logo">ALL-LLM Pod</div>
-  <a href="#intro" class="nav-item">Intro</a>
   <a href="#v1" class="nav-item">V1</a>
   <a href="#v2" class="nav-item">V2</a>
   <a href="#v3" class="nav-item">V3</a>
@@ -192,79 +198,60 @@ h2{
 
 <main>
 
-<div id="intro">
-  <p class="page-eyebrow">Voice Classification Architecture</p>
-  <h1>Speaker Classification Policy Evolution</h1>
-  <p class="lead">
-    The classifier evolved in four stages.  
-    V1 exposed structural fragility.  
-    V2 corrected the dataset.  
-    V3 upgraded the embedding backbone.  
-    V4 proved that high accuracy is not the same as production reliability.
-  </p>
-</div>
+<h1>Speaker Classification Policy Evolution</h1>
 
 <!-- ================= V4 ================= -->
 
 <div class="section-heading" id="v4">
   <h2>Version 4 — Duration Constraint & Production Reality</h2>
-  <span class="section-count">production correction</span>
 </div>
 
 <div class="version-text">
-V4 introduced a duration constraint after analysis showed that ≤5s audio segments were disproportionately error-prone.
+V4 constrained training to >5s audio after discovering short segments were error-prone.
 
-The classifier was rebuilt using only >5s segments for training.  
-Short segments were labeled using the classifier’s strengths and then backfilled to NeMo speaker_ID clusters.
+Embedding geometry improved. Separation tightened.
 
-This improved embedding compactness and geometric separation.
+But production revealed the deeper issue:
 
-But it revealed something more important:
+High accuracy does not guarantee reliability.
 
-High test accuracy does not guarantee production reliability.
+The system failed confidently at cluster scale — mislabeling entire speaker groups with certainty.
 
-In production, the system failed confidently — mislabeling entire clusters with high certainty.
+The solution was architectural:
 
-The lesson was architectural, not statistical:
+Map NeMo speaker_IDs directly to timestamped audio and introduce Human-In-The-Loop verification.
 
-Move from pure model confidence to Human-In-The-Loop (HITL) verification by mapping NeMo speaker_IDs directly to timestamped audio segments.
+Accuracy is a metric.  
+Reliability is a system property.
 </div>
 
 <div class="block">
   <div class="block-header">
-    <div class="block-title">V4 Metrics & Findings</div>
+    <div class="block-title">V4 Key Findings</div>
   </div>
   <div class="block-body">
     <div class="metric-list">
-
-<strong>Duration Strategy</strong>
 <ul>
-<li>Training: >5s segments only</li>
-<li>Short segments labeled via cluster propagation</li>
+<li>>5s training constraint</li>
+<li>Improved embedding compactness</li>
+<li>Confident misclassification at production scale</li>
+<li>Shift to HITL speaker_ID verification</li>
 </ul>
-
-<strong>Embedding Geometry</strong>
-<ul>
-<li>Intra-class distance: 0.25</li>
-<li>Inter-class distance: 0.99</li>
-<li>Separation ratio: ~3.96×</li>
-</ul>
-
-<strong>Observed Reality</strong>
-<ul>
-<li>High-confidence misclassifications at cluster level</li>
-<li>Failure surfaced under episode-scale production load</li>
-<li>Accuracy ≠ reliability</li>
-</ul>
-
-<strong>Architectural Shift</strong>
-<ul>
-<li>Map NeMo speaker_ID → timestamped audio</li>
-<li>Introduce Human-In-The-Loop verification</li>
-<li>Treat model output as candidate labels, not ground truth</li>
-</ul>
-
     </div>
+
+    <div class="image-section">
+      <h3 style="margin-bottom:10px;font-size:13px;">Segment Distribution</h3>
+      <img src="v4.png" alt="V4 Segment Distribution" onclick="openModal(this)">
+    </div>
+
+    <div class="image-section">
+      <h3 style="margin-bottom:10px;font-size:13px;">Production Errors</h3>
+      <div class="error-grid">
+        <img src="v4_error_1.png" alt="V4 Error 1" onclick="openModal(this)">
+        <img src="v4_error_2.png" alt="V4 Error 2" onclick="openModal(this)">
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -274,27 +261,29 @@ Mason Thompson · Berkeley, California
 
 </main>
 
+<div id="imgModal" class="modal" onclick="closeModal()">
+  <img id="modalImg">
+</div>
+
 <script>
+
 document.querySelectorAll('.block').forEach(b=>{
   b.querySelector('.block-header').addEventListener('click',()=>{
     b.classList.toggle('open');
   });
 });
 
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      document.querySelectorAll('.nav-item').forEach(a=>{
-        a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id);
-      });
-    }
-  });
-},{rootMargin:'-20% 0px -70% 0px'});
+function openModal(img){
+  const modal=document.getElementById("imgModal");
+  const modalImg=document.getElementById("modalImg");
+  modal.style.display="flex";
+  modalImg.src=img.src;
+}
 
-['intro','v1','v2','v3','v4'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el)observer.observe(el);
-});
+function closeModal(){
+  document.getElementById("imgModal").style.display="none";
+}
+
 </script>
 
 </body>
