@@ -152,24 +152,22 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
 
 <h1>Speaker Classification Policy Evolution</h1>
 
-<!-- ================= V1 ================= -->
+<!-- V1 -->
 <h2 id="v1">V1 — Host-Only Classifier</h2>
-
 <div class="version-text">
-WhisperX segmentation + Pyannote embeddings.  
+WhisperX segmentation + Pyannote embeddings.
 ~9,000 host clips from 44 episodes. Guest audio excluded.
 
-Structural flaw: no guest hard-negatives → risk of confident mislabeling.  
+Structural flaw: no guest hard-negatives → risk of confident mislabeling.
 An incidental “unknown” bucket absorbed ambiguity.
 
 V1 worked in isolation. It was structurally fragile.
 </div>
 
-<!-- ================= V2 ================= -->
+<!-- V2 -->
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
-
 <div class="version-text">
-Same segmentation + embedding stack.  
+Same segmentation + embedding stack.
 Added Clownfish speaker verification and large-scale guest extraction.
 
 Architecture unchanged. Data discipline changed.
@@ -183,68 +181,34 @@ Architecture unchanged. Data discipline changed.
 198.46 hours
 4 hosts + 87 guests
 
-Models:
-RandomForest
-SVM
-Logistic Regression
-MLP
-XGBoost
-
-Performance:
 Host vs Guest ≈ 99%
 5-class (hosts + other) ≈ 96–97%
 </div>
 </div>
 </div>
 
-<!-- ================= V3 ================= -->
+<!-- V3 -->
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
-
 <div class="version-text">
-Replaced Pyannote embeddings with NVIDIA NeMo TitaNet.  
+Replaced Pyannote embeddings with NVIDIA NeMo TitaNet.
 Segmentation logic unchanged. Classification architecture unchanged.
 
-V2 fixed the dataset.  
+V2 fixed the dataset.
 V3 corrected the representation layer.
 </div>
 
 <div class="block">
 <div class="block-header">V3 Full Training & Evaluation Metrics</div>
 <div class="block-body">
+
 <div class="metric-list">
-
 Embeddings: 91,410
-
-Train / Val / Test:
-64,131 / 13,062 / 14,217
-
-Training Distribution:
-Chamath: 17,764
-JCal: 16,047
-Other: 11,315
-Friedberg: 9,519
-Sacks: 9,486
-
-Best Model: Random Forest
+Train / Val / Test: 64,131 / 13,062 / 14,217
 Test Accuracy: 96.53%
-Overfitting Gap: 3.25%
-
-Per-Class Accuracy:
-Chamath: 97.94%
-Friedberg: 96.62%
-JCal: 92.64%
-Sacks: 97.80%
-Other: 99.21%
-
 Host Identification Accuracy: 95.98%
 Binary Host vs Other: 98.52%
 End-to-End Combined Accuracy: 91.19%
-
-Primary Confusion Pattern:
-JCal → Chamath (196 errors)
-
-Model Saved:
-five_class_classifier.pkl
+Primary Confusion: JCal → Chamath (196)
 </div>
 
 <div class="image-section">
@@ -252,15 +216,15 @@ five_class_classifier.pkl
 <div class="image-grid">
   <div>
     <div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:6px;">
-      Pyannote Embeddings (Over-Segmentation)
+      Pyannote Embeddings
     </div>
-    <img src="/images/pyanote.png" onclick="openModal(this)">
+    <img src="images/pyanote.png" onclick="openModal(this)">
   </div>
   <div>
     <div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:6px;">
-      NeMo / TitaNet Embeddings (Cleaner Manifold)
+      NeMo / TitaNet Embeddings
     </div>
-    <img src="/images/nemo.png" onclick="openModal(this)">
+    <img src="images/nemo.png" onclick="openModal(this)">
   </div>
 </div>
 </div>
@@ -268,22 +232,16 @@ five_class_classifier.pkl
 </div>
 </div>
 
-<!-- ================= V4 ================= -->
+<!-- V4 -->
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
-
 <div class="version-text">
-White papers warn that sub-5s audio degrades embedding stability.  
-My 387-episode dataset showed the same pattern.
+White papers warn sub-5s audio degrades embedding stability.
+My 387-episode dataset reflected this.
 
-Community consensus: discard short-turn audio.  
+Community consensus: discard short-turn audio.
 I refused to drop ~50% of the data.
 
 V4 retrained on >5s audio and restricted classification to ≥5s segments.
-
-Strategy:
-Use long-form geometry to anchor identity.
-Map speaker_name → NeMo speaker_ID.
-Backfill short segments via cluster membership.
 
 Embedding geometry improved.
 Production exposed confident cluster-level failures.
@@ -307,14 +265,14 @@ Shift to HITL verification
 
 <div class="image-section">
 <h3 style="font-size:13px;margin-bottom:10px;">Segment Distribution</h3>
-<img src="/images/v4.png" onclick="openModal(this)">
+<img src="images/v4.png" onclick="openModal(this)">
 </div>
 
 <div class="image-section">
 <h3 style="font-size:13px;margin-bottom:10px;">Production Errors</h3>
 <div class="image-grid">
-<img src="/images/v4_error_1.png" onclick="openModal(this)">
-<img src="/images/v4_error_2.png" onclick="openModal(this)">
+<img src="images/v4_error_1.png" onclick="openModal(this)">
+<img src="images/v4_error_2.png" onclick="openModal(this)">
 </div>
 </div>
 
