@@ -154,30 +154,14 @@ h2{
 
 .block.open .block-body{display:block;}
 
-.metrics-grid{
-  display:grid;
-  grid-template-columns:1fr 280px;
-  gap:40px;
-  align-items:start;
-}
-
 .metric-list{
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;
   line-height:1.9;
-  text-align:left;
 }
 
-.thumbnail{
-  width:100%;
-  height:160px;
-  background:#ddd;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  color:#555;
+.metric-list ul{
+  margin-left:18px;
 }
 
 .footer{
@@ -189,7 +173,6 @@ h2{
 }
 
 @media(max-width:900px){
-  .metrics-grid{grid-template-columns:1fr;}
   nav{display:none;}
   main{padding:32px 24px;}
 }
@@ -204,6 +187,7 @@ h2{
   <a href="#v1" class="nav-item">V1</a>
   <a href="#v2" class="nav-item">V2</a>
   <a href="#v3" class="nav-item">V3</a>
+  <a href="#v4" class="nav-item">V4</a>
 </nav>
 
 <main>
@@ -212,127 +196,74 @@ h2{
   <p class="page-eyebrow">Voice Classification Architecture</p>
   <h1>Speaker Classification Policy Evolution</h1>
   <p class="lead">
-    The classifier evolved in three stages.  
+    The classifier evolved in four stages.  
     V1 exposed structural fragility.  
     V2 corrected the dataset.  
-    V3 upgraded the embedding backbone.
+    V3 upgraded the embedding backbone.  
+    V4 proved that high accuracy is not the same as production reliability.
   </p>
 </div>
 
-<!-- ================= V1 ================= -->
+<!-- ================= V4 ================= -->
 
-<div class="section-heading" id="v1">
-  <h2>Version 1 — Host-Only Classifier</h2>
-  <span class="section-count">structural fragility</span>
+<div class="section-heading" id="v4">
+  <h2>Version 4 — Duration Constraint & Production Reality</h2>
+  <span class="section-count">production correction</span>
 </div>
 
 <div class="version-text">
+V4 introduced a duration constraint after analysis showed that ≤5s audio segments were disproportionately error-prone.
 
-<strong>Pipeline</strong><br>
-WhisperX segmentation + Pyannote embeddings.<br>
-Four binary classifiers extracted ~9,000 host clips from 44 episodes.
+The classifier was rebuilt using only >5s segments for training.  
+Short segments were labeled using the classifier’s strengths and then backfilled to NeMo speaker_ID clusters.
 
-<br><br>
+This improved embedding compactness and geometric separation.
 
-<strong>Design Assumption</strong><br>
-Guest audio was excluded intentionally.  
-At the time, it appeared unnecessary and operationally tedious.
+But it revealed something more important:
 
-<br><br>
+High test accuracy does not guarantee production reliability.
 
-<strong>Structural Flaw</strong><br>
-Without guest hard-negatives, a host-only classifier risks labeling guest speech as a host — contaminating downstream persona training.
+In production, the system failed confidently — mislabeling entire clusters with high certainty.
 
-<br><br>
+The lesson was architectural, not statistical:
 
-<strong>Incidental Safeguard</strong><br>
-An “unknown” class captured low-confidence segments.  
-This prevented catastrophic contamination — but it was incidental, not architectural.
-
-</div>
-
-<!-- ================= V2 ================= -->
-
-<div class="section-heading" id="v2">
-  <h2>Version 2 — Guest-Aware Scaling</h2>
-  <span class="section-count">data correction</span>
-</div>
-
-<div class="version-text">
-V2 reused the same segmentation and embedding stack, but introduced verified speaker mapping (Clownfish) and large-scale guest extraction.
-
-The architecture remained the same.  
-The data discipline changed.
+Move from pure model confidence to Human-In-The-Loop (HITL) verification by mapping NeMo speaker_IDs directly to timestamped audio segments.
 </div>
 
 <div class="block">
   <div class="block-header">
-    <div class="block-title">V2 Dataset & Results</div>
-  </div>
-  <div class="block-body">
-    <div class="metrics-grid">
-
-      <div class="metric-list">
-Dataset scale:
-- 61,682 clips  
-- 198.46 hours  
-- 4 hosts + 87 guests  
-
-Embeddings:
-- Pyannote  
-
-Models:
-- RandomForest  
-- SVM  
-- Logistic Regression  
-- MLP  
-- XGBoost  
-
-Results:
-- Host vs Guest: ~99% accuracy  
-- 5-class (hosts + other): ~96–97%  
-
-V2 introduced explicit guest awareness and class balance.
-      </div>
-
-      <div class="thumbnail">
-        YouTube Thumbnail<br>Placeholder
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ================= V3 ================= -->
-
-<div class="section-heading" id="v3">
-  <h2>Version 3 — Embedding Upgrade (NeMo / TitaNet)</h2>
-  <span class="section-count">representation correction</span>
-</div>
-
-<div class="version-text">
-V3 replaced Pyannote embeddings with NVIDIA NeMo TitaNet embeddings.  
-Segmentation logic and classification architecture remained conceptually unchanged.
-
-V2 fixed the dataset.  
-V3 fixed the feature space.
-</div>
-
-<div class="block">
-  <div class="block-header">
-    <div class="block-title">V3 Performance</div>
+    <div class="block-title">V4 Metrics & Findings</div>
   </div>
   <div class="block-body">
     <div class="metric-list">
-Results:
-- 4-host classifier: 99.38% test accuracy  
-- Guest classifier (93 classes): 97.67%  
-- Reduced confusion between similar hosts  
 
-Improvement source:
-- Better embedding geometry  
-- Unit-norm cosine stability  
-- Stronger class separability  
+<strong>Duration Strategy</strong>
+<ul>
+<li>Training: >5s segments only</li>
+<li>Short segments labeled via cluster propagation</li>
+</ul>
+
+<strong>Embedding Geometry</strong>
+<ul>
+<li>Intra-class distance: 0.25</li>
+<li>Inter-class distance: 0.99</li>
+<li>Separation ratio: ~3.96×</li>
+</ul>
+
+<strong>Observed Reality</strong>
+<ul>
+<li>High-confidence misclassifications at cluster level</li>
+<li>Failure surfaced under episode-scale production load</li>
+<li>Accuracy ≠ reliability</li>
+</ul>
+
+<strong>Architectural Shift</strong>
+<ul>
+<li>Map NeMo speaker_ID → timestamped audio</li>
+<li>Introduce Human-In-The-Loop verification</li>
+<li>Treat model output as candidate labels, not ground truth</li>
+</ul>
+
     </div>
   </div>
 </div>
@@ -344,7 +275,6 @@ Mason Thompson · Berkeley, California
 </main>
 
 <script>
-
 document.querySelectorAll('.block').forEach(b=>{
   b.querySelector('.block-header').addEventListener('click',()=>{
     b.classList.toggle('open');
@@ -361,11 +291,10 @@ const observer=new IntersectionObserver(entries=>{
   });
 },{rootMargin:'-20% 0px -70% 0px'});
 
-['intro','v1','v2','v3'].forEach(id=>{
+['intro','v1','v2','v3','v4'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)observer.observe(el);
 });
-
 </script>
 
 </body>
