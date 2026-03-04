@@ -59,7 +59,9 @@ h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
 <li>Intro music with lyrics</li>
 </ul>
 <p class="lead"><strong>Why this example matters:</strong> The segment required more than two dozen pipeline iterations before it appeared reliably in the transcript. Each run completed successfully and produced no warnings.</p>
-<p class="lead">The speech was always present in the recording, but the transcription system silently omitted it. Compare that to the Watergate tapes, or audio recordings recovered from a crashed aircraft - The table below is meant to illustrate why silent omission is the hardest failure mode to defend against: in every other well-known case of lost speech, someone at least knew to go looking.</p>
+<p class="lead">The speech was always present in the recording, but the transcription system silently omitted it.</p>
+
+<p class="lead">This is a specific kind of failure — one that's easy to overlook precisely because nothing breaks. No error is thrown. No flag is raised. The pipeline completes and returns a transcript that looks complete. The comparison below is meant to illustrate why silent omission is the hardest failure mode to defend against: in every other well-known case of lost speech, someone at least knew to go looking.</p>
 
 <table class="compare-table">
 <tr><th>Scenario</th><th>Audio exists</th><th>Someone knows it's missing</th><th>Recoverable</th></tr>
@@ -68,8 +70,9 @@ h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
 <tr><td>This ASR case</td><td>✅ present</td><td>❌ no — the transcript looks fine</td><td>⚠️ only if someone goes looking</td></tr>
 </table>
 
+<p class="lead">The Watergate gap was damaging because the audio was gone. This case is more insidious: the audio exists, the transcript exists, and neither one signals that anything is wrong. At scale, that means omissions accumulate invisibly — and the training data reflects a version of events that never happened.</p>
 
-<p class="lead">Without intentional forensic inspection of the audio, nothing indicates that Friedberg's [i]"Oh, my god."[/i] was lost. Although this example is a short utterance, there could be omissions that are larger and omissions propogate throughout the dataset: original speech disappears while other speakers' reactions to it remain.</p>
+<p class="lead">Without intentional forensic inspection of the audio, nothing indicates that Friedberg's <em>"Oh, my god."</em> was lost. Although this example is a short utterance, there could be omissions that are larger — and omissions propagate throughout the dataset: original speech disappears while other speakers' reactions to it remain.</p>
 
 <div class="two-col">
 <div>
