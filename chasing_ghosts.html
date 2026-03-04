@@ -59,14 +59,17 @@ h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
 <li>Intro music with lyrics</li>
 </ul>
 <p class="lead"><strong>Why this example matters:</strong> The segment required more than two dozen pipeline iterations before it appeared reliably in the transcript. Each run completed successfully and produced no warnings.</p>
-<p class="lead">The speech was always present in the recording, but the transcription system silently omitted it.</p>
+<p class="lead">The speech was always present in the recording, but the transcription system silently omitted it. Compare that to the Watergate tapes, or audio recordings recovered from a crashed aircraft - in both scenarios, investigators are looking for content.</p>
+
+<p class="lead">This is a specific kind of failure — one that's easy to overlook precisely because nothing breaks. No error is thrown. No flag is raised. The pipeline completes and returns a transcript that looks complete. The comparison below is meant to illustrate why silent omission is the hardest failure mode to defend against: in every other well-known case of lost speech, someone at least knew to go looking.</p>
 
 <table class="compare-table">
-<tr><th>Scenario</th><th>Audio exists</th><th>Investigators know something is missing</th><th>Recoverable</th></tr>
-<tr><td>Watergate tapes</td><td>❌ destroyed</td><td>✅ yes</td><td>❌ no</td></tr>
-<tr><td>Cockpit voice recorders</td><td>✅ present</td><td>✅ yes</td><td>⚠️ partially</td></tr>
-<tr><td>This ASR case</td><td>✅ present</td><td>❌ no</td><td>⚠️ only if discovered</td></tr>
+<tr><th>Scenario</th><th>Audio exists</th><th>Someone knows it's missing</th><th>Recoverable</th></tr>
+<tr><td>Watergate tapes</td><td>❌ erased</td><td>✅ yes — the gap was known</td><td>❌ no</td></tr>
+<tr><td>Cockpit voice recorders</td><td>✅ present</td><td>✅ yes — investigators know to check</td><td>⚠️ partially</td></tr>
+<tr><td>This ASR case</td><td>✅ present</td><td>❌ no — the transcript looks fine</td><td>⚠️ only if someone goes looking</td></tr>
 </table>
+
 
 <p class="lead">Without deliberate forensic inspection of the audio, nothing indicates that speech was lost. At scale, omissions like this propagate into training datasets: the original speech disappears while other speakers' reactions to it remain.</p>
 
