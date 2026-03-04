@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -43,7 +42,6 @@ border-right:1px solid var(--border);
 display:flex;
 flex-direction:column;
 padding:32px 0;
-overflow-y:auto;
 }
 
 .nav-logo{
@@ -97,7 +95,6 @@ border-top:1px solid var(--border);
 font-family:'IBM Plex Mono',monospace;
 font-size:10px;
 color:var(--faint);
-line-height:1.6;
 }
 
 main{
@@ -120,15 +117,7 @@ h1{
 font-size:28px;
 font-weight:700;
 letter-spacing:-.02em;
-line-height:1.2;
 margin-bottom:10px;
-}
-
-.author{
-font-family:'IBM Plex Mono',monospace;
-font-size:11px;
-color:#000;
-margin-bottom:22px;
 }
 
 .lead{
@@ -139,38 +128,18 @@ max-width:680px;
 margin-bottom:22px;
 }
 
-ul{
-margin-left:20px;
-margin-top:8px;
-margin-bottom:28px;
-font-size:14px;
-line-height:1.9;
-color:#3a3a3a;
-}
-
-.section-heading{
-display:flex;
-align-items:baseline;
-gap:16px;
-margin-bottom:14px;
-padding-bottom:10px;
-border-bottom:1px solid var(--border);
-margin-top:52px;
-}
-
-h2{
-font-size:13px;
-font-weight:700;
-letter-spacing:.06em;
-text-transform:uppercase;
-color:var(--text);
+.two-col{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:26px;
+align-items:start;
+margin-top:30px;
 }
 
 .analysis-img{
 width:100%;
 border:1px solid var(--border);
 border-radius:3px;
-margin-top:14px;
 }
 
 .img-caption{
@@ -182,6 +151,48 @@ color:var(--faint);
 margin-top:6px;
 }
 
+.code-tabs{
+border:1px solid #2a2a2a;
+border-radius:4px;
+background:#0d1117;
+color:#c9d1d9;
+font-family:'IBM Plex Mono',monospace;
+overflow:hidden;
+}
+
+.tab-buttons{
+display:flex;
+background:#161b22;
+border-bottom:1px solid #30363d;
+}
+
+.tab-buttons button{
+background:none;
+border:none;
+color:#8b949e;
+padding:10px 16px;
+cursor:pointer;
+font-size:12px;
+font-family:'IBM Plex Mono',monospace;
+}
+
+.tab-buttons button.active{
+color:#ffffff;
+border-bottom:2px solid var(--green);
+}
+
+.tab-content{
+display:none;
+padding:18px;
+overflow-x:auto;
+font-size:12px;
+line-height:1.6;
+}
+
+.tab-content.active{
+display:block;
+}
+
 .footer{
 margin-top:80px;
 font-family:'IBM Plex Mono',monospace;
@@ -189,24 +200,22 @@ font-size:10px;
 letter-spacing:.06em;
 text-transform:uppercase;
 color:var(--text);
+display:flex;
+justify-content:space-between;
 }
-
-a{color:var(--text);}
 
 @media (max-width:768px){
 nav{display:none;}
 main{padding:32px 24px 80px;}
+.two-col{grid-template-columns:1fr;}
 }
-
 </style>
-
 </head>
 
 <body>
 
 <nav>
 <div class="nav-logo">ALL-LLM Pod</div>
-
 <div class="nav-section-label">Pages</div>
 <a href="index.html" class="nav-item">Overview</a>
 <a href="performance.html" class="nav-item">Performance</a>
@@ -214,8 +223,7 @@ main{padding:32px 24px 80px;}
 <a href="chasing_ghosts.html" class="nav-item active">Chasing Ghosts</a>
 
 <div class="nav-footer">
-Mason Thompson<br>
-Berkeley, CA
+Mason Thompson<br>Berkeley, CA
 </div>
 </nav>
 
@@ -225,52 +233,127 @@ Berkeley, CA
 
 <h1>Chasing Ghosts: capturing nearly imperceptible spoken words</h1>
 
-<div class="author">
-Mason Thompson · Berkeley, California · ALL-LLM Pod
-</div>
-
 <p class="lead">
 E136's opening is a quintessential example of where modern ASR can be overwhelmed — four failure conditions,
 all within about 15 seconds.
 (<a href="https://youtu.be/JD-b-Zl7yso?t=10" target="_blank">YouTube</a>)
 </p>
 
-<ul>
+<ul class="lead">
 <li>Speaker mimicry — Chamath imitating Jcal's voice</li>
 <li>Group laughter</li>
-<li>Muffled speech — Friedberg's nearly imperceptible “Oh, my god” muttering.</li>
+<li>Muffled speech — Friedberg's nearly imperceptible “Oh, my god” muttering</li>
 <li>Intro music with lyrics</li>
 </ul>
 
 <p class="lead">
 <strong>Why this example matters:</strong>
 Two dozen pipeline iterations were required before the segment surfaced reliably.
-It adds marginal value to Friedberg's training data — but it exposes a more significant problem.
-The pipeline completed successfully every time. No errors, no warnings, and no indication anything was missing.
-Following conventional preprocessing instructions created an invisible gap.
-At scale, gaps of this kind silently compound into training data,
-and the model learns not the speakers as they are, but the speakers as the pipeline was able to perceive them.
+The pipeline completed successfully every time with no warnings.
+At scale, silent failures like this compound into training data.
 </p>
 
-<div class="section-heading">
-<h2>Episode E136: WhisperX Forced Alignment — ASR Source Comparison</h2>
+<div class="two-col">
+
+<div>
+<img src="images/e136_audio_analysis.png" class="analysis-img" alt="e136 audio analysis">
+<p class="img-caption">Waveform · RMS Energy · Spectrogram · Pitch Track — 12s to 26s. Red = Oh my God region (21.1–24.25s)</p>
 </div>
 
-<img src="images/e136_alignment.png" class="analysis-img">
-<div class="img-caption">WhisperX alignment comparison</div>
+<div>
 
-<div class="section-heading">
-<h2>Voice Activity Detection Confirmation</h2>
+<div class="code-tabs">
+
+<div class="tab-buttons">
+<button class="active" onclick="openTab(event,'mp3')">MP3 (normalized)</button>
+<button onclick="openTab(event,'wav')">WAV (16k mono)</button>
 </div>
 
-<img src="images/e136_vad.png" class="analysis-img">
-<div class="img-caption">Silero + NeMo VAD detection window</div>
+<div id="mp3" class="tab-content active">
+<pre><code>[
+{
+"start":5.207,
+"end":9.668,
+"speaker":"friedberg",
+"text":"How does J. Cal open the show? What does he say? Hey, everybody."
+},
+{
+"start":10.208,
+"end":10.988,
+"speaker":"friedberg",
+"text":"Yeah, do it, Chamath."
+},
+{
+"start":12.028,
+"end":19.870,
+"speaker":"chamath",
+"text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+},
+<span style="color:#e05c5c;font-weight:600;">{
+"start":21.110,
+"end":24.251,
+"speaker":"friedberg",
+"text":"Oh, my God."
+},</span>
+{
+"start":25.271,
+"end":26.691,
+"speaker":"friedberg",
+"text":"He's not even here. You can't do that."
+}
+]</code></pre>
+</div>
+
+<div id="wav" class="tab-content">
+<pre><code>[
+{
+"start":5.207,
+"end":9.668,
+"speaker":"friedberg",
+"text":"How does J. Cal open the show? What does he say? Hey, everybody."
+},
+{
+"start":10.208,
+"end":10.988,
+"speaker":"friedberg",
+"text":"Yeah, do it, Chamath."
+},
+{
+"start":12.028,
+"end":19.870,
+"speaker":"chamath",
+"text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+},
+{
+"start":25.271,
+"end":26.691,
+"speaker":"friedberg",
+"text":"He's not even here. You can't do that."
+}
+]</code></pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 <div class="footer">
-Mason Thompson · Berkeley, California
+<span>Mason Thompson · Berkeley, California</span>
+<span>ALL-LLM Pod</span>
 </div>
 
 </main>
+
+<script>
+function openTab(evt,tabId){
+document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+document.querySelectorAll(".tab-buttons button").forEach(b=>b.classList.remove("active"));
+document.getElementById(tabId).classList.add("active");
+evt.currentTarget.classList.add("active");
+}
+</script>
 
 </body>
 </html>
