@@ -30,6 +30,8 @@ body{
   min-height:100vh;
 }
 
+/* NAV */
+
 nav{
   position:sticky;
   top:0;
@@ -67,6 +69,8 @@ nav{
   color:var(--green);
   background:var(--green-dim);
 }
+
+/* MAIN */
 
 main{
   flex:1;
@@ -108,13 +112,34 @@ h2{
   margin-bottom:22px;
 }
 
-.two-col{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:40px;
-  align-items:start;
-  margin-top:32px;
+/* ACCORDION */
+
+.block{
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:20px;
 }
+
+.block-header{
+  padding:14px 18px;
+  cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  background:#fafafa;
+}
+
+.block-body{
+  display:none;
+  padding:24px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  line-height:1.7;
+}
+
+.block.open .block-body{ display:block; }
+
+/* IMAGES */
 
 .image-grid{
   display:grid;
@@ -132,6 +157,15 @@ h2{
 
 .image-grid img:hover{
   transform:scale(1.02);
+}
+
+/* CODE */
+
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  margin-top:32px;
 }
 
 .nav-section-label{
@@ -163,11 +197,22 @@ h2{
 .code-body{
   padding:18px;
   overflow-x:auto;
+}
+
+.code-body pre{
+  margin:0;
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;
   line-height:1.6;
   color:#c9d1d9;
 }
+
+.code-red{
+  color:#ff7b72;
+  font-weight:500;
+}
+
+/* TEXT */
 
 .analysis-text{
   font-size:14px;
@@ -176,6 +221,8 @@ h2{
   max-width:760px;
   margin-top:32px;
 }
+
+/* MODAL */
 
 .modal{
   display:none;
@@ -191,6 +238,8 @@ h2{
   max-width:90%;
   max-height:90%;
 }
+
+/* RESPONSIVE */
 
 @media(max-width:900px){
   nav{display:none;}
@@ -217,42 +266,40 @@ h2{
 <p class="page-eyebrow">Speaker Identification Architecture</p>
 <h1>Speaker Classification Policy Evolution</h1>
 
-<!-- V1 -->
-<h2 id="v1">V1 — Host-Only Classifier</h2>
-<p class="lead">
-WhisperX segmentation + Pyannote embeddings. Guest audio excluded.
-V1 proved feasibility, not robustness. Severe class imbalance and incomplete evaluation made generalization unknowable.
-</p>
-
-<!-- V2 -->
-<h2 id="v2">V2 — Guest-Aware Scaling</h2>
-<p class="lead">
-Architecture unchanged. Balanced dataset and explicit guest class introduced.
-Data discipline changed.
-</p>
-
 <!-- V3 -->
+
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
-<p class="lead">
-Cleaner embedding manifold. Reduced over-segmentation.
-Test Accuracy: 96.53%. Binary Host vs Other: 98.52%.
-Primary Confusion: JCal → Chamath.
-</p>
+
+<div class="block">
+  <div class="block-header">V3 Performance Metrics</div>
+  <div class="block-body">
+Embeddings: 91,410<br>
+Test Accuracy: 96.53%<br>
+Binary Host vs Other: 98.52%<br>
+Primary Confusion: JCal → Chamath
+  </div>
+</div>
 
 <div class="image-grid">
-<img src="images/pyanote.png" onclick="openModal(this)">
-<img src="images/nemo.png" onclick="openModal(this)">
+  <img src="images/pyanote.png" onclick="openModal(this)">
+  <img src="images/nemo.png" onclick="openModal(this)">
 </div>
 
 <!-- V4 -->
+
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
-<p class="lead">
-Trained only on &gt;5s segments. Anchored identity on long-form geometry.
-Embedding geometry improved. Production exposed confident cluster-level failures.
-High accuracy ≠ production reliability.
-</p>
+
+<div class="block">
+  <div class="block-header">V4 Observations</div>
+  <div class="block-body">
+&gt;5s constraint improved compactness<br>
+Confident cluster-level failures surfaced<br>
+High accuracy ≠ production reliability
+  </div>
+</div>
 
 <!-- RATIONALE -->
+
 <h2 id="rationale">Rationale for Dropping the Classifier Layer</h2>
 
 <div class="two-col">
@@ -262,7 +309,7 @@ High accuracy ≠ production reliability.
   <div class="code-container">
     <div class="code-header">Segment A — 10.4s</div>
     <div class="code-body">
-<pre><code>{
+<pre>{
   "speaker_id": "SPEAKER_03",
   "is_lizard": false,
   "custom_speaker": "friedberg",
@@ -270,7 +317,7 @@ High accuracy ≠ production reliability.
   "duration": 10.4119,
   <span class="code-red">"text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",</span>
   "speaker_id_propagated": true
-}</code></pre>
+}</pre>
     </div>
   </div>
 </div>
@@ -280,7 +327,7 @@ High accuracy ≠ production reliability.
   <div class="code-container">
     <div class="code-header">Segment B — 0.32s</div>
     <div class="code-body">
-{
+<pre>{
   "speaker_id": "SPEAKER_04",
   "is_lizard": true,
   "custom_speaker": "friedberg",
@@ -288,7 +335,7 @@ High accuracy ≠ production reliability.
   "duration": 0.3200,
   "text": "Where is Jcal?",
   "speaker_id_propagated": true
-}
+}</pre>
     </div>
   </div>
 </div>
@@ -304,18 +351,9 @@ Brad → Sacks: 0.7774 (most similar)<br>
 Brad → Friedberg: 0.8007
 <br><br>
 
-This is a fundamental voice-similarity problem made worse by a classifier forced to act as the source of truth inside a constrained label space.
-
-I did not audit whether any Brad clips were mislabeled as Sacks.  
-I also did not perform a deep post-mortem on the transcript processing script itself.
-
 If inference logic prevented Brad from ever being eligible for the label “brad,” then the system was not confused — it was structurally incapable of being correct.
 
-The classifier layer was removed.
-
-Cluster first.  
-Verify identity.  
-Then propagate.
+Cluster first. Verify identity. Then propagate.
 </div>
 
 </main>
@@ -325,10 +363,17 @@ Then propagate.
 </div>
 
 <script>
+document.querySelectorAll('.block-header').forEach(h=>{
+  h.addEventListener('click',()=>{
+    h.parentElement.classList.toggle('open');
+  });
+});
+
 function openModal(img){
   document.getElementById("modalImg").src = img.src;
   document.getElementById("modal").style.display = "flex";
 }
+
 function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
