@@ -14,7 +14,6 @@
   --bg:#f9f9f9;
   --surface:#ffffff;
   --border:#e4e4e4;
-  --code-bg:#0d1117;
   --text:#1a1a1a;
   --muted:#6b6b6b;
   --faint:#aaaaaa;
@@ -150,14 +149,32 @@ h2{
 
 .block-body{
   display:none;
-  padding:18px;
+  padding:24px;
   border-top:1px solid var(--border);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
+  font-size:13px;
   line-height:1.8;
+  color:#3a3a3a;
 }
 
 .block.open .block-body{display:block;}
+
+.metrics-section{
+  margin-bottom:28px;
+}
+
+.metrics-section h4{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:10px;
+  color:var(--muted);
+}
+
+.metric-list{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  line-height:1.9;
+}
 
 .footer{
   margin-top:100px;
@@ -205,21 +222,19 @@ h2{
 </div>
 
 <div style="margin:18px 0 40px;font-size:14px;line-height:1.75;max-width:720px;color:#3a3a3a;">
-  <strong>Version 1</strong> of the multi-speaker host-only classifier
-  was trained on approximately 9,000 audio files derived from a 44-episode corpus.
-  The model was trained exclusively on the four core hosts —
-  no guest audio was included in training.
+  Version 1 transcripts were generated using a WhisperX + Pyannote pipeline that extracted ~9,000 host audio samples from 44 episodes via four binary classifiers. These samples were used to train a multi-speaker classifier capable of labeling the four hosts across transcripts at scale.
 
   <br><br>
 
-  A fifth class (<strong>“unknown”</strong>) was introduced during implementation.
-  This allowed low-confidence, non-host audio to be labeled explicitly rather
-  than forced into a host identity.
+  Guest audio was intentionally excluded. At the time, I saw no value in collecting it, and doing so accurately at scale would have been operationally tedious.
 
   <br><br>
 
-  This prevented catastrophic training data contamination.
-  Uncertain segments were isolated instead of misassigned.
+  Weeks later — after viable persona models already existed — I recognized the structural flaw. Guest audio provides essential hard-negative examples. More critically, a host-only classifier without a guest class risks mislabeling guest speech as a host, contaminating downstream training data.
+
+  <br><br>
+
+  An “unknown” class did appear in the transcripts, capturing low-confidence non-host speech. While this mitigated immediate failure, it was not intentionally designed as a formal guest class. The system was structurally fragile — and that realization triggered the redesign that became V2.
 </div>
 
 <div class="block">
@@ -229,42 +244,55 @@ h2{
       <span class="block-title">Empirical Performance Report (145 Episodes)</span>
     </div>
   </div>
+
   <div class="block-body">
 
-📊 DATASET OVERVIEW  
-----------------------------------------------------------------  
-Episodes analyzed: 145  
-Total content: 214.6 hours  
+    <div class="metrics-section">
+      <h4>Dataset Overview</h4>
+      <div class="metric-list">
+        Episodes analyzed: 145<br>
+        Total content: 214.6 hours<br>
+        Average low-confidence rate: 23.1%<br>
+        High-confidence host identification: 76.9%
+      </div>
+    </div>
 
-Average low-confidence rate: 23.1%  
-High-confidence host identification: 76.9%  
+    <div class="metrics-section">
+      <h4>Highest Confidence Episodes</h4>
+      <div class="metric-list">
+        EP152 Real Estate Chaos — 11.2% uncertain<br>
+        EP114 Markets Update Whipsaw — 11.7% uncertain<br>
+        EP150 Israel Gaza Escalating — 11.8% uncertain
+      </div>
+    </div>
 
-🏆 HIGHEST CONFIDENCE EPISODES  
-----------------------------------------------------------------  
-EP152 Real Estate Chaos            : 11.2% uncertain  
-EP114 Markets Update Whipsaw       : 11.7% uncertain  
-EP150 Israel Gaza Escalating       : 11.8% uncertain  
+    <div class="metrics-section">
+      <h4>Most Challenging Episodes</h4>
+      <div class="metric-list">
+        E02 - reboot — 37.8% uncertain<br>
+        EP79 Analyzing Leaked Draft — 38.4% uncertain<br>
+        EP61 2022 Predictions Business — 39.2% uncertain
+      </div>
+    </div>
 
-⚠️ MOST CHALLENGING EPISODES  
-----------------------------------------------------------------  
-E02 - reboot                       : 37.8% uncertain  
-EP79 Analyzing Leaked Draft        : 38.4% uncertain  
-EP61 2022 Predictions Business     : 39.2% uncertain  
+    <div class="metrics-section">
+      <h4>Natural Speaker Distribution (High Confidence Only)</h4>
+      <div class="metric-list">
+        Sacks: 26.0%<br>
+        Chamath: 24.2%<br>
+        Friedberg: 19.9%<br>
+        JCal: 13.2%<br>
+        Guest/Unknown: 16.6%
+      </div>
+    </div>
 
-🎤 NATURAL SPEAKER DISTRIBUTION (HIGH-CONFIDENCE ONLY)  
-----------------------------------------------------------------  
-Sacks:      26.0%  
-Chamath:    24.2%  
-Friedberg:  19.9%  
-JCal:       13.2%  
-Guest/Unknown: 16.6%  
-
-🎯 44 balanced episodes identified for V2 seed training  
-
-💡 KEY TAKEAWAY  
-----------------------------------------------------------------  
-The 23% guest rate reflects intelligent uncertainty handling,
-not model failure.
+    <div class="metrics-section">
+      <h4>Key Takeaway</h4>
+      <div>
+        The 23% guest rate reflects intelligent uncertainty handling,
+        not model failure. 44 balanced episodes were identified as high-quality seed data for V2.
+      </div>
+    </div>
 
   </div>
 </div>
@@ -285,35 +313,6 @@ not model failure.
   and inherited speaker identity via cluster propagation.
 
   This enforced operation inside the stable embedding regime.
-</div>
-
-<div class="block">
-  <div class="block-header">
-    <div>
-      <span class="block-id">V2</span>
-      <span class="block-title">Segment Distribution (383 Episodes)</span>
-    </div>
-  </div>
-  <div class="block-body">
-
-Segments: 350,645  
-Mean: 4.02s  
-Median: 2.90s  
-P10: 0.80s  
-P25: 1.46s  
-P75: 5.47s  
-P90: 8.73s  
-
-% <2s: 35.83%  
-% <4s: 62.77%  
-% <6s: 78.45%  
-
-Classifier trained on ≥4s  
-Applied only ≥5s  
-
-Sub-5s segments propagated via cluster identity.
-
-  </div>
 </div>
 
 <div class="footer">
