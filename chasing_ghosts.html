@@ -4,498 +4,172 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALL-LLM Pod | Chasing Ghosts</title>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
-
-:root{
---green:#76b900;
---green-dim:rgba(118,185,0,0.12);
---bg:#f9f9f9;
---surface:#ffffff;
---border:#e4e4e4;
---text:#1a1a1a;
---muted:#6b6b6b;
---faint:#aaaaaa;
---nav-width:220px;
-}
-
+:root{ --green:#76b900; --green-dim:rgba(118,185,0,0.12); --bg:#f9f9f9; --surface:#ffffff; --border:#e4e4e4; --text:#1a1a1a; --muted:#6b6b6b; --faint:#aaaaaa; --nav-width:220px; }
 *{box-sizing:border-box;margin:0;padding:0;}
-
-body{
-font-family:'Inter',sans-serif;
-background:var(--bg);
-color:var(--text);
-display:flex;
-min-height:100vh;
-}
-
-nav{
-position:sticky;
-top:0;
-height:100vh;
-width:var(--nav-width);
-background:var(--surface);
-border-right:1px solid var(--border);
-display:flex;
-flex-direction:column;
-padding:32px 0;
-}
-
-.nav-logo{
-font-family:'IBM Plex Mono',monospace;
-font-size:11px;
-font-weight:600;
-letter-spacing:.08em;
-text-transform:uppercase;
-color:var(--green);
-padding:0 24px 28px;
-border-bottom:1px solid var(--border);
-}
-
-.nav-section-label{
-font-family:'IBM Plex Mono',monospace;
-font-size:9px;
-font-weight:600;
-letter-spacing:.12em;
-text-transform:uppercase;
-color:var(--faint);
-padding:20px 24px 8px;
-}
-
-.nav-item{
-display:block;
-font-family:'IBM Plex Mono',monospace;
-font-size:11px;
-color:var(--muted);
-text-decoration:none;
-padding:7px 24px;
-border-left:2px solid transparent;
-}
-
-.nav-item.active{
-color:var(--green);
-border-left-color:var(--green);
-background:var(--green-dim);
-}
-
-.nav-footer{
-margin-top:auto;
-padding:20px 24px 0;
-border-top:1px solid var(--border);
-font-family:'IBM Plex Mono',monospace;
-font-size:10px;
-color:var(--faint);
-}
-
-main{
-flex:1;
-padding:56px 64px 120px;
-max-width:1000px;
-}
-
-.page-eyebrow{
-font-family:'IBM Plex Mono',monospace;
-font-size:10px;
-font-weight:600;
-letter-spacing:.12em;
-text-transform:uppercase;
-color:var(--green);
-margin-bottom:12px;
-}
-
-h1{
-font-size:28px;
-font-weight:700;
-letter-spacing:-.02em;
-margin-bottom:10px;
-}
-
-.lead{
-font-size:14px;
-line-height:1.75;
-color:#3a3a3a;
-max-width:720px;
-margin-bottom:22px;
-}
-
-.compare-table{
-width:100%;
-border-collapse:collapse;
-margin:20px 0 26px;
-font-size:13px;
-}
-
-.compare-table th{
-text-align:left;
-font-weight:600;
-border-bottom:2px solid var(--border);
-padding:10px 12px;
-background:#fafafa;
-}
-
-.compare-table td{
-padding:10px 12px;
-border-bottom:1px solid var(--border);
-}
-
-.two-col{
-display:grid;
-grid-template-columns:420px 1fr;
-gap:40px;
-align-items:start;
-margin-top:34px;
-}
-
-.analysis-img{
-width:100%;
-border:1px solid var(--border);
-border-radius:4px;
-cursor:zoom-in;
-transition:transform .15s ease;
-}
-
-.analysis-img:hover{
-transform:scale(1.02);
-}
-
-.img-caption{
-font-family:'IBM Plex Mono',monospace;
-font-size:11px;
-letter-spacing:.06em;
-color:var(--faint);
-margin-top:8px;
-}
-
-.img-modal{
-display:none;
-position:fixed;
-z-index:999;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.85);
-align-items:center;
-justify-content:center;
-padding:40px;
-}
-
-.img-modal img{
-max-width:95%;
-max-height:95%;
-border-radius:6px;
-box-shadow:0 0 40px rgba(0,0,0,.6);
-}
-
-.img-modal.active{
-display:flex;
-cursor:zoom-out;
-}
-
-.analysis-breakdown{
-margin-top:18px;
-font-size:14px;
-line-height:1.7;
-color:#3a3a3a;
-}
-
-.analysis-breakdown p{
-margin-bottom:10px;
-}
-
-.analysis-breakdown strong{
-color:#000;
-}
-
-.code-tabs{
-border:1px solid #2a2a2a;
-border-radius:4px;
-background:#0d1117;
-color:#c9d1d9;
-font-family:'IBM Plex Mono',monospace;
-overflow:hidden;
-max-width:480px;
-}
-
-.tab-buttons{
-display:flex;
-background:#161b22;
-border-bottom:1px solid #30363d;
-}
-
-.tab-buttons button{
-background:none;
-border:none;
-color:#8b949e;
-padding:10px 16px;
-cursor:pointer;
-font-size:12px;
-font-family:'IBM Plex Mono',monospace;
-}
-
-.tab-buttons button.active{
-color:#ffffff;
-border-bottom:2px solid var(--green);
-}
-
-.tab-content{
-display:none;
-padding:18px;
-overflow-x:auto;
-font-size:12px;
-line-height:1.6;
-}
-
-.tab-content.active{
-display:block;
-}
-
-.code-highlight{
-color:#ff6b6b;
-font-weight:500;
-}
-
-.footer{
-margin-top:80px;
-font-family:'IBM Plex Mono',monospace;
-font-size:10px;
-letter-spacing:.06em;
-text-transform:uppercase;
-color:#000;
-display:flex;
-justify-content:space-between;
-}
-
-@media (max-width:768px){
-nav{display:none;}
-main{padding:32px 24px 80px;}
-.two-col{grid-template-columns:1fr;}
-.code-tabs{max-width:100%;}
-}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+nav{position:sticky;top:0;height:100vh;width:var(--nav-width);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 0;}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);padding:0 24px 28px;border-bottom:1px solid var(--border);}
+.nav-section-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:20px 24px 8px;}
+.nav-item{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:7px 24px;border-left:2px solid transparent;}
+.nav-item.active{color:var(--green);border-left-color:var(--green);background:var(--green-dim);}
+.nav-footer{margin-top:auto;padding:20px 24px 0;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);}
+main{flex:1;padding:56px 64px 120px;max-width:1000px;}
+.page-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px;}
+h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
+.lead{font-size:14px;line-height:1.75;color:#3a3a3a;max-width:720px;margin-bottom:22px;}
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0 26px;font-size:13px;}
+.compare-table th{text-align:left;font-weight:600;border-bottom:2px solid var(--border);padding:10px 12px;background:#fafafa;}
+.compare-table td{padding:10px 12px;border-bottom:1px solid var(--border);}
+.two-col{display:grid;grid-template-columns:420px 1fr;gap:40px;align-items:start;margin-top:34px;}
+.analysis-img{width:100%;border:1px solid var(--border);border-radius:4px;cursor:zoom-in;transition:transform .15s ease;}
+.analysis-img:hover{transform:scale(1.02);}
+.img-caption{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--faint);margin-top:8px;}
+.img-modal{display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:40px;}
+.img-modal img{max-width:95%;max-height:95%;border-radius:6px;box-shadow:0 0 40px rgba(0,0,0,.6);}
+.img-modal.active{display:flex;cursor:zoom-out;}
+.analysis-breakdown{margin-top:18px;font-size:14px;line-height:1.7;color:#3a3a3a;}
+.analysis-breakdown p{margin-bottom:10px;}
+.analysis-breakdown strong{color:#000;}
+.code-tabs{border:1px solid #2a2a2a;border-radius:4px;background:#0d1117;color:#c9d1d9;font-family:'IBM Plex Mono',monospace;overflow:hidden;max-width:480px;}
+.tab-buttons{display:flex;background:#161b22;border-bottom:1px solid #30363d;}
+.tab-buttons button{background:none;border:none;color:#8b949e;padding:10px 16px;cursor:pointer;font-size:12px;font-family:'IBM Plex Mono',monospace;}
+.tab-buttons button.active{color:#ffffff;border-bottom:2px solid var(--green);}
+.tab-content{display:none;padding:18px;overflow-x:auto;font-size:12px;line-height:1.6;}
+.tab-content.active{display:block;}
+.code-highlight{color:#ff6b6b;font-weight:500;}
+.footer{margin-top:80px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#000;display:flex;justify-content:space-between;}
+@media(max-width:768px){nav{display:none;}main{padding:32px 24px 80px;}.two-col{grid-template-columns:1fr;}.code-tabs{max-width:100%;}}
 </style>
 </head>
-
 <body>
 
-<nav>
-<div class="nav-logo">ALL-LLM Pod</div>
-<div class="nav-section-label">Pages</div>
-<a href="index.html" class="nav-item">Overview</a>
-<a href="performance.html" class="nav-item">Performance</a>
-<a href="heuristics.html" class="nav-item">HITL Heuristics</a>
-<a href="chasing_ghosts.html" class="nav-item active">Chasing Ghosts</a>
-
-<div class="nav-footer">
-Mason Thompson<br>Berkeley, CA
-</div>
-</nav>
+<nav id="shared-nav"></nav>
 
 <main>
-
 <p class="page-eyebrow">ASR Forensics · Episode E136</p>
-
 <h1>Chasing Ghosts: capturing nearly imperceptible spoken words</h1>
-
-<p class="lead">
-E136's opening shows how quickly modern ASR systems can fail under real conversational audio. In roughly fifteen seconds, four distinct failure conditions occur simultaneously. “Chasing ghosts” refers to the forensic process of investigating moments where speech clearly exists in the recording, but never appears in the transcript.
-(<a href="https://youtu.be/JD-b-Zl7yso?t=10" target="_blank">YouTube</a>)
-</p>
-
+<p class="lead">"Chasing ghosts" refers to the forensic process of investigating moments where speech clearly exists in the recording, but never appears in the transcript.</p>
+<p>E136's opening shows how quickly modern ASR systems can fail under real conversational audio, where in roughly fifteen seconds four distinct failure conditions occur simultaneously.  (<a href="https://youtu.be/JD-b-Zl7yso?t=10" target="_blank">YouTube</a>)</p>
 <ul class="lead">
 <li>Speaker mimicry — Chamath imitating Jcal's voice</li>
 <li>Group laughter</li>
-<li>Muffled speech — Friedberg's nearly imperceptible “Oh, my god” muttering</li>
+<li>Muffled speech — Friedberg's nearly imperceptible "Oh, my god" muttering</li>
 <li>Intro music with lyrics</li>
 </ul>
-
-<p class="lead">
-<strong>Why this example matters:</strong>
-The segment required more than two dozen pipeline iterations before it appeared reliably in the transcript. Each run completed successfully and produced no warnings.
-</p>
-
-<p class="lead">
-The speech was always present in the recording, but the transcription system silently omitted it.
-</p>
+<p class="lead"><strong>Why this example matters:</strong> The segment required more than two dozen pipeline iterations before it appeared reliably in the transcript. Each run completed successfully and produced no warnings.</p>
+<p class="lead">The speech was always present in the recording, but the transcription system silently omitted it.</p>
 
 <table class="compare-table">
-<tr>
-<th>Scenario</th>
-<th>Audio exists</th>
-<th>Investigators know something is missing</th>
-<th>Recoverable</th>
-</tr>
-
-<tr>
-<td>Watergate tapes</td>
-<td>❌ destroyed</td>
-<td>✅ yes</td>
-<td>❌ no</td>
-</tr>
-
-<tr>
-<td>Cockpit voice recorders</td>
-<td>✅ present</td>
-<td>✅ yes</td>
-<td>⚠️ partially</td>
-</tr>
-
-<tr>
-<td>This ASR case</td>
-<td>✅ present</td>
-<td>❌ no</td>
-<td>⚠️ only if discovered</td>
-</tr>
+<tr><th>Scenario</th><th>Audio exists</th><th>Investigators know something is missing</th><th>Recoverable</th></tr>
+<tr><td>Watergate tapes</td><td>❌ destroyed</td><td>✅ yes</td><td>❌ no</td></tr>
+<tr><td>Cockpit voice recorders</td><td>✅ present</td><td>✅ yes</td><td>⚠️ partially</td></tr>
+<tr><td>This ASR case</td><td>✅ present</td><td>❌ no</td><td>⚠️ only if discovered</td></tr>
 </table>
 
-<p class="lead">
-Without deliberate forensic inspection of the audio, nothing indicates that speech was lost. At scale, omissions like this propagate into training datasets: the original speech disappears while other speakers’ reactions to it remain.
-</p>
+<p class="lead">Without deliberate forensic inspection of the audio, nothing indicates that speech was lost. At scale, omissions like this propagate into training datasets: the original speech disappears while other speakers' reactions to it remain.</p>
 
 <div class="two-col">
-
 <div>
-
-<img src="images/e136_audio_analysis.png"
-class="analysis-img"
-alt="e136 audio analysis"
-onclick="openImageModal()">
-
-<div id="imgModal" class="img-modal" onclick="closeImageModal()">
-<img src="images/e136_audio_analysis.png">
-</div>
-
-<p class="img-caption">
-Waveform · RMS Energy · Spectrogram · Pitch Track — 12s to 26s.  
-Red = “Oh my God” region (21.1–24.25s)
-</p>
-
-<div class="analysis-breakdown">
-
-<p><strong>Waveform</strong> — the red region contains clear amplitude variation. The signal is present and structured; it is not silence.</p>
-
-<p><strong>RMS Energy</strong> — energy is sustained across the entire window. Both Silero and MarbleNet VAD systems flagged this region as speech.</p>
-
-<p><strong>Spectrogram</strong> — the red window shows dense harmonic structure across roughly 0–2kHz, consistent with voiced human speech rather than background noise or music bleed.</p>
-
-<p><strong>Pitch Track (F0)</strong> — a continuous fundamental frequency is tracked through the region, rising and then falling with natural intonation. This indicates a single speaker producing a voiced utterance.</p>
-
-<p>
-All four panels agree: a human spoke. The signal was real, the energy was present, and the pitch was trackable. WhisperX on the 16kHz mono WAV still missed it — not because the audio was absent, but because the conversion degraded the spectral detail needed for confident phoneme resolution.
-</p>
-
-<p>
-The ghost was always there. The pipeline simply failed to see it.
-</p>
-
-</div>
-
+  <img src="images/e136_audio_analysis.png" class="analysis-img" alt="e136 audio analysis" onclick="openImageModal()">
+  <div id="imgModal" class="img-modal" onclick="closeImageModal()"><img src="images/e136_audio_analysis.png"></div>
+  <p class="img-caption">Waveform · RMS Energy · Spectrogram · Pitch Track — 12s to 26s.<br>Red = "Oh my God" region (21.1–24.25s)</p>
+  <div class="analysis-breakdown">
+    <p><strong>Waveform</strong> — the red region contains clear amplitude variation. The signal is present and structured; it is not silence.</p>
+    <p><strong>RMS Energy</strong> — energy is sustained across the entire window. Both Silero and MarbleNet VAD systems flagged this region as speech.</p>
+    <p><strong>Spectrogram</strong> — the red window shows dense harmonic structure across roughly 0–2kHz, consistent with voiced human speech rather than background noise or music bleed.</p>
+    <p><strong>Pitch Track (F0)</strong> — a continuous fundamental frequency is tracked through the region, rising and then falling with natural intonation. This indicates a single speaker producing a voiced utterance.</p>
+    <p>All four panels agree: a human spoke. The signal was real, the energy was present, and the pitch was trackable. WhisperX on the 16kHz mono WAV still missed it — not because the audio was absent, but because the conversion degraded the spectral detail needed for confident phoneme resolution.</p>
+    <p>The ghost was always there. The pipeline simply failed to see it.</p>
+  </div>
 </div>
 
 <div>
-
-<div class="code-tabs">
-
-<div class="tab-buttons">
-<button class="active" onclick="openTab(event,'mp3')">MP3 (normalized)</button>
-<button onclick="openTab(event,'wav')">WAV (16k mono)</button>
-</div>
-
-<div id="mp3" class="tab-content active">
+  <div class="code-tabs">
+    <div class="tab-buttons">
+      <button class="active" onclick="openTab(event,'mp3')">MP3 (normalized)</button>
+      <button onclick="openTab(event,'wav')">WAV (16k mono)</button>
+    </div>
+    <div id="mp3" class="tab-content active">
 <pre><code>[
 {
-"start":5.207,
-"end":9.668,
-"speaker":"friedberg",
-"text":"How does J. Cal open the show? What does he say? Hey, everybody."
+  "start":5.207,
+  "end":9.668,
+  "speaker":"friedberg",
+  "text":"How does J. Cal open the show? What does he say? Hey, everybody."
 },
 {
-"start":10.208,
-"end":10.988,
-"speaker":"friedberg",
-"text":"Yeah, do it, Chamath."
+  "start":10.208,
+  "end":10.988,
+  "speaker":"friedberg",
+  "text":"Yeah, do it, Chamath."
 },
 {
-"start":12.028,
-"end":19.870,
-"speaker":"chamath",
-"text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+  "start":12.028,
+  "end":19.870,
+  "speaker":"chamath",
+  "text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis..."
 },
 <span class="code-highlight">{
-"start":21.110,
-"end":24.251,
-"speaker":"friedberg",
-"text":"Oh, my God."
+  "start":21.110,
+  "end":24.251,
+  "speaker":"friedberg",
+  "text":"Oh, my God."
 },</span>
 {
-"start":25.271,
-"end":26.691,
-"speaker":"friedberg",
-"text":"He's not even here. You can't do that."
+  "start":25.271,
+  "end":26.691,
+  "speaker":"friedberg",
+  "text":"He's not even here. You can't do that."
 }
 ]</code></pre>
-</div>
-
-<div id="wav" class="tab-content">
+    </div>
+    <div id="wav" class="tab-content">
 <pre><code>[
 {
-"start":5.207,
-"end":9.668,
-"speaker":"friedberg",
-"text":"How does J. Cal open the show? What does he say? Hey, everybody."
+  "start":5.207,
+  "end":9.668,
+  "speaker":"friedberg",
+  "text":"How does J. Cal open the show? What does he say? Hey, everybody."
 },
 {
-"start":10.208,
-"end":10.988,
-"speaker":"friedberg",
-"text":"Yeah, do it, Chamath."
+  "start":10.208,
+  "end":10.988,
+  "speaker":"friedberg",
+  "text":"Yeah, do it, Chamath."
 },
 {
-"start":12.028,
-"end":19.870,
-"speaker":"chamath",
-"text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis. I am the grifter with the mostest. The mostest, that's the shortest. The shortest, that's the fattest. And the fattest, that's the dumbest."
+  "start":12.028,
+  "end":19.870,
+  "speaker":"chamath",
+  "text":"Hey, everybody. Hey, everybody. I'm Jason Calacanis..."
 },
 {
-"start":25.271,
-"end":26.691,
-"speaker":"friedberg",
-"text":"He's not even here. You can't do that."
+  "start":25.271,
+  "end":26.691,
+  "speaker":"friedberg",
+  "text":"He's not even here. You can't do that."
 }
 ]</code></pre>
+    </div>
+  </div>
+</div>
 </div>
 
-</div>
-
-</div>
-
-</div>
-
-<div class="footer">
-<span>Mason Thompson · Berkeley, California</span>
-<span>ALL-LLM Pod</span>
-</div>
-
+<div class="footer"><span>Mason Thompson · Berkeley, California</span><span>ALL-LLM Pod</span></div>
 </main>
 
+<script src="nav-loader.js" data-page="chasing_ghosts"></script>
 <script>
-
 function openTab(evt,tabId){
-document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
-document.querySelectorAll(".tab-buttons button").forEach(b=>b.classList.remove("active"));
-document.getElementById(tabId).classList.add("active");
-evt.currentTarget.classList.add("active");
+  document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+  document.querySelectorAll(".tab-buttons button").forEach(b=>b.classList.remove("active"));
+  document.getElementById(tabId).classList.add("active");
+  evt.currentTarget.classList.add("active");
 }
-
-function openImageModal(){
-document.getElementById("imgModal").classList.add("active");
-}
-
-function closeImageModal(){
-document.getElementById("imgModal").classList.remove("active");
-}
-
+function openImageModal(){ document.getElementById("imgModal").classList.add("active"); }
+function closeImageModal(){ document.getElementById("imgModal").classList.remove("active"); }
 </script>
-
 </body>
 </html>
