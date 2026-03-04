@@ -137,7 +137,25 @@ white-space:pre-line;
 
 .block.open .block-body{display:block}
 
-/* MODAL (not used but left for consistency) */
+/* IMAGE GRID */
+
+.image-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+margin-top:28px;
+}
+
+.image-grid img{
+width:100%;
+border:1px solid var(--border);
+cursor:pointer;
+transition:transform .15s ease;
+}
+
+.image-grid img:hover{transform:scale(1.02);}
+
+/* MODAL */
 
 .modal{
 display:none;
@@ -157,6 +175,7 @@ max-height:90%;
 @media(max-width:900px){
 nav{display:none;}
 main{padding:32px 24px;}
+.image-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -166,6 +185,8 @@ main{padding:32px 24px;}
 <nav>
 <div class="nav-logo">ALL-LLM Pod</div>
 <a href="#v1" class="nav-item">V1</a>
+<a href="#v2" class="nav-item">V2</a>
+<a href="#v3" class="nav-item">V3</a>
 </nav>
 
 <main>
@@ -227,7 +248,101 @@ Key Insight:
   </div>
 </div>
 
+<!-- =============================== -->
+<!--            V2 SECTION          -->
+<!-- =============================== -->
+
+<h2 id="v2">V2 — Guest-Aware Scaling</h2>
+
+<p class="lead">
+V2 was made possible via a custom HITL tool I created called <strong>Clownfish</strong>.  
+Clownfish ingested the original V1 transcripts and let me manually review and re-map <code>pyannote</code> speaker_ids to structured <code>custom_speaker</code> labels, with side-by-side audio examples and video screengrabs for cross-validation.
+<br><br>
+Once a speaker was validated and assigned, the transcript was automatically backfilled with the corrected labels. Audio for each segment was then extracted into clean, per-speaker directories. This produced the first reliable, guest-inclusive dataset and established a disciplined labeling pipeline.
+</p>
+
+<div class="block">
+  <div class="block-header">V2 — Core Signals</div>
+  <div class="block-body">
+V2 Summary:
+• First HITL pipeline (Clownfish) introduced  
+• pyannote → custom_speaker remapping validated with audio + video  
+• Full transcript backfill applied after each speaker confirmation  
+• Produced clean, structured per-speaker audio directories  
+
+Balanced Dataset (V2-Actual):
+• Chamath:   2,280 total (1,810 train, 234 val, 236 test)  
+• Friedberg: 2,280 total (1,573 train, 345 val, 362 test)  
+• JCal:      2,280 total (1,601 train, 339 val, 340 test)  
+• Sacks:     2,280 total (1,602 train, 348 val, 330 test)  
+→ Total V2-Actual: 9,120 samples  
+
+Modeling Insight:
+• Class balance fully corrected  
+• Guest segments present → realistic negative examples  
+• Evaluation now meaningful (V1 metrics were inflated from host-only domain)  
+
+Key Shift:
+• V2 established quality control, structure, and true dataset hygiene  
+• Marked the transition from “feasibility” to a scalable training pipeline  
+  </div>
+</div>
+
+<!-- =============================== -->
+<!--            V3 SECTION          -->
+<!-- =============================== -->
+
+<h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
+
+<p class="lead">
+V3 replaced Pyannote embeddings with Nvidia NeMo / TitaNet, immediately stabilizing the embedding space.  
+Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.  
+Accuracy dipped slightly, but the geometry improved dramatically — the first version that behaved like a production-quality speaker model.
+</p>
+
+<div class="image-grid">
+  <img src="images/pyannote.png" onclick="openModal(this)">
+  <img src="images/nemo.png" onclick="openModal(this)">
+</div>
+
+<div class="block">
+  <div class="block-header">V3 — Core Signals</div>
+  <div class="block-body">
+Embedding Metrics (NeMo / TitaNet):
+• Intra-class distance: 0.2502  
+• Inter-class distance: 0.9914  
+• Separation ratio: 3.96×
+
+Classifier Performance:
+• Accuracy: 96% on >5s segments  
+• Test size: 11,373 clips  
+• Speaker classes: 5 (incl. OTHER)  
+• Intra/Inter ratio: 4.18×
+
+Confusion Structure:
+• Friedberg ↔ JCal: ~1–1.5%  
+• Chamath ↔ JCal: ~2%  
+• Sacks errors: ~0.5%  
+• OTHER F1: 95–97%
+
+Behavioral Shifts:
+• Confusion asymmetry eliminated  
+• Clusters became compact and cosine-stable  
+• Boundary errors now reflect real acoustic difficulty  
+• Generalization improved across 390 episodes  
+• >5s segment requirement removed false-short artifacts
+
+Key Insight:
+V3 is the first version with correct embedding geometry —  
+tight clusters, stable cosine structure, balanced error flows, and reproducible behavior across real-world audio domains.
+  </div>
+</div>
+
 </main>
+
+<div id="modal" class="modal" onclick="closeModal()">
+  <img id="modalImg">
+</div>
 
 <script>
 document.querySelectorAll('.block-header').forEach(h=>{
@@ -235,6 +350,15 @@ document.querySelectorAll('.block-header').forEach(h=>{
     h.parentElement.classList.toggle('open');
   });
 });
+
+function openModal(img){
+document.getElementById("modalImg").src = img.src;
+document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display = "none";
+}
 </script>
 
 </body>
