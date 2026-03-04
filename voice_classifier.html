@@ -10,11 +10,13 @@
 
 :root{
   --green:#76b900;
+  --green-dim:rgba(118,185,0,0.12);
   --bg:#f9f9f9;
   --surface:#ffffff;
   --border:#e4e4e4;
   --text:#1a1a1a;
   --muted:#6b6b6b;
+  --faint:#aaaaaa;
   --nav-width:220px;
 }
 
@@ -25,6 +27,7 @@ body{
   background:var(--bg);
   color:var(--text);
   display:flex;
+  min-height:100vh;
 }
 
 nav{
@@ -35,11 +38,16 @@ nav{
   background:var(--surface);
   border-right:1px solid var(--border);
   padding:32px 0;
+  display:flex;
+  flex-direction:column;
 }
 
 .nav-logo{
   font-family:'IBM Plex Mono',monospace;
   font-size:11px;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
   color:var(--green);
   padding:0 24px 24px;
   border-bottom:1px solid var(--border);
@@ -51,7 +59,13 @@ nav{
   font-size:11px;
   color:var(--muted);
   text-decoration:none;
-  padding:8px 24px;
+  padding:7px 24px;
+  border-left:2px solid transparent;
+}
+
+.nav-item:hover{
+  color:var(--green);
+  background:var(--green-dim);
 }
 
 main{
@@ -60,44 +74,46 @@ main{
   max-width:1000px;
 }
 
-h1{font-size:28px;margin-bottom:20px;}
-h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
+.page-eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--green);
+  margin-bottom:12px;
+}
 
-.version-text{
-  margin:18px 0 30px;
+h1{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+
+h2{
+  font-size:13px;
+  text-transform:uppercase;
+  margin-top:60px;
+  margin-bottom:14px;
+  font-family:'IBM Plex Mono',monospace;
+  letter-spacing:.08em;
+}
+
+.lead{
   font-size:14px;
-  line-height:1.8;
-  max-width:760px;
+  line-height:1.75;
   color:#3a3a3a;
+  max-width:720px;
+  margin-bottom:22px;
 }
 
-.block{
-  border:1px solid var(--border);
-  margin-bottom:20px;
-  border-radius:4px;
-  overflow:hidden;
-}
-
-.block-header{
-  padding:14px 18px;
-  cursor:pointer;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  background:#fafafa;
-}
-
-.block-body{
-  display:none;
-  padding:24px;
-}
-
-.block.open .block-body{display:block;}
-
-.metric-list{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:12px;
-  line-height:1.8;
-  white-space:pre-line;
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:start;
+  margin-top:32px;
 }
 
 .image-grid{
@@ -111,16 +127,54 @@ h2{font-size:13px;text-transform:uppercase;margin-top:60px;}
   width:100%;
   border:1px solid var(--border);
   cursor:pointer;
+  transition:transform .15s ease;
 }
 
-pre{
+.image-grid img:hover{
+  transform:scale(1.02);
+}
+
+.nav-section-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--faint);
+  margin-bottom:12px;
+}
+
+.code-container{
+  background:#0d1117;
+  border:1px solid #30363d;
+  border-radius:4px;
+  overflow:hidden;
+}
+
+.code-header{
+  background:#161b22;
+  padding:10px 14px;
   font-family:'IBM Plex Mono',monospace;
   font-size:11px;
-  line-height:1.6;
-  background:#fafafa;
-  padding:16px;
-  border:1px solid var(--border);
+  color:#8b949e;
+  border-bottom:1px solid #30363d;
+}
+
+.code-body{
+  padding:18px;
   overflow-x:auto;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  line-height:1.6;
+  color:#c9d1d9;
+}
+
+.analysis-text{
+  font-size:14px;
+  line-height:1.75;
+  color:#3a3a3a;
+  max-width:760px;
+  margin-top:32px;
 }
 
 .modal{
@@ -142,6 +196,7 @@ pre{
   nav{display:none;}
   main{padding:32px 24px;}
   .image-grid{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -154,151 +209,110 @@ pre{
   <a href="#v2" class="nav-item">V2</a>
   <a href="#v3" class="nav-item">V3</a>
   <a href="#v4" class="nav-item">V4</a>
+  <a href="#rationale" class="nav-item">Rationale</a>
 </nav>
 
 <main>
 
+<p class="page-eyebrow">Speaker Identification Architecture</p>
 <h1>Speaker Classification Policy Evolution</h1>
 
-<!-- ================= V1 ================= -->
+<!-- V1 -->
 <h2 id="v1">V1 — Host-Only Classifier</h2>
-
-<div class="version-text">
+<p class="lead">
 WhisperX segmentation + Pyannote embeddings. Guest audio excluded.
+V1 proved feasibility, not robustness. Severe class imbalance and incomplete evaluation made generalization unknowable.
+</p>
 
-V1 proved feasibility, not robustness.
-Severe class imbalance and incomplete evaluation made generalization unknowable.
-</div>
-
-<div class="block">
-<div class="block-header">V1 Original Dataset Reality</div>
-<div class="block-body">
-<div class="metric-list">
-Total Samples: 3,859
-
-Chamath: 716 (100% train)
-Friedberg: 1,483
-JCal: 840
-Sacks: 820
-
-Issues:
-• Severe class imbalance
-• No guest hard-negatives
-• No reliable generalization measurement
-</div>
-</div>
-</div>
-
-<!-- ================= V2 ================= -->
+<!-- V2 -->
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
-
-<div class="version-text">
-Same architecture. Balanced dataset. Guest awareness added.
+<p class="lead">
+Architecture unchanged. Balanced dataset and explicit guest class introduced.
 Data discipline changed.
-</div>
+</p>
 
-<!-- ================= V3 ================= -->
+<!-- V3 -->
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
-
-<div class="version-text">
+<p class="lead">
 Cleaner embedding manifold. Reduced over-segmentation.
-Test Accuracy: 96.53%
-Binary Host vs Other: 98.52%
-Primary Confusion: JCal → Chamath
-</div>
+Test Accuracy: 96.53%. Binary Host vs Other: 98.52%.
+Primary Confusion: JCal → Chamath.
+</p>
 
 <div class="image-grid">
 <img src="images/pyanote.png" onclick="openModal(this)">
 <img src="images/nemo.png" onclick="openModal(this)">
 </div>
 
-<!-- ================= V4 ================= -->
+<!-- V4 -->
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
-
-<div class="version-text">
-Trained only on >5s segments.
-Embedding geometry improved.
-
-Production exposed confident cluster-level failures.
-
+<p class="lead">
+Trained only on &gt;5s segments. Anchored identity on long-form geometry.
+Embedding geometry improved. Production exposed confident cluster-level failures.
 High accuracy ≠ production reliability.
-</div>
+</p>
 
-<!-- ================= RATIONALE ================= -->
+<!-- RATIONALE -->
 <h2 id="rationale">Rationale for Dropping the Classifier Layer</h2>
 
-<div class="version-text">
-
-The failure surfaced during manual transcript spot-checking.
-
-A 10.4s segment was incorrectly marked as propagated.
-
-</div>
-
-<div class="image-grid">
+<div class="two-col">
 
 <div>
-<div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:8px;">
-10.4s Segment (Incorrectly Propagated)
-</div>
-<pre>{
+  <div class="nav-section-label">LONG SEGMENT · SHOULD BE CLASSIFIED</div>
+  <div class="code-container">
+    <div class="code-header">Segment A — 10.4s</div>
+    <div class="code-body">
+{
   "speaker_id": "SPEAKER_03",
   "custom_speaker": "friedberg",
   "confidence": 0.9999877214431763,
-  "start": 425.706,
-  "end": 436.118,
-  "duration": 10.411999999999978,
-  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
+  "duration": 10.4119,
   "speaker_id_propagated": true
-}</pre>
+}
+    </div>
+  </div>
 </div>
 
 <div>
-<div style="font-family:'IBM Plex Mono';font-size:11px;margin-bottom:8px;">
-0.32s Segment (Backfilled)
-</div>
-<pre>{
+  <div class="nav-section-label">SHORT SEGMENT · BACKFILLED</div>
+  <div class="code-container">
+    <div class="code-header">Segment B — 0.32s</div>
+    <div class="code-body">
+{
   "speaker_id": "SPEAKER_04",
   "is_lizard": true,
   "custom_speaker": "friedberg",
   "confidence": 0.0,
-  "start": 51.092,
-  "end": 51.412,
-  "duration": 0.3200000000000003,
-  "text": "Where is J. Cal?",
+  "duration": 0.3200,
   "speaker_id_propagated": true
-}</pre>
+}
+    </div>
+  </div>
 </div>
 
 </div>
 
-<div class="version-text">
-
-Brad Gerstner’s embeddings overlap with Sacks and Friedberg. That’s why his segments were getting wrongly attributed.
-
-This is a fundamental voice-similarity problem, made worse by a classifier that’s forced to act as the source of truth inside a fixed label space.
+<div class="analysis-text">
+Brad Gerstner’s embeddings overlap with Sacks and Friedberg. That’s why his segments were wrongly attributed.
 
 Cosine distance (mean):
+<br><br>
+Brad → Sacks: 0.7774 (most similar)<br>
+Brad → Friedberg: 0.8007
+<br><br>
 
-Brad → Sacks: 0.7774 (most similar)  
-Brad → Friedberg: 0.8007  
+This is a fundamental voice-similarity problem made worse by a classifier forced to act as the source of truth inside a constrained label space.
 
-Two things worth noting.
+I did not audit whether any Brad clips were mislabeled as Sacks.  
+I also did not perform a deep post-mortem on the transcript processing script itself.
 
-First, I didn’t go back and audit whether any of Brad’s segments were incorrectly labeled as Sacks. The analysis focused on the Friedberg misattribution that surfaced.
-
-Second, I don’t recall doing a deeper post-mortem on the transcript processing script itself. It’s entirely possible there was additional logic influencing propagation — for example, code-gen that unintentionally constrained the classifier to label only the four hosts, even though guests were intentionally created as a class.
-
-I also find it suspicious that there is no "custom_speaker": "brad" in any of the segment records. There’s also no "custom_speaker": "jcal" — but JCal wasn’t in that episode. The difference is that Brad’s cosine cluster sits much closer to Sacks and Friedberg than it does to JCal, which makes it unsurprising that we don’t see any JCal misattribution.
-
-If Brad’s clips were never actually eligible to be labeled as Brad at inference time, then the system wasn’t merely confused — it was structurally incapable of being correct.
+If inference logic prevented Brad from ever being eligible for the label “brad,” then the system was not confused — it was structurally incapable of being correct.
 
 The classifier layer was removed.
 
 Cluster first.  
 Verify identity.  
 Then propagate.
-
 </div>
 
 </main>
@@ -315,9 +329,6 @@ function openModal(img){
 function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
-document.addEventListener("keydown", e=>{
-  if(e.key==="Escape") closeModal();
-});
 </script>
 
 </body>
