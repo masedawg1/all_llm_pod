@@ -337,7 +337,57 @@ V3 is the first version with correct embedding geometry —
 tight clusters, stable cosine structure, balanced error flows, and reproducible behavior across real-world audio domains.
   </div>
 </div>
+<!-- =============================== -->
+<!--            V4 SECTION          -->
+<!-- =============================== -->
 
+<h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
+
+<p class="lead">
+Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched what I observed in practice.  
+Short clips produced noisy geometry, inconsistent distances, and unpredictable classifier behavior.
+<br><br>
+Community advice was to drop short segments entirely — which does make sense: shorter audio is more likely to be mislabeled, and it also contains less acoustic identity signal.  
+But approximately 50% of All-In’s segments are under 4 seconds, and I refused to discard half the dataset without attempting a more principled solution.
+<br><br>
+My working hypothesis became:
+<br>1. Train the classifier only on host and guest audio >5 seconds  
+2. Classify only segments >5 seconds, leaving everything else untouched  
+3. Validate the >5s classifications, then propagate speaker labels to shorter segments using NeMo <code>cluster_id</code> — which had already proven extremely reliable  
+</p>
+
+<div class="image-grid">
+  <img src="images/v4_error_1.png" onclick="openModal(this)">
+  <img src="images/v4_error_2.png" onclick="openModal(this)">
+</div>
+
+<div class="block">
+  <div class="block-header">V4 — Core Signals</div>
+  <div class="block-body">
+Duration Constraint Observations:
+• Sub-5s clips produce unstable embeddings  
+• Distance metrics fluctuate unpredictably  
+• Short clips disproportionately responsible for mislabels  
+
+Strategy Shift:
+• Train classifier on >5s segments only  
+• Classify >5s segments only  
+• Backfill short segments using NeMo cluster_id continuity  
+
+Why It Worked:
+• NeMo clusters remained speaker-consistent even for very short segments  
+• Eliminated error amplification from ambiguous micro-segments  
+• Preserved nearly the entire dataset (~50% would have been discarded otherwise)  
+
+Production Insight:
+V4 separated “classification” from “propagation,” using >5s segments for reliable ground truth  
+and leveraging NeMo cluster cohesion to maintain continuity across short utterances.
+
+Outcome:
+Cleaner boundaries, fewer false-short artifacts, higher consistency,  
+and a hybrid system that respects both research constraints and real-world production demands.
+  </div>
+</div>
 </main>
 
 <div id="modal" class="modal" onclick="closeModal()">
