@@ -440,7 +440,9 @@ Brad's embedding geometry explained the second failure: his cosine distances pla
 <br><br>
 It's unclear why <code>custom_speaker: "brad"</code> was never created. If the labeling had been incorrectly limited to hosts, I'd expect to see his segments attributed to JCal (who wasn't present in the episode) — but that didn't happen. That bolsters the case that Brad's voice was simply too phonemically close to the hosts for the classifier to work effectively, regardless of label space.
 <br><br>
-That's why the classifier layer was removed. A forced, incomplete label space sitting on top of overlapping embeddings isn't truth — it's noise with confidence scores.
+Removing the classifier replaced stochastic guesswork with a more interpretable, auditable pipeline. 
+<br><br>
+<p>Lesson learned: a forced, incomplete label space sitting on top of overlapping embeddings wasn't ground-truth; it was slop with really impressive confidence scores.</p>
 </p>
 
 <div class="block">
