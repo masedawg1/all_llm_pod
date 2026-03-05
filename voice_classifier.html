@@ -407,9 +407,9 @@ Ultimately, I chose to strip the pipeline down. An imperfect label space sitting
     <div class="panel-label">Long Segment · Misclassified</div>
     <div class="code">
 <pre>{
-  "speaker_id": "SPEAKER_03",
+  "speaker_id": "SPEAKER_03", //Brad's NeMo_ID
   "is_lizard": false,
-  "custom_speaker": "friedberg",
+  <span style="color:#ff6b6b;">"custom_speaker": "friedberg",</span>
   "confidence": 0.9999877,
   "duration": 10.4119,
   "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
@@ -422,9 +422,9 @@ Ultimately, I chose to strip the pipeline down. An imperfect label space sitting
     <div class="panel-label">Short Segment · Also Misclassified</div>
     <div class="code">
 <pre>{
-  "speaker_id": "SPEAKER_04",
+  "speaker_id": "SPEAKER_04", //Friedberg's NeMo_ID
   "is_lizard": true,
-  "custom_speaker": "friedberg",
+  <span style="color:#ff6b6b;">"custom_speaker": "friedberg",</span>  //but Brad is talking
   "confidence": 0.0,
   "duration": 0.3200,
   "text": "Where is Jcal?",
