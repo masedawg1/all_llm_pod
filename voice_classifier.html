@@ -345,7 +345,10 @@ tight clusters, stable cosine structure, balanced error flows, and reproducible 
 
 <p class="lead">
 Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched what I observed in practice.  
-Short clips produced noisy geometry, inconsistent distances, and erratic classifier behavior.
+<div class="image-grid">
+  <img src="images/v4_error_1.png" onclick="openModal(this)">
+  <img src="images/v4_error_2.png" onclick="openModal(this)">
+  </div>
 <br><br>
 Community advice was to drop short segments entirely — which does make sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.  
 But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset wasn’t acceptable without trying something more principled.
@@ -355,10 +358,6 @@ My working hypothesis became:
 <br>2. Classify only >5s segments, leaving all short segments untouched  
 <br>3. After validating the long-segment classifications, propagate labels to short segments using NeMo <code>cluster_id</code>, which had already proven reliable  
 </p>
-
-<div class="image-grid">
-  <img src="images/v4_error_1.png" onclick="openModal(this)">
-  <img src="images/v4_error_2.png" onclick="openModal(this)">
   </div>
 </div>
 </main>
