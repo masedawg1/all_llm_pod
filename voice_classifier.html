@@ -41,6 +41,7 @@ border-right:1px solid var(--border);
 padding:32px 0;
 display:flex;
 flex-direction:column;
+overflow-y:auto;
 }
 
 .nav-logo{
@@ -54,6 +55,16 @@ padding:0 24px 24px;
 border-bottom:1px solid var(--border);
 }
 
+.nav-section-label{
+font-family:'IBM Plex Mono',monospace;
+font-size:9px;
+font-weight:600;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--faint);
+padding:20px 24px 8px;
+}
+
 .nav-item{
 display:block;
 font-family:'IBM Plex Mono',monospace;
@@ -62,11 +73,32 @@ color:var(--muted);
 text-decoration:none;
 padding:7px 24px;
 border-left:2px solid transparent;
+transition:color .15s,border-color .15s,background .15s;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
 }
 
 .nav-item:hover{
+color:var(--text);
+background:var(--bg);
+border-left-color:var(--border);
+}
+
+.nav-item.active{
 color:var(--green);
+border-left-color:var(--green);
 background:var(--green-dim);
+}
+
+.nav-footer{
+margin-top:auto;
+padding:20px 24px 0;
+border-top:1px solid var(--border);
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+color:var(--faint);
+line-height:1.6;
 }
 
 main{
@@ -108,8 +140,6 @@ max-width:720px;
 margin-bottom:22px;
 }
 
-/* ACCORDION */
-
 .block{
 border:1px solid var(--border);
 border-radius:4px;
@@ -137,8 +167,6 @@ white-space:pre-line;
 
 .block.open .block-body{display:block}
 
-/* IMAGE GRID */
-
 .image-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -155,8 +183,6 @@ transition:transform .15s ease;
 }
 
 .image-grid img:hover{transform:scale(1.02);}
-
-/* TWO-COL CODE PANELS */
 
 .two-col{
 display:grid;
@@ -196,8 +222,6 @@ word-break:break-all;
 overflow-wrap:break-word;
 }
 
-/* MODAL */
-
 .modal{
 display:none;
 position:fixed;
@@ -224,23 +248,12 @@ main{padding:32px 24px;}
 
 <body>
 
-<nav>
-<div class="nav-logo">ALL-LLM Pod</div>
-<a href="#v1" class="nav-item">V1</a>
-<a href="#v2" class="nav-item">V2</a>
-<a href="#v3" class="nav-item">V3</a>
-<a href="#v4" class="nav-item">V4</a>
-<a href="#v5" class="nav-item">Classifier Removal</a>
-</nav>
+<nav id="shared-nav"></nav>
 
 <main>
 
 <p class="page-eyebrow">Speaker Identification Architecture</p>
 <h1>Speaker Classification Policy Evolution</h1>
-
-<!-- =============================== -->
-<!--            V1 SECTION          -->
-<!-- =============================== -->
 
 <h2 id="v1">V1 — Host-Only Classifier</h2>
 
@@ -270,14 +283,10 @@ Key Insight:
 Confirmed host-only classification feasibility, but identified critical confusion between Chamath ↔ JCal due to fast-speech similarity. Architecture lacked production robustness.</div>
 </div>
 
-<!-- =============================== -->
-<!--            V2 SECTION          -->
-<!-- =============================== -->
-
 <h2 id="v2">V2 — Guest-Aware Scaling</h2>
 
 <p class="lead">
-V2 was made possible via a custom HITL tool I created called <strong>Clownfish</strong>.  
+V2 was made possible via a custom HITL tool I created called <strong>Clownfish</strong>.
 Clownfish ingested the original V1 transcripts and let me manually review and re-map <code>pyannote</code> speaker_ids to structured <code>custom_speaker</code> labels, with side-by-side audio examples and video screengrabs for cross-validation.
 <br><br>
 <a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank" style="display:block;margin:20px 0;max-width:480px;">
@@ -310,15 +319,11 @@ Key Shift:
 V2 moved from simple MLP feasibility to a higher-quality, pre-production pipeline. While training hit 100% accuracy, the test set's 98% performance across 12,843 samples proved the model's ability to generalize once guest segments and class-weight balancing were properly implemented, ensuring evaluation metrics were no longer inflated by host-only domain constraints.</div>
 </div>
 
-<!-- =============================== -->
-<!--            V3 SECTION          -->
-<!-- =============================== -->
-
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
 
 <p class="lead">
-Episode count grew to 387. V3 replaced Pyannote embeddings with Nvidia NeMo / TitaNet, immediately stabilizing the embedding space.  
-Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.  
+Episode count grew to 387. V3 replaced Pyannote embeddings with Nvidia NeMo / TitaNet, immediately stabilizing the embedding space.
+Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.
 Accuracy dipped slightly, but the geometry and confidence improved.
 </p>
 
@@ -330,37 +335,33 @@ Accuracy dipped slightly, but the geometry and confidence improved.
 <div class="block">
   <div class="block-header">V3 — Core Signals</div>
   <div class="block-body">Embedding Metrics (NeMo / TitaNet):
-• Intra-class distance: 0.2502  
-• Inter-class distance: 0.9914  
+• Intra-class distance: 0.2502
+• Inter-class distance: 0.9914
 • Separation ratio: 3.96×
 
 Classifier Performance:
-• Accuracy: 96% on &gt;5s segments  
-• Test size: 11,373 clips  
-• Speaker classes: 5 (incl. OTHER)  
+• Accuracy: 96% on &gt;5s segments
+• Test size: 11,373 clips
+• Speaker classes: 5 (incl. OTHER)
 • Intra/Inter ratio: 4.18×
 
 Confusion Structure:
-• Friedberg ↔ JCal: ~1–1.5%  
-• Chamath ↔ JCal: ~2%  
-• Sacks errors: ~0.5%  
+• Friedberg ↔ JCal: ~1–1.5%
+• Chamath ↔ JCal: ~2%
+• Sacks errors: ~0.5%
 • OTHER F1: 95–97%
 
 Behavioral Shifts:
-• Confusion asymmetry eliminated  
-• Clusters became compact and cosine-stable  
-• Boundary errors now reflect real acoustic difficulty  
-• Generalization improved across 387 episodes  
+• Confusion asymmetry eliminated
+• Clusters became compact and cosine-stable
+• Boundary errors now reflect real acoustic difficulty
+• Generalization improved across 387 episodes
 • &gt;5s segment requirement removed false-short artifacts
 
 Key Insight:
-V3 is the first version with correct embedding geometry —  
+V3 is the first version with correct embedding geometry —
 tight clusters, stable cosine structure, balanced error flows, and reproducible behavior across real-world audio domains.</div>
 </div>
-
-<!-- =============================== -->
-<!--            V4 SECTION          -->
-<!-- =============================== -->
 
 <h2 id="v4">V4 — Duration Constraint &amp; Production Reality</h2>
 
@@ -374,29 +375,24 @@ Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched wha
 </div>
 
 <p class="lead">
-Community advice was to drop short segments entirely — which makes sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.  
+Community advice was to drop short segments entirely — which makes sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.
 But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset this early wasn't acceptable.
 <br><br>
 My working hypothesis became:
-<br>1. Train the classifier only on host and guest audio longer than 5 seconds  
-<br>2. Limit the classifier to segments longer than 5s, leaving all short segments untouched  
+<br>1. Train the classifier only on host and guest audio longer than 5 seconds
+<br>2. Limit the classifier to segments longer than 5s, leaving all short segments untouched
 <br>3. Propagate speaker labels to short segments using NeMo <code>cluster_id</code>, which had proven remarkably reliable across dozens of episodes
 </p>
-
-<!-- =============================== -->
-<!--     WHY CLASSIFIERS WERE DROPPED -->
-<!-- =============================== -->
 
 <h2 id="v5">Classifier Removal — Structural Failure</h2>
 
 <p class="lead">
-Classifiers were ultimately dropped when spot-checks of V4 transcripts exposed high-confidence contradictions that defied the system's own logic. Seeing longer segments labeled with nearly 100% confidence while simultaneously being flagged as <code>is_back_propagated: true</code>—a state that should be physically impossible—was the turning point.
+V4 was retired when embedding geometry made the core problem undeniable. Brad Gerstner's voice didn't sit in guest space — it overlapped directly with host clusters. His minimum cosine distance to JCal (0.2507) fell below JCal's own intra-class baseline (0.4842). His distances to Sacks (0.7774) and Friedberg (0.8007) both landed below the 0.8740 inter-host floor. No classifier trained on this label space could resolve those cases — the geometry itself was the failure, not the model.
 <br><br>
-Going forward, NeMo's speaker_id backbone and Streamlit HITL review replaced stochastic label assignment with something auditable. 
-
-It also exposed me directly to workin with transcripts at scale, revealing a new class of problems that a classifier score would have steamrolled over.</p>
-
-<p>Lesson learned: a forced, incomplete label space sitting on top of overlapping embeddings wasn't ground-truth; it was slop with really impressive confidence scores.</p>
+High-confidence scores made it worse, not better. A segment misclassified at 0.9999 confidence is harder to catch than a low-confidence flag — it passes every threshold and surfaces nothing for review. The system wasn't degrading visibly; it was failing silently. The two JSON blocks below capture the contradiction: a long segment with near-certain confidence and a short one with zero — both wrong, both labeled Friedberg, both actually Brad.
+<br><br>
+The classifier was dropped. NeMo's <code>speaker_id</code> backbone and Streamlit HITL review replaced stochastic label assignment with something auditable. It also exposed me directly to working with transcripts at scale, revealing a new class of problems that a classifier score would have steamrolled over. The decision and the episode that forced it are covered on the <a href="about.html" style="color:var(--green);text-decoration:none;font-family:'IBM Plex Mono',monospace;">About page ↗</a>.
+</p>
 
 <div class="two-col">
 
@@ -433,18 +429,17 @@ It also exposed me directly to workin with transcripts at scale, revealing a new
 </div>
 
 <div class="block">
-  <div class="block-header">Brad — Embedding Geometry: The Smoking Gun</div>
-  <div class="block-body">The Math of the Collision:
-• Brad → Chamath Mean Distance: 0.9181 (Above baseline, but still within the confusion zone)
-• Brad → Sacks Mean Distance: 0.7774 (Lower than the 0.8740 inter-host baseline)
-• Brad → Friedberg Mean Distance: 0.8007 (Lower than the 0.8740 inter-host baseline)
-• Brad → JCal Min Distance: 0.2507 (Lower than JCal's own 0.4842 intra-host baseline!)
-• Conclusion: Brad Gerstner doesn't just "sound like" the hosts; some of his segments are mathematically indistinguishable from host identity manifolds.
+  <div class="block-header">Brad — Embedding Geometry</div>
+  <div class="block-body">Inter-host baseline (mean cosine distance between any two hosts): 0.8740
+JCal intra-class baseline (within-speaker distance): 0.4842
 
-The Paradox: Why wasn't Brad mapped to JCal?
-Note: JCal wasn't in episode 136.
-Brad's minimum distance (0.2507) should have triggered a JCal label, because the classifier wasn't told who was in the episode. Yet it confidently mapped him to Friedberg. This exposes the "Black Box" failure:
+Brad → Chamath:   0.9181  (above inter-host baseline)
+Brad → Sacks:     0.7774  (below inter-host baseline)
+Brad → Friedberg: 0.8007  (below inter-host baseline)
+Brad → JCal min:  0.2507  (below JCal's own intra-class baseline)
 
+Some of Brad's segments are geometrically closer to JCal than JCal's own clips are to each other.
+A label space built on these embeddings wasn't ground truth — it was confident slop.</div>
 </div>
 
 </main>
@@ -469,6 +464,17 @@ function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
 </script>
+
+<script>
+window.NAV_ANCHORS = [
+  { href: '#v1', label: 'V1' },
+  { href: '#v2', label: 'V2' },
+  { href: '#v3', label: 'V3' },
+  { href: '#v4', label: 'V4' },
+  { href: '#v5', label: 'Classifier Removal' }
+];
+</script>
+<script src="nav-loader.js" data-page="voice_classifier"></script>
 
 </body>
 </html>
