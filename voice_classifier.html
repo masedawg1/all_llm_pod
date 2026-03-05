@@ -253,42 +253,24 @@ Noteworthy: Guests were deliberately excluded. Guest audio was difficult to reli
 <div class="block">
   <div class="block-header">V1 — Core Signals</div>
   <div class="block-body">
+<div class="block-body">
 V1 Summary:
-• ~9,000 host-only clips from 98 episodes  
-• WhisperX segmentation + Pyannote embeddings  
-• Guests excluded → "unknown" class emerged and correctly absorbed them  
-• Produced first 187 transcripts; system was functional but fragile  
+• 9,000 host-only clips (98 episodes) using WhisperX + Pyannote
+• (Inexplicable) Guest Handling: "Unknown" class emerged to absorb guest audio
+• Output: First 187 functional transcripts
 
-Dataset Balance (post-clean):
-• Sacks: 1602  
-• JCal: 1601  
-• Friedberg: 1573  
-• Chamath: 1810  
-→ Nearly perfect class balance  
+Dataset Balance:
+• Sacks: 1602 | JCal: 1601 | Friedberg: 1573 | Chamath: 1810
+→ Achieved near-perfect host class balance
 
-Model Suite Results:
-• RandomForest: CV 0.930, Val 0.972  
-• SVM: CV 0.936, Val 0.979  
-• Logistic Regression: CV 0.918, Val 0.977  
-• MLP: CV 0.927, Val 0.979  
-→ Best model: MLP (97.9% validation)  
-
-Test Performance:
-• Overall accuracy: 0.953  
-• Sacks F1 0.97  
-• JCal F1 0.96  
-• Friedberg F1 0.95  
-• Chamath F1 0.94 (Recall 0.99 → over-called boundaries)  
-
-Confusion Behavior:
-• Main confusion: Chamath ↔ JCal (fast-speech similarity)  
-• Sacks highly stable  
-• Friedberg slightly overlaps but not collapsing  
+Model Performance:
+• Best Model: MLP (97.9% Val / 0.953 Test Accuracy)
+• Sacks F1: 0.97 | JCal F1: 0.96 | Friedberg F1: 0.95
+• Chamath F1: 0.94 (High Recall 0.99 → boundary over-calling)
 
 Key Insight:
-• V1 proved host-only classification works  
-• Accuracy was strong, but architecture lacked robustness  
-• Data diversity + guest integration required a redesign
+Confirmed host-only classification feasibility, but identified critical confusion between Chamath ↔ JCal due to fast-speech similarity. Architecture lacked production robustness.
+</div>
   </div>
 </div>
 
@@ -309,26 +291,24 @@ Once a speaker was validated and assigned, the transcript was automatically back
   <div class="block-header">V2 — Core Signals</div>
   <div class="block-body">
 V2 Summary:
-• First HITL pipeline (Clownfish) introduced  
-• pyannote → custom_speaker remapping validated with audio + video  
-• Full transcript backfill applied after each speaker confirmation  
-• Produced clean, structured per-speaker audio directories  
+• Integrated HITL pipeline (Clownfish) with clusterID/audio/video cross-validation
+• Massive scale-up: **85,619 total audio samples** (70/15/15 split)
+• Transcript backfill applied after each speaker confirmation
 
-Balanced Dataset (V2-Actual):
-• Chamath:   2,280 total (1,810 train, 234 val, 236 test)  
-• Friedberg: 2,280 total (1,573 train, 345 val, 362 test)  
-• JCal:      2,280 total (1,601 train, 339 val, 340 test)  
-• Sacks:     2,280 total (1,602 train, 348 val, 330 test)  
-→ Total V2-Actual: 9,120 samples  
+Dataset Distribution (Pre-balancing):
+• Chamath: 22,930 (26.8%) | JCal: 21,915 (25.6%)
+• Sacks: 13,696 (16.0%)   | Friedberg: 13,103 (15.3%)
+• Guest: 13,975 (16.3%)
+→ Introduced robust "Guest" class for negative sampling
 
-Modeling Insight:
-• Class balance fully corrected  
-• Guest segments present → realistic negative examples  
-• Evaluation now meaningful (V1 metrics were inflated from host-only domain)  
+Performance Metrics:
+• **Test Accuracy: 0.9798 (97.98%)**
+• Sacks F1: 0.9851 | Chamath F1: 0.9823
+• Guest F1: 0.9879 (Highest recall at 0.9895)
+• JCal F1: 0.9708 (Main source of noise: 48 misclassified as Chamath)
 
 Key Shift:
-• V2 established quality control, structure, and true dataset hygiene  
-• Marked the transition from "feasibility" to a scalable training pipeline  
+V2 moved from simple MLP feasibility to a higher-quality, pre-production pipeline. While training hit 100% accuracy, the test set's 98% performance across 12,843 samples proved the model's ability to generalize once guest segments and class-weight balancing were properly implemented, ensuring evaluation metrics were no longer inflated by host-only domain constraints.
   </div>
 </div>
 
@@ -339,9 +319,9 @@ Key Shift:
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
 
 <p class="lead">
-V3 replaced Pyannote embeddings with Nvidia NeMo / TitaNet, immediately stabilizing the embedding space.  
+Episode count grew to 387. V3 replaced Pyannote embeddings with Nvidia NeMo / TitaNet, immediately stabilizing the embedding space.  
 Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.  
-Accuracy dipped slightly, but the geometry improved dramatically — the first version that behaved like a production-quality speaker model.
+Accuracy dipped slightly, but the geometry and confidence improved.
 </p>
 
 <div class="image-grid">
@@ -373,7 +353,7 @@ Behavioral Shifts:
 • Confusion asymmetry eliminated  
 • Clusters became compact and cosine-stable  
 • Boundary errors now reflect real acoustic difficulty  
-• Generalization improved across 390 episodes  
+• Generalization improved across 387 episodes  
 • >5s segment requirement removed false-short artifacts
 
 Key Insight:
@@ -389,7 +369,7 @@ tight clusters, stable cosine structure, balanced error flows, and reproducible 
 <h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
 
 <p class="lead">
-Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched what I observed in practice.
+Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched what I observed in my corpus.
 </p>
 
 <div class="image-grid">
@@ -398,13 +378,13 @@ Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched wha
 </div>
 
 <p class="lead">
-Community advice was to drop short segments entirely — which does make sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.  
-But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset wasn't acceptable without trying something more principled.
+Community advice was to drop short segments entirely — which makes sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.  
+But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset this early wasn't acceptable. 
 <br><br>
 My working hypothesis became:
 <br>1. Train the classifier only on host and guest audio longer than 5 seconds  
-<br>2. Classify only >5s segments, leaving all short segments untouched  
-<br>3. After validating the long-segment classifications, propagate labels to short segments using NeMo <code>cluster_id</code>, which had already proven reliable  
+<br>2. Limit the classifier to segments longer than 5s, leaving all short segments untouched  
+<br>3. Propagate speaker labels to short segments using NeMo <code>cluster_id</code>, which had proven remarkably reliable reliable across dozens of episodes
 </p>
 
 <!-- =============================== -->
@@ -414,7 +394,7 @@ My working hypothesis became:
 <h2 id="v5">Classifier Removal — Structural Failure</h2>
 
 <p class="lead">
-Classifiers were dropped after V4 because spot-checking transcripts exposed contradictions that simply shouldn't happen:
+Classifiers were dropped because transcripts exposed contradictions that simply shouldn't happen:
 </p>
 
 <p class="lead">
