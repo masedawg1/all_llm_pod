@@ -1,1 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALL-LLM Pod | Media</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
+  :root {
+    --green: #76b900;
+    --green-dim: rgba(118, 185, 0, 0.12);
+    --bg: #f9f9f9;
+    --surface: #ffffff;
+    --border: #e4e4e4;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --faint: #aaaaaa;
+    --nav-width: 220px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  nav {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: var(--nav-width);
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    overflow-y: auto;
+  }
+
+  .nav-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+    padding: 0 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 20px 24px 8px;
+  }
+
+  .nav-item {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 7px 24px;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-item:hover {
+    color: var(--text);
+    background: var(--bg);
+    border-left-color: var(--border);
+  }
+
+  .nav-item.active {
+    color: var(--green);
+    border-left-color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .nav-footer {
+    margin-top: auto;
+    padding: 20px 24px 0;
+    border-top: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    line-height: 1.6;
+  }
+
+  main {
+    flex: 1;
+    padding: 56px 64px 120px;
+    max-width: 900px;
+  }
+
+  .page-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+  }
+
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .media-card {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+
+  .media-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--green);
+  }
+
+  .media-card img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+
+  .media-card.short img {
+    aspect-ratio: 9/16;
+    max-height: 280px;
+    object-fit: cover;
+  }
+
+  .media-card-label {
+    padding: 10px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    border-top: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .footer {
+    margin-top: 80px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  @media (max-width: 768px) {
+    nav { display: none; }
+    main { padding: 32px 24px 80px; }
+    .media-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="shared-nav"></nav>
+
+<main>
+  <p class="page-eyebrow">Additional Media</p>
+  <h1>Videos</h1>
+
+  <div class="media-grid">
+
+    <a href="https://youtu.be/ZeN9U_gRCcs" target="_blank" class="media-card">
+      <img src="https://img.youtube.com/vi/ZeN9U_gRCcs/mqdefault.jpg" alt="The Embedding Knows What a Voice Sounds Like">
+      <div class="media-card-label">The Embedding Knows What a Voice Sounds Like</div>
+    </a>
+
+    <a href="https://youtube.com/shorts/xh2SyJAt_Gk" target="_blank" class="media-card short">
+      <img src="https://img.youtube.com/vi/xh2SyJAt_Gk/mqdefault.jpg" alt="Smoking These Meats!">
+      <div class="media-card-label">Smoking These Meats!</div>
+    </a>
+
+    <a href="https://youtube.com/shorts/FwR6WolWH0Q" target="_blank" class="media-card short">
+      <img src="https://img.youtube.com/vi/FwR6WolWH0Q/mqdefault.jpg" alt="Where does the sun go at night?">
+      <div class="media-card-label">Where does the sun go at night?</div>
+    </a>
+
+    <a href="https://youtube.com/shorts/0CqtqMo07nQ" target="_blank" class="media-card short">
+      <img src="https://img.youtube.com/vi/0CqtqMo07nQ/mqdefault.jpg" alt="WAAAAAGH!">
+      <div class="media-card-label">WAAAAAGH!</div>
+    </a>
+
+  </div>
+
+  <div class="footer">Mason Thompson · Berkeley, California</div>
+</main>
+
+<script>
+window.NAV_ANCHORS = [];
+</script>
+<script src="nav-loader.js" data-page="media"></script>
+
+</body>
+</html>
