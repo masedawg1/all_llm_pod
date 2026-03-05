@@ -30,7 +30,6 @@
     min-height: 100vh;
   }
 
-  /* ── LEFT NAV ── */
   nav {
     position: sticky;
     top: 0;
@@ -102,14 +101,12 @@
     line-height: 1.6;
   }
 
-  /* ── MAIN ── */
   main {
     flex: 1;
     padding: 56px 64px 120px;
     max-width: 860px;
   }
 
-  /* ── HEADER ── */
   .page-eyebrow {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
@@ -129,189 +126,37 @@
     margin-bottom: 20px;
   }
 
-  .version-row {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
-  }
-
-  .version-pill {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--muted);
-    background: var(--surface);
-  }
-
-  .version-pill.active {
-    color: var(--green);
-    border-color: var(--green);
-    background: var(--green-dim);
-  }
-
   .lead {
     font-size: 14px;
     line-height: 1.75;
     color: #3a3a3a;
-    margin-bottom: 52px;
+    margin-bottom: 28px;
     max-width: 680px;
   }
 
   .lead strong { color: var(--text); font-weight: 600; }
 
-  /* ── SECTION HEADING ── */
-  .section-heading {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 6px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  h2 {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text);
-  }
-
-  .section-count {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--faint);
-  }
-
-  /* ── BLOCKS ── */
-  .block {
-    margin-bottom: 2px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .block-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    user-select: none;
-    padding: 14px 18px;
-    gap: 12px;
-    transition: background 0.1s;
-  }
-
-  .block-header:hover { background: var(--bg); }
-
-  .block-header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .block-id {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
+  .lead a {
     color: var(--green);
-    background: var(--green-dim);
-    padding: 2px 7px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  .block-title {
+    text-decoration: none;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
+    font-size: 13px;
   }
 
-  .chevron {
-    font-size: 10px;
-    color: var(--faint);
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .block.open .chevron { transform: rotate(180deg); }
-
-  .block-body {
-    display: none;
-    padding: 0 18px 18px;
+  .divider {
+    border: none;
     border-top: 1px solid var(--border);
+    margin: 40px 0;
+    max-width: 680px;
   }
 
-  .block.open .block-body { display: block; }
-
-  .block-why {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.65;
-    padding: 14px 0 4px;
-  }
-
-  /* ── PIVOT LABEL ── */
-  .pivot {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--green);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  .pivot::after {
-    content: '';
-    display: block;
-    width: 32px;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* ── PULL QUOTE ── */
-  .pull {
-    border-left: 3px solid var(--green);
-    padding: 4px 16px;
-    font-size: 13px;
-    font-style: italic;
-    line-height: 1.7;
-    color: var(--muted);
-    margin: 14px 0;
-  }
-
-  .pull em {
-    color: var(--green);
-    font-style: normal;
-  }
-
-  /* ── INLINE HIGHLIGHT ── */
-  code {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--green);
-    background: none;
-    padding: 0;
-  }
-
-  /* ── STATS ── */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
-    margin-top: 32px;
+    margin-top: 52px;
     margin-bottom: 2px;
+    max-width: 680px;
   }
 
   .stat-card {
@@ -338,7 +183,6 @@
     color: var(--faint);
   }
 
-  /* ── FOOTER ── */
   .footer {
     margin-top: 80px;
     font-family: 'IBM Plex Mono', monospace;
@@ -361,47 +205,30 @@
 
 <main>
 
-  <div id="origin">
-    <p class="page-eyebrow">Project Background</p>
-    <h1>How This Got Built</h1>
+  <p class="page-eyebrow">Project Background</p>
+  <h1>How This Got Built</h1>
 
-    <p class="lead">
-      The goal was a persona-driven chatbot that could reproduce how people speak, not just what they say. The All-In Podcast was the obvious corpus — widely followed in tech circles, hundreds of episodes. The first challenge wasn't modeling language at all. YouTube transcripts lacked speaker attribution, so a custom pipeline was built to convert raw audio into speaker-labeled transcripts. That pipeline became the foundation of everything that followed.<br><br>
-      V1 took a couple of months. ASR plus a voice classifier trained on host audio identified speakers; Mistral-7B ran the personas. On the surface it worked. Then a structural weakness surfaced: the classifier had only seen the four hosts, meaning guest speech could be silently forced into a host label. Looking back, that failure didn't appear often — an "unknown" bucket absorbed most guest audio — but the architecture was fragile, and I was embarrassed by the oversight, so this warranted a rebuild.<br><br>
-      Days of focused work followed creating custom embeddings and classifiers to find and label speakers at scale. Clownfish made this possible. More on the subject of embeddings and classifiers <a href="voice_classifier.html" style="color:var(--green);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:13px;">here ↗</a>
-    </p>
+  <p class="lead">
+    The goal was a persona-driven chatbot that could reproduce how people speak, not just what they say. The All-In Podcast was the obvious corpus — widely followed in tech circles, hundreds of episodes. The first challenge wasn't modeling language at all. YouTube transcripts lacked speaker attribution, so a custom pipeline was built to convert raw audio into speaker-labeled transcripts — and I got hooked doing it.
+  </p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:-8px 0 40px;max-width:680px;">
-      <div>
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">pyannote.png</span>
-        </div>
-        <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:6px;letter-spacing:.1em;text-transform:uppercase;">Pyannote</p>
-      </div>
-      <div>
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);">nemo.png</span>
-        </div>
-        <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:6px;letter-spacing:.1em;text-transform:uppercase;">NeMo</p>
-      </div>
-    </div>
+  <p class="lead">
+    Building the pipeline meant needing training data. Getting training data meant building a labeling tool. Having a labeling tool meant actually using it — which meant sitting with thousands of transcript segments, listening, correcting, noticing things. Patterns that a classifier would have scored and moved on from became visible: crosstalk, mic bleed, diarization artifacts, speakers who sounded close enough to each other that no embedding could cleanly separate them. Each layer exposed the one underneath it.
+  </p>
 
-    <p class="lead">
-      Getting NVIDIA NeMo running locally was the turning point. It produced far more stable diarization than Pyannote. Streamlit tooling expanded around it — timeline analysis, facial recognition, cross-validation signals. Within a day or two it had grown too complicated to reason about. So it was stripped back.<br><br>
-      What remained was <strong>Clownfish</strong>: NeMo produces stable speaker IDs, the interface groups clips by ID, you listen and map the ID to a name. Once mapped, the assignment propagates through the transcript. That simplicity let the pipeline scale from roughly 185 labeled episodes to more than 500 within a couple of months.
-    </p>
+  <p class="lead">
+    That process produced <strong>Clownfish</strong> — a Streamlit HITL tool for reviewing and mapping NeMo speaker IDs to named labels at scale. Clownfish evolved into <strong>Brody</strong>, with integrated heuristics and deeper transcript inspection. From there it became a process of tinkering with audio files and hyperparameters to surface ghost audio — segments where words are heard but never transcribed. The pipeline wasn't a detour. It turned out to be the project, and it's still going.
+  </p>
 
-    <a href="https://youtu.be/UPnnOCWqiAw" target="_blank" style="display:inline-block;margin:-8px 0 40px;border:1px solid var(--border);border-radius:3px;overflow:hidden;line-height:0;">
-      <img src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg" alt="YouTube preview" style="width:320px;display:block;">
-    </a>
+  <hr class="divider">
 
-    <p class="lead">
-      In parallel, speaker classification evolved alongside the transcript pipeline. A first classifier — 9,120 balanced clips, four hosts, Pyannote embeddings — hit 95.3% test accuracy with proper train/val/test splits for all speakers. A second generation scaled to 76,000+ host clips and 14,000+ guest clips across 114 guests. Two embedding tracks ran in parallel: Pyannote XGBoost reached 99.41% on binary host/guest detection; NeMo TitaNet XGBoost reached 99.38% on 4-host identification with a 3.96x cluster separation ratio — a fundamentally tighter geometry.<br><br>
-      By every benchmark, strong results. But production behavior told a different story. Episode 136 made this concrete: Brad Gerstner was misclassified as David Friedberg. The embeddings revealed why — some of Brad's clips landed closer to host clusters than same-speaker clips do to each other. No classifier could reliably separate those cases. The embedding space itself overlapped.<br><br>
-      That finding drove the final architectural decision: abandon classifier-based labeling, rely on NeMo's stable <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green);">speaker_id</code> backbone, and use HITL heuristic review to surface edge cases. Generating trustworthy training data requires guarding against worst-case errors, not optimizing average accuracy. <a href="voice_classifier.html" style="color:var(--green);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:12px;">Full classifier detail ↗</a>
-    </p>
+  <p class="lead">
+    The chatbot is built. Personas load, inference runs, the voices are recognizable. What remains unsolved is the training — LoRA fine-tuning is on hold while the right data composition gets worked out. The transcripts need to be clean enough, labeled well enough, and representative enough that the fine-tune actually transfers. Which is exactly what all of this has been about.
+  </p>
 
-  </div>
+  <p class="lead">
+    The pipeline detail is in <a href="voice_classifier.html">Voice Classification ↗</a>. The edge cases are in <a href="heuristics.html">HITL Heuristics ↗</a>. What fell out of all of it is in <a href="chasing_ghosts.html">Chasing Ghosts ↗</a>.
+  </p>
 
   <div class="stats-row">
     <div class="stat-card">
@@ -419,6 +246,7 @@
   </div>
 
   <div class="footer">Mason Thompson · Berkeley, California</div>
+
 </main>
 
 <script>
