@@ -392,8 +392,11 @@ My working hypothesis became:
 <p class="lead">
 Classifiers were ultimately dropped when spot-checks of V4 transcripts exposed high-confidence contradictions that defied the system's own logic. Seeing longer segments labeled with nearly 100% confidence while simultaneously being flagged as <code>is_back_propagated: true</code>—a state that should be physically impossible—was the turning point.
 <br><br>
-Worse still, those high-confidence, "back-propagated" segments that the model insisted were Friedberg were, in fact, Brad Gerstner. In retrospect, it's wholly possible that buggy code produced the mislabeling and would have been worthy of troubleshooting. But at the time, I was so unsettled by the outcome—knowing such a glaring error could pass at scale with a perfect confidence score—that I decided to drop the classifier altogether.
-</p>
+Going forward, NeMo's speaker_id backbone and Streamlit HITL review replaced stochastic label assignment with something auditable. 
+
+It also exposed me directly to workin with transcripts at scale, revealing a new class of problems that a classifier score would have steamrolled over.</p>
+
+<p>Lesson learned: a forced, incomplete label space sitting on top of overlapping embeddings wasn't ground-truth; it was slop with really impressive confidence scores.</p>
 
 <div class="two-col">
 
@@ -429,14 +432,6 @@ Worse still, those high-confidence, "back-propagated" segments that the model in
 
 </div>
 
-<p class="lead" style="margin-top:28px;">
-Brad's embedding geometry explained the second failure: his cosine distances placed him directly on top of Sacks and Friedberg in embedding space, making host/guest separation impossible for the classifier. It wasn't confused — it was incapable of being correct.
-<br><br>
-It's unclear why <code>custom_speaker: "brad"</code> was never created. If the labeling had been incorrectly limited to hosts, I'd expect to see his segments attributed to JCal (who wasn't present in the episode) — but that didn't happen. That bolsters the case that Brad's voice was simply too phonemically close to the hosts for the classifier to work effectively, regardless of label space.
-<br><br>
-Removing the classifier replaced stochastic guesswork with a more interpretable, auditable pipeline.
-</p>
-
 <div class="block">
   <div class="block-header">Brad — Embedding Geometry: The Smoking Gun</div>
   <div class="block-body">The Math of the Collision:
@@ -450,7 +445,6 @@ The Paradox: Why wasn't Brad mapped to JCal?
 Note: JCal wasn't in episode 136.
 Brad's minimum distance (0.2507) should have triggered a JCal label, because the classifier wasn't told who was in the episode. Yet it confidently mapped him to Friedberg. This exposes the "Black Box" failure:
 
-Lesson learned: a forced, incomplete label space sitting on top of overlapping embeddings wasn't ground-truth; it was slop with really impressive confidence scores.</div>
 </div>
 
 </main>
