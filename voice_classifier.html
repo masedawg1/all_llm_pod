@@ -358,6 +358,59 @@ My working hypothesis became:
 <br>2. Classify only >5s segments, leaving all short segments untouched  
 <br>3. After validating the long-segment classifications, propagate labels to short segments using NeMo <code>cluster_id</code>, which had already proven reliable  
 </p>
+<!-- =============================== -->
+<!--     WHY CLASSIFIERS WERE DROPPED -->
+<!-- =============================== -->
+
+<h2 id="v5">Classifier Removal — Structural Failure</h2>
+
+<p class="lead">
+Classifiers were dropped after V4 because spot-checking transcripts exposed contradictions that simply shouldn’t happen.
+Longer segments (>5s) that were directly labeled by the classifier were still being marked
+<code>is_back_propagated: true</code> — which is impossible. Backfill only applies to sub-5s segments.
+<br><br>
+Then came the bad examples. The system was confidently mislabeling both long and short segments, and labeling neither of them as Brad — even though both were Brad in the source audio.
+This wasn’t noise. This was structural.
+<br><br>
+When I checked Brad’s embedding geometry, it became obvious why:
+his distances to Sacks (0.7774) and Friedberg (0.8007) placed him directly on top of them in embedding space.
+And because no <code>custom_speaker: "brad"</code> existed in the label space, the classifier could never output Brad at inference time.
+It wasn’t confused — it was <em>incapable</em> of being correct.
+<br><br>
+That’s why the classifier layer was removed. I’m not letting a forced, incomplete label space sit on top of overlapping embeddings and pretend it’s truth.
+</p>
+
+<div class="two-col" style="margin-top:40px;">
+
+  <!-- LEFT PANEL -->
+  <div>
+    <div class="panel-label">Long Segment · Misclassified</div>
+    <div class="code">
+<pre>{
+  "speaker_id": "SPEAKER_03",
+  "is_lizard": false,
+  "custom_speaker": "friedberg",
+  "confidence": 0.9999877,
+  "duration": 10.4119,
+  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
+  "speaker_id_propagated": true
+}</pre>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div>
+    <div class="panel-label">Short Segment · Also Misclassified</div>
+    <div class="code">
+<pre>{
+  "speaker_id": "SPEAKER_04",
+  "is_lizard": true,
+  "custom_speaker": "friedberg",
+  "confidence": 0.0,
+  "duration": 0.3200,
+  "text": "Where is Jcal?",
+  "speaker_id_propagated": true
+}</pre>
   </div>
 </div>
 </main>
