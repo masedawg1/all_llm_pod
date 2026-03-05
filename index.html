@@ -153,63 +153,6 @@
       color: var(--text);
     }
 
-    /* ── SPEAKER STAT GRID ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 3px 3px 0 0;
-      overflow: hidden;
-    }
-
-    .stats-total {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-top: none;
-      border-radius: 0 0 3px 3px;
-      overflow: hidden;
-      margin-bottom: 0;
-    }
-
-    .stat {
-      background: var(--surface);
-      padding: 16px 18px;
-    }
-
-    .stat.dimmed {
-      background: var(--bg);
-    }
-
-    .stat-value {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--green);
-      display: block;
-      line-height: 1.1;
-    }
-
-    .stat.dimmed .stat-value {
-      color: var(--text);
-      font-size: 18px;
-    }
-
-    .stat-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      display: block;
-      margin-top: 5px;
-    }
-
-    /* ── SPEAKER TABLE ── */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -251,21 +194,6 @@
       border-bottom: none;
     }
 
-    .bar-cell { width: 140px; }
-    .bar-wrap {
-      background: var(--bg);
-      border-radius: 2px;
-      height: 5px;
-      overflow: hidden;
-    }
-    .bar-fill {
-      height: 100%;
-      background: var(--green);
-      border-radius: 2px;
-      opacity: 0.65;
-    }
-
-    /* ── DIAGRAM ── */
     .diagram {
       background: var(--code-bg);
       border: 1px solid #1e2530;
@@ -290,21 +218,12 @@
     @media (max-width: 768px) {
       nav { display: none; }
       main { padding: 32px 24px 80px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
 
-  <nav>
-    <div class="nav-logo">ALL-LLM Pod</div>
-    <div class="nav-section-label">Pages</div>
-    <a href="index.html" class="nav-item active">Overview</a>
-    <a href="performance.html" class="nav-item">Performance</a>
-    <a href="heuristics.html" class="nav-item">HITL Heuristics</a>
-    <a href="chasing_ghosts.html" class="nav-item">Chasing Ghosts</a>
-    <div class="nav-footer">Mason Thompson<br>Berkeley, CA</div>
-  </nav>
+  <nav id="shared-nav"></nav>
 
   <main>
     <p class="page-eyebrow">Multi-Agent LLM System</p>
@@ -318,7 +237,6 @@
       Human-in-the-Loop validation tooling, and a SwiftUI client application.
     </p>
 
-    <!-- hours per speaker -->
     <div class="section-heading"><h2>538 Episodes: Spoken Time by Speaker</h2></div>
     <table>
       <tr>
@@ -358,7 +276,7 @@
     ↓ (Tailscale)
 FastAPI Backend (Local GPU Workstation)
     ├── LLM (Mistral + LoRA Adapters)
-    ├── TTS Engine (F5-TTS)
+    ├── TTS Engine (F5-TTS primary, VibeVoice1.5B backup)
     ├── Hybrid RAG Layer
     ├── Behavioral Memory Store
     ├── WhisperX (ASR)
@@ -368,7 +286,7 @@ FastAPI Backend (Local GPU Workstation)
     <div class="section-heading"><h2>ASR &amp; Diarization Pipeline</h2></div>
     <div class="diagram">YouTube URL
     ↓
-yt_dlp
+yt_dlp + 3rd party apps
     ↓
 Audio Normalization (16k mono)
     ↓
@@ -384,6 +302,11 @@ Speaker-Labeled Dataset Export</div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
   </main>
+
+  <script>
+    window.NAV_ANCHORS = [];
+  </script>
+  <script src="nav-loader.js" data-page="index"></script>
 
 </body>
 </html>
