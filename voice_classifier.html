@@ -252,9 +252,7 @@ Noteworthy: Guests were deliberately excluded. Guest audio was difficult to reli
 
 <div class="block">
   <div class="block-header">V1 — Core Signals</div>
-  <div class="block-body">
-<div class="block-body">
-V1 Summary:
+  <div class="block-body">V1 Summary:
 • 9,000 host-only clips (98 episodes) using WhisperX + Pyannote
 • (Inexplicable) Guest Handling: "Unknown" class emerged to absorb guest audio
 • Output: First 187 functional transcripts
@@ -269,9 +267,7 @@ Model Performance:
 • Chamath F1: 0.94 (High Recall 0.99 → boundary over-calling)
 
 Key Insight:
-Confirmed host-only classification feasibility, but identified critical confusion between Chamath ↔ JCal due to fast-speech similarity. Architecture lacked production robustness.
-</div>
-  </div>
+Confirmed host-only classification feasibility, but identified critical confusion between Chamath ↔ JCal due to fast-speech similarity. Architecture lacked production robustness.</div>
 </div>
 
 <!-- =============================== -->
@@ -284,15 +280,18 @@ Confirmed host-only classification feasibility, but identified critical confusio
 V2 was made possible via a custom HITL tool I created called <strong>Clownfish</strong>.  
 Clownfish ingested the original V1 transcripts and let me manually review and re-map <code>pyannote</code> speaker_ids to structured <code>custom_speaker</code> labels, with side-by-side audio examples and video screengrabs for cross-validation.
 <br><br>
+<a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank" style="display:block;margin:20px 0;max-width:480px;">
+  <img src="https://img.youtube.com/vi/UPnnOCWqiAw/maxresdefault.jpg" alt="Clownfish demo on YouTube" style="width:100%;border:1px solid var(--border);border-radius:4px;display:block;transition:transform .15s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+</a>
+
 Once a speaker was validated and assigned, the transcript was automatically backfilled with the corrected labels. Audio for each segment was then extracted into clean, per-speaker directories. This produced the first reliable, guest-inclusive dataset and established a disciplined labeling pipeline.
 </p>
 
 <div class="block">
   <div class="block-header">V2 — Core Signals</div>
-  <div class="block-body">
-V2 Summary:
+  <div class="block-body">V2 Summary:
 • Integrated HITL pipeline (Clownfish) with clusterID/audio/video cross-validation
-• Massive scale-up: **85,619 total audio samples** (70/15/15 split)
+• Massive scale-up: 85,619 total audio samples (70/15/15 split)
 • Transcript backfill applied after each speaker confirmation
 
 Dataset Distribution (Pre-balancing):
@@ -302,14 +301,13 @@ Dataset Distribution (Pre-balancing):
 → Introduced robust "Guest" class for negative sampling
 
 Performance Metrics:
-• **Test Accuracy: 0.9798 (97.98%)**
+• Test Accuracy: 0.9798 (97.98%)
 • Sacks F1: 0.9851 | Chamath F1: 0.9823
 • Guest F1: 0.9879 (Highest recall at 0.9895)
 • JCal F1: 0.9708 (Main source of noise: 48 misclassified as Chamath)
 
 Key Shift:
-V2 moved from simple MLP feasibility to a higher-quality, pre-production pipeline. While training hit 100% accuracy, the test set's 98% performance across 12,843 samples proved the model's ability to generalize once guest segments and class-weight balancing were properly implemented, ensuring evaluation metrics were no longer inflated by host-only domain constraints.
-  </div>
+V2 moved from simple MLP feasibility to a higher-quality, pre-production pipeline. While training hit 100% accuracy, the test set's 98% performance across 12,843 samples proved the model's ability to generalize once guest segments and class-weight balancing were properly implemented, ensuring evaluation metrics were no longer inflated by host-only domain constraints.</div>
 </div>
 
 <!-- =============================== -->
@@ -325,20 +323,19 @@ Accuracy dipped slightly, but the geometry and confidence improved.
 </p>
 
 <div class="image-grid">
-  <img src="images/pyannote.png" onclick="openModal(this)">
-  <img src="images/nemo.png" onclick="openModal(this)">
+  <img src="images/pyannote.png" onclick="openModal(this)" alt="Pyannote embedding visualization">
+  <img src="images/nemo.png" onclick="openModal(this)" alt="NeMo embedding visualization">
 </div>
 
 <div class="block">
   <div class="block-header">V3 — Core Signals</div>
-  <div class="block-body">
-Embedding Metrics (NeMo / TitaNet):
+  <div class="block-body">Embedding Metrics (NeMo / TitaNet):
 • Intra-class distance: 0.2502  
 • Inter-class distance: 0.9914  
 • Separation ratio: 3.96×
 
 Classifier Performance:
-• Accuracy: 96% on >5s segments  
+• Accuracy: 96% on &gt;5s segments  
 • Test size: 11,373 clips  
 • Speaker classes: 5 (incl. OTHER)  
 • Intra/Inter ratio: 4.18×
@@ -354,37 +351,36 @@ Behavioral Shifts:
 • Clusters became compact and cosine-stable  
 • Boundary errors now reflect real acoustic difficulty  
 • Generalization improved across 387 episodes  
-• >5s segment requirement removed false-short artifacts
+• &gt;5s segment requirement removed false-short artifacts
 
 Key Insight:
 V3 is the first version with correct embedding geometry —  
-tight clusters, stable cosine structure, balanced error flows, and reproducible behavior across real-world audio domains.
-  </div>
+tight clusters, stable cosine structure, balanced error flows, and reproducible behavior across real-world audio domains.</div>
 </div>
 
 <!-- =============================== -->
 <!--            V4 SECTION          -->
 <!-- =============================== -->
 
-<h2 id="v4">V4 — Duration Constraint & Production Reality</h2>
+<h2 id="v4">V4 — Duration Constraint &amp; Production Reality</h2>
 
 <p class="lead">
 Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched what I observed in my corpus.
 </p>
 
 <div class="image-grid">
-  <img src="images/v4_error_1.png" onclick="openModal(this)">
-  <img src="images/v4_error_2.png" onclick="openModal(this)">
+  <img src="images/v4_error_1.png" onclick="openModal(this)" alt="V4 error example 1">
+  <img src="images/v4_error_2.png" onclick="openModal(this)" alt="V4 error example 2">
 </div>
 
 <p class="lead">
 Community advice was to drop short segments entirely — which makes sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.  
-But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset this early wasn't acceptable. 
+But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset this early wasn't acceptable.
 <br><br>
 My working hypothesis became:
 <br>1. Train the classifier only on host and guest audio longer than 5 seconds  
 <br>2. Limit the classifier to segments longer than 5s, leaving all short segments untouched  
-<br>3. Propagate speaker labels to short segments using NeMo <code>cluster_id</code>, which had proven remarkably reliable reliable across dozens of episodes
+<br>3. Propagate speaker labels to short segments using NeMo <code>cluster_id</code>, which had proven remarkably reliable across dozens of episodes
 </p>
 
 <!-- =============================== -->
@@ -396,7 +392,8 @@ My working hypothesis became:
 <p class="lead">
 Classifiers were ultimately dropped when spot-checks of V4 transcripts exposed high-confidence contradictions that defied the system's own logic. Seeing longer segments labeled with nearly 100% confidence while simultaneously being flagged as <code>is_back_propagated: true</code>—a state that should be physically impossible—was the turning point.
 <br><br>
-Worse still, those high-confidence, "back-propagated" segments that the model insisted were Friedberg were, in fact, Brad Gerstner. In retrospect, it’s wholly possible that buggy code produced the mislabeling and would have been worthy of troubleshooting. But at the time, I was so unsettled by the outcome—knowing such a glaring error could pass at scale with a perfect confidence score—that I decided to drop the classifier altogether.</p>
+Worse still, those high-confidence, "back-propagated" segments that the model insisted were Friedberg were, in fact, Brad Gerstner. In retrospect, it's wholly possible that buggy code produced the mislabeling and would have been worthy of troubleshooting. But at the time, I was so unsettled by the outcome—knowing such a glaring error could pass at scale with a perfect confidence score—that I decided to drop the classifier altogether.
+</p>
 
 <div class="two-col">
 
@@ -437,38 +434,29 @@ Brad's embedding geometry explained the second failure: his cosine distances pla
 <br><br>
 It's unclear why <code>custom_speaker: "brad"</code> was never created. If the labeling had been incorrectly limited to hosts, I'd expect to see his segments attributed to JCal (who wasn't present in the episode) — but that didn't happen. That bolsters the case that Brad's voice was simply too phonemically close to the hosts for the classifier to work effectively, regardless of label space.
 <br><br>
-Removing the classifier replaced stochastic guesswork with a more interpretable, auditable pipeline. 
-<br><br>
-<p>Lesson learned: a forced, incomplete label space sitting on top of overlapping embeddings wasn't ground-truth; it was slop with really impressive confidence scores.</p>
+Removing the classifier replaced stochastic guesswork with a more interpretable, auditable pipeline.
 </p>
 
-div class="block">
+<div class="block">
   <div class="block-header">Brad — Embedding Geometry: The Smoking Gun</div>
-  <div class="block-body">
-The Math of the Collision:
-• **Brad → Chamath Mean Distance:** 0.9181 (Above baseline, but still within the confusion zone)
-• **Brad → Sacks Mean Distance:** 0.7774 (Lower than the 0.8740 inter-host baseline)
-• **Brad → Friedberg Mean Distance:** 0.8007 (Lower than the 0.8740 inter-host baseline)
-• **Brad → JCal Min Distance:** 0.2507 (Lower than JCal’s own 0.4842 intra-host baseline!)
-• **Conclusion:** Brad Gerstner doesn’t just "sound like" the hosts; some of his segments are mathematically indistinguishable from host identity manifolds.
+  <div class="block-body">The Math of the Collision:
+• Brad → Chamath Mean Distance: 0.9181 (Above baseline, but still within the confusion zone)
+• Brad → Sacks Mean Distance: 0.7774 (Lower than the 0.8740 inter-host baseline)
+• Brad → Friedberg Mean Distance: 0.8007 (Lower than the 0.8740 inter-host baseline)
+• Brad → JCal Min Distance: 0.2507 (Lower than JCal's own 0.4842 intra-host baseline!)
+• Conclusion: Brad Gerstner doesn't just "sound like" the hosts; some of his segments are mathematically indistinguishable from host identity manifolds.
 
 The Paradox: Why wasn't Brad mapped to JCal?
-Note: Jcal wasn't in this episode 136
-Brad's minimum distance (0.2507) should have triggered a JCal label, because the classifier wasn't told 'who was in the episode'. Yet it confidently mapped him to Friedberg. This exposes the "Black Box" failure:
+Note: JCal wasn't in episode 136.
+Brad's minimum distance (0.2507) should have triggered a JCal label, because the classifier wasn't told who was in the episode. Yet it confidently mapped him to Friedberg. This exposes the "Black Box" failure:
 
-1. **Forced Hallucination:** In a closed-set classifier, the model is a "forced choice" machine. It doesn't have the permission to see a new speaker, so it suppresses the "closest" neighbor (JCal) in favor of the label that satisfies its internal stochastic weights (Friedberg).
-2. **Ghost Mapping:** The system would confidently "hallucinate" a host identity even when that host was absent, simply because the guest's coordinates fell inside the host's established territory.
-3. **Deterministic Slop:** The model produced ~1.0 confidence for Friedberg not because it was "sure," but because the math of the overlap gave it nowhere else to go.
-
-The Verdict:
-This is why the classifier layer was removed. If a guest is mathematically closer to a host than the host is to themselves—and the model still picks a *different* host—you aren't looking at "intelligence." You're looking at noise with a really impressive confidence score.
-  </div>
+Lesson learned: a forced, incomplete label space sitting on top of overlapping embeddings wasn't ground-truth; it was slop with really impressive confidence scores.</div>
 </div>
 
 </main>
 
 <div id="modal" class="modal" onclick="closeModal()">
-  <img id="modalImg">
+  <img id="modalImg" alt="Expanded visualization">
 </div>
 
 <script>
