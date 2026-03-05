@@ -394,12 +394,11 @@ My working hypothesis became:
 <h2 id="v5">Classifier Removal — Structural Failure</h2>
 
 <p class="lead">
-Classifiers were dropped because transcripts exposed contradictions that simply shouldn't happen:
-</p>
-
-<p class="lead">
-1. Longer segments (&gt;5s) that were directly labeled by the classifier were being marked <code>is_back_propagated: true</code> — which is impossible. Backfill only applies to sub-5s segments.<br><br>
-2. Speakers were being mislabeled, with guest content being labeled as host.
+Classifiers were ultimately dropped when spot-checks of V4 transcripts exposed high-confidence contradictions that defied the system's own logic. Seeing longer segments labeled with nearly 100% confidence while simultaneously being flagged as <code>is_back_propagated: true</code>—a state that should be physically impossible—was the turning point.
+<br><br>
+Worse still, those high-confidence, "back-propagated" segments that the model insisted were Friedberg were, in fact, Brad Gerstner. In retrospect, it’s wholly possible that buggy code produced the mislabeling and would have been worthy of troubleshooting. But at the time, I was so unsettled by the outcome—knowing such a glaring error could pass at scale with a perfect confidence score—that I decided to drop the classifier altogether.
+<br><br>
+Ultimately, I chose to strip the pipeline down. An imperfect label space sitting on top of overlapping embeddings. I'd rather have a simplified, transparent, HITL pipeline that has some tedious work than a prompt-and-pray black box that's confidently wrong.
 </p>
 
 <div class="two-col">
